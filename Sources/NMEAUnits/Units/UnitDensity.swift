@@ -26,5 +26,5 @@ public class UnitDensity: Dimension, @unchecked Sendable {
     /// Ounces per cubic inch (oz/in^3)
     public static let ouncesPerCubicInch: UnitDensity = unit(UnitMass.ounces, per: UnitVolume.cubicInches)
 
-    override public class func baseUnit() -> Self { kilogramsPerCubicMeter as! Self }
+    override public class func baseUnit() -> Self { kilogramsPerLiter as! Self }
 }

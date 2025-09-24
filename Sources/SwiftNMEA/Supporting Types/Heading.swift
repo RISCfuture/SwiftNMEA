@@ -1,27 +1,27 @@
 // swiftlint:disable:next missing_docs
 public struct Heading {
-    private init() {}
+  private init() {}
 
-    /**
-     Heading sensor modes.
+  /**
+   Heading sensor modes.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/trueHeadingMode(_:mode:)``
+   */
+  public enum Mode: Character, Sendable, Codable, Equatable {
 
-     - SeeAlso: ``Message/Payload-swift.enum/trueHeadingMode(_:mode:)``
-     */
-    public enum Mode: Character, Sendable, Codable, Equatable {
+    /// Autonomous
+    case autonomous = "A"
 
-        /// Autonomous
-        case autonomous = "A"
+    /// Estimated (dead reckoning)
+    case estimated = "E"
 
-        /// Estimated (dead reckoning)
-        case estimated = "E"
+    /// Manual input
+    case manual = "M"
 
-        /// Manual input
-        case manual = "M"
+    /// Simulator mode
+    case simulator = "S"
 
-        /// Simulator mode
-        case simulator = "S"
-
-        /// Data not valid (including standby)
-        case invalid = "V"
-    }
+    /// Data not valid (including standby)
+    case invalid = "V"
+  }
 }

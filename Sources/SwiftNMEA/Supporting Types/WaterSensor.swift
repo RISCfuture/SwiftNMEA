@@ -1,67 +1,67 @@
 // swiftlint:disable:next missing_docs
 public struct WaterSensor {
-    private init() {}
+  private init() {}
 
-    /**
-     A method of ship speed used for measuring the current speed.
+  /**
+   A method of ship speed used for measuring the current speed.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/currentWaterLayer(isValid:setNumber:layer:depth:direction:speed:referenceDepth:heading:speedReference:)``
+   */
+  public enum SpeedReference: Character, Sendable, Codable, Equatable {
 
-     - SeeAlso: ``Message/Payload-swift.enum/currentWaterLayer(isValid:setNumber:layer:depth:direction:speed:referenceDepth:heading:speedReference:)``
-     */
-    public enum SpeedReference: Character, Sendable, Codable, Equatable {
+    /// Bottom track
+    case bottomTrack = "B"
 
-        /// Bottom track
-        case bottomTrack = "B"
+    /// Water track
+    case waterTrack = "W"
 
-        /// Water track
-        case waterTrack = "W"
+    /// Positioning system
+    case positioningSystem = "P"
+  }
 
-        /// Positioning system
-        case positioningSystem = "P"
-    }
+  /**
+   Water level sensor types.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/waterLevel(messageType:time:systemType:location1:location2:number:alarmCondition:isOverriden:description:)``
+   */
+  public enum SystemType: String, Sendable, Codable, Equatable {
 
-    /**
-     Water level sensor types.
+    /// Water level detection system
+    case waterLevel = "WL"
 
-     - SeeAlso: ``Message/Payload-swift.enum/waterLevel(messageType:time:systemType:location1:location2:number:alarmCondition:isOverriden:description:)``
-     */
-    public enum SystemType: String, Sendable, Codable, Equatable {
+    /// High water level by bilge system
+    case bilgeHigh = "BI"
 
-        /// Water level detection system
-        case waterLevel = "WL"
+    /// Water leakage at hull (shell) door
+    case hullDoorLeakage = "HD"
 
-        /// High water level by bilge system
-        case bilgeHigh = "BI"
+    /// others
+    case others = "OT"
+  }
 
-        /// Water leakage at hull (shell) door
-        case hullDoorLeakage = "HD"
+  /**
+   Water level sensor statuses.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/waterLevel(messageType:time:systemType:location1:location2:number:alarmCondition:isOverriden:description:)``
+   */
+  public enum Status: Character, Sendable, Codable, Equatable {
 
-        /// others
-        case others = "OT"
-    }
+    /// Normal state
+    case normal = "N"
 
-    /**
-     Water level sensor statuses.
+    /// Alarm state (threshold exceeded)
+    case alarmHigh = "H"
 
-     - SeeAlso: ``Message/Payload-swift.enum/waterLevel(messageType:time:systemType:location1:location2:number:alarmCondition:isOverriden:description:)``
-     */
-    public enum Status: Character, Sendable, Codable, Equatable {
+    /// Alarm state (extreme threshold exceeded)
+    case alarmExtremeHigh = "J"
 
-        /// Normal state
-        case normal = "N"
+    /// Alarm state (low threshold exceeded, i.e. not reached)
+    case alarmLow = "L"
 
-        /// Alarm state (threshold exceeded)
-        case alarmHigh = "H"
+    /// Alarm state (extreme low threshold exceeded, i.e. not reached)
+    case alarmExtremeLow = "K"
 
-        /// Alarm state (extreme threshold exceeded)
-        case alarmExtremeHigh = "J"
-
-        /// Alarm state (low threshold exceeded, i.e. not reached)
-        case alarmLow = "L"
-
-        /// Alarm state (extreme low threshold exceeded, i.e. not reached)
-        case alarmExtremeLow = "K"
-
-        /// Fault (state unknown)
-        case fault = "X"
-    }
+    /// Fault (state unknown)
+    case fault = "X"
+  }
 }

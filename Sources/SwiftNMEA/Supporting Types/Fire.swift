@@ -1,90 +1,90 @@
 // swiftlint:disable:next missing_docs
 public struct Fire {
-    private init() {}
+  private init() {}
 
-    /**
-     Fire detection message type.
+  /**
+   Fire detection message type.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/fireDetection(type:time:detector:zone:loop:number:condition:isAcknowledged:description:)``
+   */
+  public enum MessageType: Character, Sendable, Codable, Equatable {
 
-     - SeeAlso: ``Message/Payload-swift.enum/fireDetection(type:time:detector:zone:loop:number:condition:isAcknowledged:description:)``
-     */
-    public enum MessageType: Character, Sendable, Codable, Equatable {
+    /// Section message. The section may be a whole section or a
+    /// sub-section. This status is normally transmitted at regular
+    /// intervals.
+    case section = "S"
 
-        /// Section message. The section may be a whole section or a
-        /// sub-section. This status is normally transmitted at regular
-        /// intervals.
-        case section = "S"
+    /// Status for each fire detector. (May be used to indicate an event.)
+    case event = "E"
 
-        /// Status for each fire detector. (May be used to indicate an event.)
-        case event = "E"
+    /// Fault in system
+    case fault = "F"
 
-        /// Fault in system
-        case fault = "F"
+    /// Disabled: Detector is manually or automatically disabled from giving
+    /// fire alarms.
+    case disabled = "D"
+  }
 
-        /// Disabled: Detector is manually or automatically disabled from giving
-        /// fire alarms.
-        case disabled = "D"
-    }
+  /**
+   Types of fire detectors.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/fireDetection(type:time:detector:zone:loop:number:condition:isAcknowledged:description:)``
+   */
+  public enum DetectorType: String, Sendable, Codable, Equatable {
 
-    /**
-     Types of fire detectors.
+    /// Generic fire detector, can be any of the ones below
+    case generic = "FD"
 
-     - SeeAlso: ``Message/Payload-swift.enum/fireDetection(type:time:detector:zone:loop:number:condition:isAcknowledged:description:)``
-     */
-    public enum DetectorType: String, Sendable, Codable, Equatable {
+    /// Heat type detector
+    case heat = "FH"
 
-        /// Generic fire detector, can be any of the ones below
-        case generic = "FD"
+    /// Smoke type detector
+    case smoke = "FS"
 
-        /// Heat type detector
-        case heat = "FH"
+    //        case smokeAndHeat = "FD"
 
-        /// Smoke type detector
-        case smoke = "FS"
+    /// Manual call point
+    case manual = "FM"
 
-//        case smokeAndHeat = "FD"
+    /// Any gas detector
+    case gas = "GD"
 
-        /// Manual call point
-        case manual = "FM"
+    /// Oxygen gas detector
+    case oxygen = "GO"
 
-        /// Any gas detector
-        case gas = "GD"
+    /// Hydrogen sulphide gas detector
+    case H2S = "GS"
 
-        /// Oxygen gas detector
-        case oxygen = "GO"
+    /// Hydro-carbon gas detector
+    case hydrocarbon = "GH"
 
-        /// Hydrogen sulphide gas detector
-        case H2S = "GS"
+    /// Sprinkler flow switch
+    case sprinklerFlow = "SF"
 
-        /// Hydro-carbon gas detector
-        case hydrocarbon = "GH"
+    /// Sprinkler manual valve release
+    case sprinklerValve = "SV"
 
-        /// Sprinkler flow switch
-        case sprinklerFlow = "SF"
+    /// CO₂ manual release
+    case CO2 = "CO"
 
-        /// Sprinkler manual valve release
-        case sprinklerValve = "SV"
+    /// Other
+    case other = "OT"
+  }
 
-        /// CO₂ manual release
-        case CO2 = "CO"
+  /**
+   Fire detector condition.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/fireDetection(type:time:detector:zone:loop:number:condition:isAcknowledged:description:)``
+   */
+  public enum DetectorCondition: Character, Sendable, Codable, Equatable {
 
-        /// Other
-        case other = "OT"
-    }
+    /// Activation
+    case activation = "A"
 
-    /**
-     Fire detector condition.
+    /// Non-activation
+    case nonactivation = "V"
 
-     - SeeAlso: ``Message/Payload-swift.enum/fireDetection(type:time:detector:zone:loop:number:condition:isAcknowledged:description:)``
-     */
-    public enum DetectorCondition: Character, Sendable, Codable, Equatable {
-
-        /// Activation
-        case activation = "A"
-
-        /// Non-activation
-        case nonactivation = "V"
-
-        /// Fault (state unknown)
-        case fault = "X"
-    }
+    /// Fault (state unknown)
+    case fault = "X"
+  }
 }

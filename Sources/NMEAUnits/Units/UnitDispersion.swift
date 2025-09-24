@@ -1,7 +1,10 @@
 import Foundation
 
-public extension UnitDispersion {
+extension UnitDispersion {
 
-    /// Pascals (Pa): SI unit of pressure
-    static let partsPerThousand = UnitDispersion(symbol: "ppt", converter: UnitConverterLinear(coefficient: 1000))
+  /// Pascals (Pa): SI unit of pressure
+  public static let partsPerThousand = UnitDispersion(
+    symbol: "ppt",
+    converter: UnitConverterLinear(coefficient: 1000)
+  )
 }

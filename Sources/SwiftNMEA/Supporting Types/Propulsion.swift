@@ -3,82 +3,82 @@ import NMEAUnits
 
 // swiftlint:disable:next missing_docs
 public struct Propulsion {
-    private init() {}
+  private init() {}
 
-    /**
-     RPM demand or response values.
+  /**
+   RPM demand or response values.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/propulsionRemoteControl(leverDemandPosition:leverDemandValid:RPMDemand:pitchDemand:location:engineNumber:)``
+   - SeeAlso: ``Message/Payload-swift.enum/thrusterControl(number:RPM:pitch:azimuth:location:status:)``
+   - SeeAlso: ``Message/Payload-swift.enum/thrusterResponse(number:RPM:pitch:azimuth:)``
+   */
+  public enum RPMValue: Sendable, Codable, Equatable {
 
-     - SeeAlso: ``Message/Payload-swift.enum/propulsionRemoteControl(leverDemandPosition:leverDemandValid:RPMDemand:pitchDemand:location:engineNumber:)``
-     - SeeAlso: ``Message/Payload-swift.enum/thrusterControl(number:RPM:pitch:azimuth:location:status:)``
-     - SeeAlso: ``Message/Payload-swift.enum/thrusterResponse(number:RPM:pitch:azimuth:)``
-     */
-    public enum RPMValue: Sendable, Codable, Equatable {
+    /// Per cent (%): 0 to 100 % from zero to maximum rpm
+    case percent(_ percent: Double)
 
-        /// Per cent (%): 0 to 100 % from zero to maximum rpm
-        case percent(_ percent: Double)
+    /// Revolutions per minute (rpm): "-" Astern
+    case value(_ value: Measurement<UnitAngularVelocity>)
 
-        /// Revolutions per minute (rpm): "-" Astern
-        case value(_ value: Measurement<UnitAngularVelocity>)
+    /// Data invalid
+    case invalid
+  }
 
-        /// Data invalid
-        case invalid
-    }
+  /**
+   Propeller pitch demand or response values.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/propulsionRemoteControl(leverDemandPosition:leverDemandValid:RPMDemand:pitchDemand:location:engineNumber:)``
+   - SeeAlso: ``Message/Payload-swift.enum/thrusterControl(number:RPM:pitch:azimuth:location:status:)``
+   - SeeAlso: ``Message/Payload-swift.enum/thrusterResponse(number:RPM:pitch:azimuth:)``
+   */
+  public enum PitchValue: Sendable, Codable, Equatable {
+    /// P = Per cent (%): −100 to 0 to 100 % from “full astern” (crash
+    /// astern) to “full ahead” (navigation full) through “stop engine”
+    case percent(_ percent: Double)
 
-    /**
-     Propeller pitch demand or response values.
+    /// Degrees: "-": Astern
+    case value(_ value: Measurement<UnitAngle>)
 
-     - SeeAlso: ``Message/Payload-swift.enum/propulsionRemoteControl(leverDemandPosition:leverDemandValid:RPMDemand:pitchDemand:location:engineNumber:)``
-     - SeeAlso: ``Message/Payload-swift.enum/thrusterControl(number:RPM:pitch:azimuth:location:status:)``
-     - SeeAlso: ``Message/Payload-swift.enum/thrusterResponse(number:RPM:pitch:azimuth:)``
-     */
-    public enum PitchValue: Sendable, Codable, Equatable {
-        /// P = Per cent (%): −100 to 0 to 100 % from “full astern” (crash
-        /// astern) to “full ahead” (navigation full) through “stop engine”
-        case percent(_ percent: Double)
+    /// Data invalid
+    case invalid
+  }
 
-        /// Degrees: "-": Astern
-        case value(_ value: Measurement<UnitAngle>)
+  /**
+   Possible engine control or telegraph locations.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/engineTelegraph(time:type:position:subPosition:location:number:)``
+   - SeeAlso: ``Message/Payload-swift.enum/propulsionRemoteControl(leverDemandPosition:leverDemandValid:RPMDemand:pitchDemand:location:engineNumber:)``
+   - SeeAlso: ``Message/Payload-swift.enum/thrusterControl(number:RPM:pitch:azimuth:location:status:)``
+   - SeeAlso: ``Message/Payload-swift.enum/thrusterResponse(number:RPM:pitch:azimuth:)``
+   */
+  public enum Location: Character, Sendable, Codable, Equatable {
 
-        /// Data invalid
-        case invalid
-    }
+    /// Bridge
+    case bridge = "B"
 
-    /**
-     Possible engine control or telegraph locations.
+    /// Port wing
+    case portWing = "P"
 
-     - SeeAlso: ``Message/Payload-swift.enum/engineTelegraph(time:type:position:subPosition:location:number:)``
-     - SeeAlso: ``Message/Payload-swift.enum/propulsionRemoteControl(leverDemandPosition:leverDemandValid:RPMDemand:pitchDemand:location:engineNumber:)``
-     - SeeAlso: ``Message/Payload-swift.enum/thrusterControl(number:RPM:pitch:azimuth:location:status:)``
-     - SeeAlso: ``Message/Payload-swift.enum/thrusterResponse(number:RPM:pitch:azimuth:)``
-     */
-    public enum Location: Character, Sendable, Codable, Equatable {
+    /// Starboard wing
+    case starboardWing = "S"
 
-        /// Bridge
-        case bridge = "B"
+    /// Engine control room
+    case controlRoom = "C"
 
-        /// Port wing
-        case portWing = "P"
+    /// Engine side / local
+    case engineLocal = "E"
 
-        /// Starboard wing
-        case starboardWing = "S"
+    /// Wing (port or starboard not specified)
+    case wing = "W"
+  }
 
-        /// Engine control room
-        case controlRoom = "C"
-
-        /// Engine side / local
-        case engineLocal = "E"
-
-        /// Wing (port or starboard not specified)
-        case wing = "W"
-    }
-
-    /**
-     Revolution rate or thrust data sources.
-
-     - SeeAlso: ``Message/Payload-swift.enum/revolutions(source:number:speed:pitch:isValid:)``
-     */
-    public enum ThrustSource: Character, Sendable, Codable, Equatable {
-        case shaft = "S"
-        case engine = "E"
-    }
+  /**
+   Revolution rate or thrust data sources.
+  
+   - SeeAlso: ``Message/Payload-swift.enum/revolutions(source:number:speed:pitch:isValid:)``
+   */
+  public enum ThrustSource: Character, Sendable, Codable, Equatable {
+    case shaft = "S"
+    case engine = "E"
+  }
 }

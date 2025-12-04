@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.0
 
 import CompilerPluginSupport
 import PackageDescription
@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
   name: "SwiftNMEA",
   defaultLocalization: "en",
-  platforms: [.iOS(.v12), .macOS(.v13), .tvOS(.v12), .visionOS(.v1), .watchOS(.v4)],
+  platforms: [.iOS(.v18), .macOS(.v15), .tvOS(.v18), .visionOS(.v2), .watchOS(.v11)],
   products: [
     .library(
       name: "SwiftNMEA",

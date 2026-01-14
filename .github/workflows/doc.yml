@@ -37,6 +37,24 @@ jobs:
            --transform-for-static-hosting \
            --hosting-base-path SwiftNMEA \
            --enable-experimental-combined-documentation
+      - name: Create root redirect
+        run: |
+          cat > ./docs/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta http-equiv="refresh" content="0; url=/SwiftNMEA/documentation/swiftnmea/">
+              <title>SwiftNMEA Documentation</title>
+              <script>
+                  window.location.replace("/SwiftNMEA/documentation/swiftnmea/");
+              </script>
+          </head>
+          <body>
+              <p>Redirecting to <a href="/SwiftNMEA/documentation/swiftnmea/">SwiftNMEA Documentation</a>...</p>
+          </body>
+          </html>
+          EOF
       - name: Upload
         uses: actions/upload-pages-artifact@v3
         with:

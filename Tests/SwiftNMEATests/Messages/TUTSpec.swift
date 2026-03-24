@@ -188,7 +188,7 @@ final class TUTSpec: AsyncSpec {
             )
           ]
           let data = sentences.joined().data(using: .ascii)!
-          let _ = try await parser.parse(data: data)
+          _ = try await parser.parse(data: data)
 
           let flushed = try await parser.flush(includeIncomplete: true)
           expect(flushed).to(haveCount(1))

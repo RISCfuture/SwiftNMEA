@@ -78,7 +78,7 @@ public enum Datum: Sendable, Codable, Equatable {
           (subdivision != nil) ? String(subdivision!) : nil,
           forKey: .subdivision
         )
-      case .IHO(let code, let subdivision):
+      case let .IHO(code, subdivision):
         try container.encode(String(code), forKey: .datum)
         try container.encode(
           (subdivision != nil) ? String(subdivision!) : nil,

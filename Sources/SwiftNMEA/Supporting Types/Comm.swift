@@ -51,9 +51,9 @@ public struct Comm {
           return String(format: "%06d", (kHz * 10).rounded())
         case .MF_HF_telephone(let channel):
           return String(format: "3%04d", channel)
-        case .MF_HF_teletype(let band, let channel):
+        case let .MF_HF_teletype(band, channel):
           return String(format: "4%02d%03d", band, channel)
-        case .VHF(let mode, let channel):
+        case let .VHF(mode, channel):
           let simplexFlag = String(mode.rawValue)
           return String(format: "90%@%03d", simplexFlag, channel)
       }

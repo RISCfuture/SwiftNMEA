@@ -1,18 +1,6 @@
 import Foundation
 
 final class PackedBinaryCoder: Sendable {
-  func encode(_ value: Data) -> [String] {
-    value.chunks(ofCount: 2).map { chunk in
-      if let high = chunk.first, let low = chunk.last {
-        String(format: "%02X%02X", high, low)
-      } else if let high = chunk.first {
-        String(format: "%02X%02X", high, 0)
-      } else {
-        fatalError("Expected chunks of 2 bytes")
-      }
-    }
-  }
-
   func decode(_ value: some Sequence<String>) throws -> Data {
     let bytes = try value.enumerated().reduce(into: [UInt8]()) { data, chunk in
       switch chunk.element.count {

@@ -92,37 +92,6 @@ public struct Radar {
     /// correlation / association.
     public let correlationNumber: UInt8?
 
-    var data: Data {
-      var writer = BitWriter(size: 90)
-      writer.write(protocolVersion, bits: 2)
-      writer.write(number ?? 0, bits: 10)
-      writer.write(Self.encodeDecimal(bearing?.angle, unit: .degrees, nilSentinal: 4095), bits: 12)
-      writer.write(Self.encodeDecimal(speed, unit: .knots, nilSentinal: 4095), bits: 12)
-      writer.write(Self.encodeDecimal(course, unit: .degrees, nilSentinal: 4095), bits: 12)
-      if isRadarTarget {
-        writer.write(4095, bits: 12)
-      } else {
-        writer.write(Self.encodeDecimal(heading, unit: .degrees, nilSentinal: 4094), bits: 12)
-      }
-      writer.write(status?.rawValue ?? 0, bits: 3)
-      writer.write(isTestTarget ? 1 : 0, bits: 1)
-      writer.write(
-        Self.encodeDecimal(distance, unit: .nauticalMiles, step: 0.01, nilSentinal: 16384),
-        bits: 14
-      )
-      writer.write(speedCourseRelative ? 1 : 0, bits: 1)
-      writer.write(waterStabilized ? 1 : 0, bits: 1)
-      writer.write(0, bits: 2)
-      writer.write(correlationNumber ?? 0, bits: 8)
-
-      return writer.data
-    }
-
-    init?(data: Data) {
-      var reader = BitReader(data: data)
-      self.init(reader: &reader)
-    }
-
     init(reader: inout BitReader) {
       protocolVersion = reader.read(bits: 2)
       let trackNum: UInt = reader.read(bits: 10)
@@ -167,17 +136,6 @@ public struct Radar {
 
       let value = Double(rawValue) * step
       return Measurement(value: value, unit: unit)
-    }
-
-    private static func encodeDecimal<Unit: Dimension>(
-      _ measurement: Measurement<Unit>?,
-      unit: Unit,
-      step: Double = 0.1,
-      nilSentinal: UInt16
-    ) -> UInt16 {
-      guard let measurement else { return nilSentinal }
-      let value = measurement.converted(to: unit).value
-      return UInt16((value / step).rounded())
     }
 
     /// Tracked / AIS target status

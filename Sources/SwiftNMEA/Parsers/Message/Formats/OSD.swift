@@ -1,5 +1,4 @@
 import Foundation
-import NMEAUnits
 
 class OSDParser: MessageFormat {
   func canParse(sentence: ParametricSentence) throws -> Bool {

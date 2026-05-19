@@ -1,6 +1,5 @@
 import Foundation
 import NMEACommon
-import NMEAUnits
 
 class VERParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()

@@ -1,6 +1,5 @@
 import Collections
 import Foundation
-import NMEAUnits
 
 class WCVParser: MessageFormat {
   func canParse(sentence: ParametricSentence) throws -> Bool {

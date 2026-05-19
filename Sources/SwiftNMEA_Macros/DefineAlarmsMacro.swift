@@ -428,12 +428,6 @@ struct System: Identifiable, Equatable, Hashable {
     }
   }
 
-  init(name: String, id: StringLiteralExprSyntax, subsystems: [Subsystem]) {
-    self.name = name
-    self.id = id
-    self.subsystems = subsystems
-  }
-
   init(expr: TupleExprSyntax) throws {
     guard
       let nameExpr = expr.elements.first(where: { $0.label?.text == "name" })?.expression.as(

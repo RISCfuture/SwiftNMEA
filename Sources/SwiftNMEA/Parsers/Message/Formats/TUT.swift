@@ -1,6 +1,5 @@
 import Foundation
 import NMEACommon
-import NMEAUnits
 
 class TUTParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()

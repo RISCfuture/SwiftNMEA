@@ -1,5 +1,4 @@
 import Foundation
-import NMEAUnits
 
 class RMBParser: MessageFormat {
   func canParse(sentence: ParametricSentence) throws -> Bool {

@@ -1,5 +1,4 @@
 import Foundation
-import NMEAUnits
 
 class VBWParser: MessageFormat {
   func canParse(sentence: ParametricSentence) throws -> Bool {

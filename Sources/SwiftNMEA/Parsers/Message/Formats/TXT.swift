@@ -1,6 +1,5 @@
 import Foundation
 import NMEACommon
-import NMEAUnits
 
 class TXTParser: MessageFormat {
   private static let coder = EscapedStringCoder()

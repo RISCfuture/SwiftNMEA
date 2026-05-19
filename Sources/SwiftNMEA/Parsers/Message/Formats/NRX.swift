@@ -1,6 +1,4 @@
 import Foundation
-import NMEACommon
-import NMEAUnits
 
 class NRXParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()

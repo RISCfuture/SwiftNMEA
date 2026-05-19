@@ -1,5 +1,4 @@
 import Foundation
-import NMEACommon
 import NMEAUnits
 
 let lengthUnits: [String: UnitLength] = [
@@ -47,16 +46,6 @@ let speedUnits: [String: UnitSpeed] = [
 
 let densityUnits: [String: UnitDensity] = [
   "K": .kilogramsPerCubicMeter
-]
-
-let massUnits: [String: UnitMass] = [
-  "k": .kilograms
-]
-
-let durationUnits: [String: UnitDuration] = [
-  "h": .hours,
-  "m": .minutes,
-  "s": .seconds
 ]
 
 let volumeUnits: [String: UnitVolume] = [

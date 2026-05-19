@@ -22,9 +22,6 @@ public class SwiftNMEA {
   private let messageParser = MessageParser()
   private var buffer = Data()
 
-  private var shouldIncludeQueries: Bool {
-    typeFilter.isEmpty || typeFilter.contains { $0 == Query.self }
-  }
   private var shouldIncludeParametric: Bool {
     typeFilter.isEmpty || typeFilter.contains { $0 == ParametricSentence.self }
   }

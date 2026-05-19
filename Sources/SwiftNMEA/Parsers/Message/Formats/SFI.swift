@@ -1,5 +1,4 @@
 import Foundation
-import NMEAUnits
 
 class SFIParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()

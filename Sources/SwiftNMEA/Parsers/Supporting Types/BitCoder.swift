@@ -47,3 +47,4 @@ struct BitWriter {
     offset += bits
   }
 }
+

@@ -1,5 +1,4 @@
 import Foundation
-import NMEAUnits
 
 class MTWParser: MessageFormat {
   func canParse(sentence: ParametricSentence) throws -> Bool {

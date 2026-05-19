@@ -13,7 +13,6 @@ public struct Fields: Sendable, Codable, Equatable {
   private static var latitudeParser: LatitudeParser { .init() }
   private static var longitudeParser: LongitudeParser { .init() }
   private static var timeParser: TimeParser { .init() }
-  private static var sixBitParser: SixBitCoder { .init() }
 
   private var fields: [String?]
 
@@ -366,36 +365,6 @@ public struct Fields: Sendable, Codable, Equatable {
     else {
       throw fieldError(type: .badDate, index: index)
     }
-    guard
-      let date = Self.timeParser.calendar.date(
-        from: .init(timeZone: timeZone, year: year, month: month, day: day)
-      )
-    else {
-      throw lineError(type: .badDate)
-    }
-    return date
-  }
-
-  func ymd(
-    yearIndex: Int,
-    monthIndex: Int,
-    dayIndex: Int,
-    optional: Bool = false,
-    timeZone: TimeZone = .gmt
-  ) throws -> Date? {
-    guard let year = try int(at: yearIndex, optional: optional) else {
-      if optional { return nil }
-      throw fieldError(type: .missingRequiredValue, index: yearIndex)
-    }
-    guard let month = try int(at: monthIndex, optional: optional) else {
-      if optional { return nil }
-      throw fieldError(type: .missingRequiredValue, index: monthIndex)
-    }
-    guard let day = try int(at: dayIndex, optional: optional) else {
-      if optional { return nil }
-      throw fieldError(type: .missingRequiredValue, index: dayIndex)
-    }
-
     guard
       let date = Self.timeParser.calendar.date(
         from: .init(timeZone: timeZone, year: year, month: month, day: day)

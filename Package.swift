@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.3
 
 import CompilerPluginSupport
 import PackageDescription
@@ -25,7 +25,7 @@ let package = Package(
     .package(url: "https://github.com/Quick/Quick.git", from: "7.0.0"),
     .package(url: "https://github.com/Quick/Nimble.git", from: "14.0.0"),
     .package(url: "https://github.com/apple/swift-algorithms.git", from: "1.2.0"),
-    .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "602.0.0"),
+    .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "603.0.0"),
     .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
     .package(url: "https://github.com/stackotter/swift-macro-toolkit.git", from: "0.9.0"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0")

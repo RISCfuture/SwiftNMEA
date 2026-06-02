@@ -30,13 +30,13 @@ final class HMRSpec: AsyncSpec {
           return
         }
         guard
-          case .headingMonitorReceive(
-            let sensor1,
-            let sensor2,
-            let setDifference,
-            let difference,
-            let differenceOK,
-            let variation
+          case let .headingMonitorReceive(
+            sensor1,
+            sensor2,
+            setDifference,
+            difference,
+            differenceOK,
+            variation
           ) = payload
         else {
           fail("expected .headingMonitorReceive, got \(payload)")

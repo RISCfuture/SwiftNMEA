@@ -23,7 +23,7 @@ final class HBTSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .heartbeat(let interval, let isNormal, let sequenceNumber) = payload else {
+        guard case let .heartbeat(interval, isNormal, sequenceNumber) = payload else {
           fail("expected .heartbeat, got \(payload)")
           return
         }

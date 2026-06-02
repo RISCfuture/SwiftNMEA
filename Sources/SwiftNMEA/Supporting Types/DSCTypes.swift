@@ -14,7 +14,7 @@ public struct DSC {
   /**
    Given an ITU-R M.493-16 encoded "Message 3" string, decodes it as a UTC
    hour and minute time string as specified in section 8.1.3.
-  
+
    - Parameter string: The encoded string.
    - Parameter referenceDate: The reference date to use when searching for a
    matching time.
@@ -45,7 +45,7 @@ public struct DSC {
    Given an ITU-R M.493-16 encoded "Message 3" string, decodes it as a public
    switched network number (e.g. telephone number), including format
    specifier.
-  
+
    - Parameter string: The encoded string.
    - Returns: The parsed network number, or `nil` if an invalid format
    specifier is given.
@@ -103,7 +103,7 @@ public struct DSC {
   /**
    Given an ITU-R M.493-16 encoded "Message 2" string, decodes it as a set of
    coordinates as specified in section 8.1.2.
-  
+
    - Parameter string: The encoded string.
    - Returns: The decoded coordinates, or `nil` if the string could not be
    decoded.
@@ -145,7 +145,7 @@ public struct DSC {
 
   /**
    DSC acknowledgement type.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/DSC(format:MMSI:area:category:message1_1:message1_2:message2:message3:distressMMSI:distressMMSINature:acknowledgement:expansion:)``
    */
   public enum Acknowledgement: Character, Sendable, Codable, Equatable {
@@ -162,7 +162,7 @@ public struct DSC {
 
   /**
    Format specifiers from  ITU M.493.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/DSC(format:MMSI:area:category:message1_1:message1_2:message2:message3:distressMMSI:distressMMSINature:acknowledgement:expansion:)``
    */
   public enum FormatSpecifier: String, Sendable, Codable, Equatable {
@@ -190,7 +190,7 @@ public struct DSC {
 
   /**
    DSC call categories, as defined in ITU-R M.493-16 table A1-3.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/DSC(format:MMSI:area:category:message1_1:message1_2:message2:message3:distressMMSI:distressMMSINature:acknowledgement:expansion:)``
    */
   public enum Category: String, Sendable, Codable, Equatable {
@@ -202,7 +202,7 @@ public struct DSC {
 
   /**
    DSC distress natures, as defined in ITU-R M.493-16 table A1-3.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/DSC(format:MMSI:area:category:message1_1:message1_2:message2:message3:distressMMSI:distressMMSINature:acknowledgement:expansion:)``
    */
   public enum DistressNature: String, Sendable, Codable, Equatable {
@@ -244,7 +244,7 @@ public struct DSC {
   /**
    Desired communications method for subsequent messages, from a ship in
    distress. Defined in ITU-R M.493-16 table A1-3.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/DSC(format:MMSI:area:category:message1_1:message1_2:message2:message3:distressMMSI:distressMMSINature:acknowledgement:expansion:)``
    */
   public enum DistressCommunicationDesired: String, Sendable, Codable, Equatable {
@@ -266,7 +266,7 @@ public struct DSC {
 
   /**
    DSC first telecommand values, as defined in ITU-R M.493-16 table A1-3.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/DSC(format:MMSI:area:category:message1_1:message1_2:message2:message3:distressMMSI:distressMMSINature:acknowledgement:expansion:)``
    */
   public enum Telecommand1: String, Sendable, Codable, Equatable {
@@ -301,7 +301,7 @@ public struct DSC {
 
   /**
    DSC second telecommand values, as defined in ITU-R M.493-16 table A1-3.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/DSC(format:MMSI:area:category:message1_1:message1_2:message2:message3:distressMMSI:distressMMSINature:acknowledgement:expansion:)``
    */
   public enum Telecommand2: RawRepresentable, Sendable, Codable, Equatable {
@@ -417,7 +417,7 @@ public struct DSC {
 
   /**
    DSC-coded frequency or channel, as defined by ITU-R M.493-16, table A1-5.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/DSC(format:MMSI:area:category:message1_1:message1_2:message2:message3:distressMMSI:distressMMSINature:acknowledgement:expansion:)``
    */
   public enum FrequencyChannel: RawRepresentable, Sendable, Codable, Equatable {

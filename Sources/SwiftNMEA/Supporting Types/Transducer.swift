@@ -7,7 +7,7 @@ public struct Transducer {
 
   /**
    A value measured from a transducer.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/transducerMeasurements(_:)``
    */
   public enum Value: Sendable, Codable, Equatable {

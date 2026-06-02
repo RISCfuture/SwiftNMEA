@@ -18,7 +18,7 @@ final class ZDASpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .dateTime(let date, let timeZone) = payload else {
+        guard case let .dateTime(date, timeZone) = payload else {
           fail("expected .dateTime, got \(payload)")
           return
         }
@@ -49,7 +49,7 @@ final class ZDASpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .dateTime(let date, let timeZone) = payload else {
+        guard case let .dateTime(date, timeZone) = payload else {
           fail("expected .dateTime, got \(payload)")
           return
         }

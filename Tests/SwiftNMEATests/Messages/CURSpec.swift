@@ -32,16 +32,16 @@ final class CURSpec: AsyncSpec {
           return
         }
         guard
-          case .currentWaterLayer(
-            let isValid,
-            let setNumber,
-            let layer,
-            let depth,
-            let direction,
-            let speed,
-            let referenceDepth,
-            let heading,
-            let speedReference
+          case let .currentWaterLayer(
+            isValid,
+            setNumber,
+            layer,
+            depth,
+            direction,
+            speed,
+            referenceDepth,
+            heading,
+            speedReference
           ) = payload
         else {
           fail("expected .currentWaterLayer, got \(payload)")

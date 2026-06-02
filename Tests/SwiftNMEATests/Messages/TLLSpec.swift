@@ -31,13 +31,13 @@ final class TLLSpec: AsyncSpec {
           return
         }
         guard
-          case .targetPosition(
-            let number,
-            let position,
-            let name,
-            let actualTime,
-            let status,
-            let isReference
+          case let .targetPosition(
+            number,
+            position,
+            name,
+            actualTime,
+            status,
+            isReference
           ) =
             payload
         else {

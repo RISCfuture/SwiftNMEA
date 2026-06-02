@@ -24,12 +24,12 @@ final class NAKSpec: AsyncSpec {
           return
         }
         guard
-          case .negativeAcknowledgement(
-            let talker,
-            let format,
-            let uniqueID,
-            let reasonCode,
-            let reason
+          case let .negativeAcknowledgement(
+            talker,
+            format,
+            uniqueID,
+            reasonCode,
+            reason
           ) = payload
         else {
           fail("expected .negativeAcknowledgement, got \(payload)")

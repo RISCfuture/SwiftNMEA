@@ -23,7 +23,7 @@ final class HSSSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .hullStress(let value, let point, let isValid) = payload else {
+        guard case let .hullStress(value, point, isValid) = payload else {
           fail("expected .hullStress, got \(payload)")
           return
         }

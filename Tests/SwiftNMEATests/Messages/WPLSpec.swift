@@ -23,7 +23,7 @@ final class XDRSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .waypointLocation(let location, let identifier) = payload else {
+        guard case let .waypointLocation(location, identifier) = payload else {
           fail("expected .waypointLocation, got \(payload)")
           return
         }

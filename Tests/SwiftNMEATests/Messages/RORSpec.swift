@@ -24,12 +24,12 @@ final class RORSpec: AsyncSpec {
           return
         }
         guard
-          case .rudderOrder(
-            let starboard,
-            let port,
-            let starboardValid,
-            let portValid,
-            let commandSource
+          case let .rudderOrder(
+            starboard,
+            port,
+            starboardValid,
+            portValid,
+            commandSource
           ) = payload
         else {
           fail("expected .rudderOrder, got \(payload)")

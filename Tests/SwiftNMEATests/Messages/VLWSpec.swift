@@ -24,11 +24,11 @@ final class VLWSpec: AsyncSpec {
           return
         }
         guard
-          case .distanceData(
-            let waterCumulative,
-            let waterSinceReset,
-            let groundCumulative,
-            let groundSinceReset
+          case let .distanceData(
+            waterCumulative,
+            waterSinceReset,
+            groundCumulative,
+            groundSinceReset
           ) =
             payload
         else {

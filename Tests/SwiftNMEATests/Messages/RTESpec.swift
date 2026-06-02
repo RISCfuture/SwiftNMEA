@@ -53,7 +53,7 @@ final class RTESpec: AsyncSpec {
             fail("expected Message, got \(messages[2])")
             return
           }
-          guard case .route(let mode, let identifier, let waypoints) = payload else {
+          guard case let .route(mode, identifier, waypoints) = payload else {
             fail("expected .route, got \(payload)")
             return
           }
@@ -72,7 +72,7 @@ final class RTESpec: AsyncSpec {
             fail("expected Message, got \(messages[4])")
             return
           }
-          guard case .route(let mode, let identifier, let waypoints) = payload else {
+          guard case let .route(mode, identifier, waypoints) = payload else {
             fail("expected .route, got \(payload)")
             return
           }
@@ -140,7 +140,7 @@ final class RTESpec: AsyncSpec {
             fail("expected Message, got \(messages[0])")
             return
           }
-          guard case .route(let mode, let identifier, let waypoints) = message.payload else {
+          guard case let .route(mode, identifier, waypoints) = message.payload else {
             fail("expected .route, got \(message)")
             return
           }

@@ -206,22 +206,17 @@ final class MEBSpec: AsyncSpec {
             return
           }
           guard
-            case .broadcastMessage(
-              let sequence,
-              let AISChannel,
-              let MMSI,
-              let
-                messageID,
-              let messageIndex,
-              let
-                broadcastBehavior,
-              let
-                destinationMMSI,
-              let
-                binaryStructure,
-              let
-                sentenceType,
-              let actualData
+            case let .broadcastMessage(
+              sequence,
+              AISChannel,
+              MMSI,
+              messageID,
+              messageIndex,
+              broadcastBehavior,
+              destinationMMSI,
+              binaryStructure,
+              sentenceType,
+              actualData
             ) = message.payload
           else {
             fail("expected .broadcastMessage, got \(message)")

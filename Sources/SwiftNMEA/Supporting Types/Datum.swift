@@ -19,7 +19,7 @@ public enum Datum: Sendable, Codable, Equatable {
 
   /**
    Manually entered or user defined offsets.
-  
+
    - Parameter subdivision: User defined reference character, if any.
    */
   case userDefined(subdivision: Character?)
@@ -27,7 +27,7 @@ public enum Datum: Sendable, Codable, Equatable {
   /**
    IHO datum code from International Hydrographic Organisation Publication
    S-60, Appendices B and C
-  
+
    - Parameter code: The IHO datum code.
    - Parameter subdivision: The subdivision code, if the datum defines
      subdivisions.

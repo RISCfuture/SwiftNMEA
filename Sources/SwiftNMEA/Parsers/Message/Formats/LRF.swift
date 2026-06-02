@@ -27,7 +27,8 @@ class LRFParser: MessageFormat {
   }
 
   func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
-    if !includeIncomplete { return [] }  // complete messages are flushed upon receipt of the last message
+    // complete messages are flushed upon receipt of the last message
+    if !includeIncomplete { return [] }
 
     let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
     return try flushed.compactMap { recipient, element in
@@ -69,7 +70,8 @@ class LRFParser: MessageFormat {
 
   private struct LRFRecipient: BufferRecipient {
     var talker: Talker
-    let format = Format.AISLongRangeFunction  // placeholder as recipients are not distinguished by format
+    // placeholder as recipients are not distinguished by format
+    let format = Format.AISLongRangeFunction
     var MMSI: Int
     var sequence: Int
 

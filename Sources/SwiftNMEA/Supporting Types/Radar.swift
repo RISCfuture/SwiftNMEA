@@ -6,7 +6,7 @@ public struct Radar {
 
   /**
    System target status.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/targetPosition(number:position:name:time:status:isReference:)``
    - SeeAlso: ``Message/Payload-swift.enum/trackedTarget(number:distance:bearing:speed:course:CPADistance:CPATime:name:status:isReference:time:acquisition:)``
    */
@@ -24,7 +24,7 @@ public struct Radar {
 
   /**
    Tracked target acquisition types.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/trackedTarget(number:distance:bearing:speed:course:CPADistance:CPATime:name:status:isReference:time:acquisition:)``
    */
   public enum AcquisitionType: Character, Sendable, Codable, Equatable {
@@ -47,7 +47,7 @@ public struct Radar {
 
     /**
      Speed. `nil` = Invalid or N/A data
-    
+
      - SeeAlso: ``speedCourseRelative``
      - SeeAlso: ``waterStabilized``
      */
@@ -55,7 +55,7 @@ public struct Radar {
 
     /**
      Course. `nil` = Invalid or N/A data
-    
+
      - SeeAlso: ``speedCourseRelative``
      - SeeAlso: ``waterStabilized``
      */
@@ -64,7 +64,7 @@ public struct Radar {
     /**
      Reported heading from AIS, north-up coordinate system. `nil` = Invalid
      or N/A data, or radar target.
-    
+
      - SeeAlso: ``isRadarTarget``
      */
     public let heading: Measurement<UnitAngle>?

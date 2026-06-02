@@ -27,7 +27,7 @@ final class EVESpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .event(let actualTime, let tag, let description) = payload else {
+        guard case let .event(actualTime, tag, description) = payload else {
           fail("expected .event, got \(payload)")
           return
         }

@@ -4,7 +4,7 @@ public struct DSE {
 
   /**
    Possible message types for a `DSE` message.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/DSE(type:MMSI:data:)``
    */
   public enum MessageType: Character, Sendable, Codable, Equatable {

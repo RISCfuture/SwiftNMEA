@@ -21,7 +21,8 @@ extension SentenceCountingElement {
     else {
       throw BufferErrors.wrongSentenceNumber
     }
-    allSentences.insert(lastSentence)  // should be done at init but we'll do it here to preserve auto-generated inits
+    // should be done at init but we'll do it here to preserve auto-generated inits
+    allSentences.insert(lastSentence)
     allSentences.insert(other.lastSentence)
 
     append(payloadOnly: other)

@@ -4,7 +4,7 @@ public struct Doors {
 
   /**
    The type of `DOR` sentence being transmitted.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/doorStatus(messageType:time:systemType:division1:division2:doorNumber:doorStatus:switchSetting:description:)``
    - SeeAlso: ``Message/Payload-swift.enum/waterLevel(messageType:time:systemType:location1:location2:number:alarmCondition:isOverriden:description:)``
    */
@@ -31,14 +31,14 @@ public struct Doors {
    Types of door monitoring systems. The meaning of the "first division" and
    "second division" fields of the `DOR` sentence depend on the value of this
    type.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/doorStatus(messageType:time:systemType:division1:division2:doorNumber:doorStatus:switchSetting:description:)``
    */
   public enum SystemType: String, Sendable, Codable, Equatable {
 
     /**
      Watertight door
-    
+
      - First division indicator: Number of watertight bulkhead / frame number
      - Second division indicator: Deck number
      */
@@ -46,7 +46,7 @@ public struct Doors {
 
     /**
      Semi-watertight door (splash-tight)
-    
+
      - First division indicator: Number of watertight bulkhead / frame number
      - Second division indicator: Deck number
      */
@@ -54,7 +54,7 @@ public struct Doors {
 
     /**
      Fire door
-    
+
      - First division indicator: Number / letter of zone. This can also be
        identifier for control and monitoring main system.
      - Second division indicator: Deck number or control system loop number
@@ -64,7 +64,7 @@ public struct Doors {
 
     /**
      Hull (shell) door
-    
+
      - First division indicator: Door indication number / frame number
      - Second division indicator: Deck number
      */
@@ -76,7 +76,7 @@ public struct Doors {
 
   /**
    Door statuses.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/doorStatus(messageType:time:systemType:division1:division2:doorNumber:doorStatus:switchSetting:description:)``
    */
   public enum Status: Character, Sendable, Codable, Equatable {
@@ -99,7 +99,7 @@ public struct Doors {
 
   /**
    Water tight door switch settings.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/doorStatus(messageType:time:systemType:division1:division2:doorNumber:doorStatus:switchSetting:description:)``
    */
   public enum SwitchSetting: Character, Sendable, Codable, Equatable {

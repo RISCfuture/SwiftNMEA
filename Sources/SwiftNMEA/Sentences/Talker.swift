@@ -175,13 +175,13 @@ public enum Talker: RawRepresentable, Sendable, Codable, Equatable, Hashable {
 
   /**
    User configured talker identifier.
-  
+
    The U# talker identifier does not convey the nature of the device
    transmitting the sentence, and should not be “fixed” into a unit at
    manufacture. This is intended for special purpose applications. The U#
    talker identifier indicates that the devices talker identifier has been
    changed through external control.
-  
+
    - Parameter number: Talker identifier
    */
   case userConfigured(number: Int)

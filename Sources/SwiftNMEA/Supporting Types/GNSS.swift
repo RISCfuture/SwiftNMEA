@@ -6,14 +6,14 @@ public struct GNSS {
 
   /**
    The ID number of a satellite in a GNSS constellation.
-  
+
    GPS and Galileo satellites are identified by their pseudo-random number
    (PRN) ID, and GLONASS satellites are identified by their slot number. This
    is the ``PRN``.
-  
+
    Because these IDs overlap, offsets are applied to the PRNs/slot numbers
    so that the IDs can share a number space. This is the SV ID.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/GNSSFaultDetection(time:latitudeError:longitudeError:altitudeError:failedSatellite:missProbability:biasEstimate:biasEstimateStddev:)``
    - SeeAlso: ``Message/Payload-swift.enum/GNSSRangeResiduals(_:time:recomputed:)``
    - SeeAlso: ``Message/Payload-swift.enum/GNSS_DOP(PDOP:HDOP:VDOP:auto3D:solution:ids:)``
@@ -203,7 +203,7 @@ public struct GNSS {
 
   /**
    Possible sources of integrity data.
-  
+
    - SeeAlso: ``IntegrityStatus``
    - SeeAlso: ``Message/Payload-swift.enum/GNSSAccuracyIntegrity(time:HPL:VPL:semimajorStddev:semiminorStddev:semimajorErrorOrientation:altitudeStddev:selectedAccuracy:integrity:)``
    */
@@ -221,7 +221,7 @@ public struct GNSS {
 
   /**
    The integrity status of an ``IntegritySource``.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/GNSSAccuracyIntegrity(time:HPL:VPL:semimajorStddev:semiminorStddev:semimajorErrorOrientation:altitudeStddev:selectedAccuracy:integrity:)``
    - SeeAlso: ``Message/Payload-swift.enum/GNSSFix(_:time:mode:numSatellites:HDOP:geoidalSeparation:DGPSAge:DGPSReferenceStationID:status:)``
    */
@@ -233,7 +233,7 @@ public struct GNSS {
 
     /**
      Safe (when integrity is available and HPL<HAL)
-    
+
      When the estimated positioning accuracy (95 % confidence) is within the
      selected accuracy level corresponding to the actual navigation mode,
      and integrity is available and within the requirements for the actual
@@ -247,7 +247,7 @@ public struct GNSS {
 
     /**
      Unsafe (when integrity is available and HPL>HAL)
-    
+
      When the estimated positioning accuracy (95 % confidence) is less than
      the selected accuracy level corresponding to the actual navigation
      mode, and/or integrity is available but exceeds the requirements for
@@ -261,7 +261,7 @@ public struct GNSS {
   /**
    GPS quality indicator. All quality indicators except ``invalid`` are
    considered valid.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/GPSFix(_:time:quality:numSatellites:HDOP:geoidalSeparation:DGPSAge:DGPSReferenceStationID:)``
    */
   public enum GPSQuality: Int, Sendable, Codable, Equatable {
@@ -296,7 +296,7 @@ public struct GNSS {
 
   /**
    GNSS systems and constellations.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/GNSSFix(_:time:mode:numSatellites:HDOP:geoidalSeparation:DGPSAge:DGPSReferenceStationID:status:)``
    */
   public enum System: Sendable, Codable, Equatable {
@@ -313,7 +313,7 @@ public struct GNSS {
 
   /**
    Types of GPS solutions based on the number of satellites in use.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/GNSS_DOP(PDOP:HDOP:VDOP:auto3D:solution:ids:)``
    */
   public enum SolutionType: Int, Sendable, Codable, Equatable {
@@ -340,7 +340,7 @@ public struct GNSS {
 
   /**
    Information about a satellite in view.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/GNSSSatellitesInView(_:total:)``
    */
   public struct SatelliteInView: Sendable, Codable, Equatable {

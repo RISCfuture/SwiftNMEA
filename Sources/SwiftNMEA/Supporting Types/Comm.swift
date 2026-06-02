@@ -6,7 +6,7 @@ public struct Comm {
 
   /**
    A frequency used a communications set.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/frequencySetInfo(transmit:receive:mode:powerLevel:type:)``
    */
   public enum Frequency: RawRepresentable, Sendable, Codable, Equatable {
@@ -14,21 +14,21 @@ public struct Comm {
 
     /**
      MH/HF transceiver frequency
-    
+
      - Parameter frequency: Frequency, kHz
      */
     case MF_HF(frequency: Measurement<UnitFrequency>)
 
     /**
      MF/HF telephone channel
-    
+
      - Parameter channel: ITU channel number
      */
     case MF_HF_telephone(channel: Int)
 
     /**
      MF/HF teletype channel
-    
+
      - Parameter band: Frequency band
      - Parameter channel: ITU channel number
      */
@@ -36,7 +36,7 @@ public struct Comm {
 
     /**
      VHF channel
-    
+
      - Parameter mode: The simplex/duplex transceiver mode.
      transmit frequency is being used as a simplex channel frequency
      - Parameter channel: VHF channel number
@@ -103,7 +103,7 @@ public struct Comm {
 
   /**
    Comm radio operation modes.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/frequencySetInfo(transmit:receive:mode:powerLevel:type:)``
    - SeeAlso: ``Message/Payload-swift.enum/scanningFrequencies(_:)``
    */
@@ -145,7 +145,7 @@ public struct Comm {
 
   /**
    A comm frequency and optional operation mode.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/scanningFrequencies(_:)``
    */
   public struct FrequencyMode: Sendable, Codable, Equatable {

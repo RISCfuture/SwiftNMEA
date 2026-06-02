@@ -23,7 +23,7 @@ final class VPWSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .speedParallelToWind(let knots, let mps) = payload else {
+        guard case let .speedParallelToWind(knots, mps) = payload else {
           fail("expected .speedMadeGood, got \(payload)")
           return
         }

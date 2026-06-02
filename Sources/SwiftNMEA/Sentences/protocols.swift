@@ -21,7 +21,7 @@ public protocol Sentence: Sendable, Codable, Equatable {
   /**
    Creates a new record from a given sentence. Returns `nil` if the sentence
    structure does not match the message format.
-  
+
    - Parameter sentence: The sentence string, not including CRLF.
    - Parameter ignoreChecksum: If `true`, does not validate the checksum.
    - Throws: If the checksum was incorrect.

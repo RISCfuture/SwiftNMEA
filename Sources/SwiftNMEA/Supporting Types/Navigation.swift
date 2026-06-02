@@ -4,7 +4,7 @@ public struct Navigation {
 
   /**
    Possible positioning system modes.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/autopilotSentenceB(LORANC_blinkSNRFlag:LORANC_cycleLockWarningFlag:crossTrackError:arrivalCircleEntered:perpendicularPassed:bearingOriginToDest:destinationID:bearingPresentPosToDest:headingToDest:mode:)``
    - SeeAlso: ``Message/Payload-swift.enum/geoPosition(_:time:isValid:mode:)``
    - SeeAlso: ``Message/Payload-swift.enum/GNSSFix(_:time:mode:numSatellites:HDOP:geoidalSeparation:DGPSAge:DGPSReferenceStationID:status:)``
@@ -52,7 +52,7 @@ public struct Navigation {
 
   /**
    Route modes of transmission.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/route(mode:identifier:waypoints:)``
    */
   public enum RouteType: Character, Sendable, Codable, Equatable {
@@ -67,7 +67,7 @@ public struct Navigation {
 
   /**
    A calculated variable point.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/timeDistanceToVariablePoint(time:distance:type:)``
    */
   public enum VariablePoint: Character, Sendable, Codable, Equatable {

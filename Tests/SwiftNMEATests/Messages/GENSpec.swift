@@ -24,7 +24,7 @@ final class GENSpec: AsyncSpec {
           fail("expected Message, got \(flushed[0])")
           return
         }
-        guard case .genericBinary(let time, let data) = message.payload else {
+        guard case let .genericBinary(time, data) = message.payload else {
           fail("expected .genericBinary, got \(message)")
           return
         }

@@ -23,7 +23,7 @@ final class MWVSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .windAngleSpeed(let angle, let speed, let reference, let isValid) = payload
+        guard case let .windAngleSpeed(angle, speed, reference, isValid) = payload
         else {
           fail("expected .windAngleSpeed, got \(payload)")
           return

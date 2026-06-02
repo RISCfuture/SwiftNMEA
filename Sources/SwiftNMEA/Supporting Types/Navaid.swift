@@ -6,7 +6,7 @@ public struct Navaid {
 
   /**
    Possible actions for a `CBR` message broadcast configuration.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/navaidMessageBroadcastRates(MMSI:message:index:channelA:scheduleType:channelB:type:)``
    */
   public enum SlotConfiguration: Sendable, Codable, Equatable {
@@ -15,7 +15,7 @@ public struct Navaid {
      Begin transmitting AIS Class A message 26 on this channel with this
      slot configuration. Nominal start slot for each channel is determined
      by the combination of Start UTC hour, Start UTC minute, and Start slot.
-    
+
      - Parameter start: The hour and minute. All other components are `nil`.
      - Parameter slot: Starting slot. Valid range is 0 to 2249.
      - Parameter interval: Message transmission slot interval. Valid range
@@ -42,7 +42,7 @@ public struct Navaid {
       /**
        For configuration sentences: Set the slot or interval to this
        value.
-      
+
        For query responses: The slot or interval is configured to this
        value.
        */
@@ -50,7 +50,7 @@ public struct Navaid {
 
       /**
        For configuration sentences: Do not change the slot or interval.
-      
+
        Not allowed for query responses.
        */
       case noChange
@@ -58,7 +58,7 @@ public struct Navaid {
       /**
        For configuration sentences: Clear the slot or interval
        configuration.
-      
+
        For query responses: No slot or interval is configured.
        */
       case clear
@@ -67,7 +67,7 @@ public struct Navaid {
 
   /**
    Whether the CBR is configuring a FATDMA schedule or RATDMA/CSTDMA schedule.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/navaidMessageBroadcastRates(MMSI:message:index:channelA:scheduleType:channelB:type:)``
    */
   public enum Schedule: Int, Sendable, Codable, Equatable {
@@ -78,7 +78,7 @@ public struct Navaid {
 
   /**
    The number of the message being scheduled (See ITU-R M.1371).
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/navaidMessageBroadcastRates(MMSI:message:index:channelA:scheduleType:channelB:type:)``
    */
   public enum MessageID: RawRepresentable, Sendable, Codable, Equatable, Hashable {

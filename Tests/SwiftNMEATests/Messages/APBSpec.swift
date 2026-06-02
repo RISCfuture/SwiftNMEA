@@ -33,17 +33,17 @@ final class APBSpec: AsyncSpec {
           return
         }
         guard
-          case .autopilotSentenceB(
-            let LORANC_blinkSNRFlag,
-            let LORANC_cycleLockWarningFlag,
-            let crossTrackError,
-            let arrivalCircleEntered,
-            let perpendicularPassed,
-            let bearingOriginToDest,
-            let destinationID,
-            let bearingPresentPosToDest,
-            let headingToDest,
-            let mode
+          case let .autopilotSentenceB(
+            LORANC_blinkSNRFlag,
+            LORANC_cycleLockWarningFlag,
+            crossTrackError,
+            arrivalCircleEntered,
+            perpendicularPassed,
+            bearingOriginToDest,
+            destinationID,
+            bearingPresentPosToDest,
+            headingToDest,
+            mode
           ) = payload
         else {
           fail("expected .autopilotSentenceB, got \(payload)")

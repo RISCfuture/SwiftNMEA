@@ -37,12 +37,12 @@ final class LRISpec: AsyncSpec {
           return
         }
         guard
-          case .AISLongRangeInterrogation(
-            let replyLogic,
-            let requestorMMSI,
-            let requestorName,
-            let destination,
-            let functions
+          case let .AISLongRangeInterrogation(
+            replyLogic,
+            requestorMMSI,
+            requestorName,
+            destination,
+            functions
           ) =
             payload
         else {

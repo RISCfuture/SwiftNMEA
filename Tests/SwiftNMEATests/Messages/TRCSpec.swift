@@ -24,13 +24,13 @@ final class TRCSpec: AsyncSpec {
           return
         }
         guard
-          case .thrusterControl(
-            let number,
-            let RPMDemand,
-            let pitchDemand,
-            let azimuthDemand,
-            let location,
-            let status
+          case let .thrusterControl(
+            number,
+            RPMDemand,
+            pitchDemand,
+            azimuthDemand,
+            location,
+            status
           ) =
             payload
         else {

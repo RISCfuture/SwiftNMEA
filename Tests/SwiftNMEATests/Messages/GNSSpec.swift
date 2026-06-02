@@ -21,16 +21,16 @@ final class GNSSpec: AsyncSpec {
           return
         }
         guard
-          case .GNSSFix(
-            let position,
-            let time,
-            let mode,
-            let numSatellites,
-            let HDOP,
-            let geoidalSeparation,
-            let DGPSAge,
-            let DGPSReferenceStationID,
-            let status
+          case let .GNSSFix(
+            position,
+            time,
+            mode,
+            numSatellites,
+            HDOP,
+            geoidalSeparation,
+            DGPSAge,
+            DGPSReferenceStationID,
+            status
           ) = message.payload
         else {
           fail("expected .GNSSFix, got \(message)")
@@ -72,16 +72,16 @@ final class GNSSpec: AsyncSpec {
           return
         }
         guard
-          case .GNSSFix(
-            let position,
-            let time,
-            let mode,
-            let numSatellites,
-            let HDOP,
-            let geoidalSeparation,
-            let DGPSAge,
-            let DGPSReferenceStationID,
-            let status
+          case let .GNSSFix(
+            position,
+            time,
+            mode,
+            numSatellites,
+            HDOP,
+            geoidalSeparation,
+            DGPSAge,
+            DGPSReferenceStationID,
+            status
           ) = message.payload
         else {
           fail("expected .GNSSFix, got \(message)")

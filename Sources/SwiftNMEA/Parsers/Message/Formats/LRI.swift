@@ -36,7 +36,8 @@ class LRIParser: MessageFormat {
 
   private struct LRIRecipient: BufferRecipient {
     var talker: Talker
-    let format = Format.AISLongRangeInterrogation  // placeholder as recipients are not distinguished by format
+    // placeholder as recipients are not distinguished by format
+    let format = Format.AISLongRangeInterrogation
     var MMSI: Int
     var sequence: Int
 

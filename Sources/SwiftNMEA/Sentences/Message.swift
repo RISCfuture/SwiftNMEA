@@ -25,10 +25,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.2 AAM – Waypoint arrival alarm
-    
+
      Status of arrival (entering the arrival circle, or passing the
      perpendicular of the course line) at waypoint.
-    
+
      - Parameter arrivalCircleEntered: `true` if the vehicle entered the arrival
      circle of the waypoint.
      - Parameter perpendicularPassed: `true` if the vehicle passed the
@@ -45,7 +45,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.3 ABK – AIS addressed and binary broadcast acknowledgement
-    
+
      The `ABK`-sentence is generated when a transaction, initiated by reception
      of an `ABM`, `AIR`, or `BBM` sentence, is completed or terminated. This
      sentence provides information about the success or failure of a requested
@@ -60,10 +60,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
      `AIR`-sentence, or a broadcast through the use of the `BBM` sentence. The
      AIS unit generates an ABK sentence to report the outcome of the `ABM`,
      `AIR`, or `BBM` broadcast process.
-    
+
      The `ABK` is also used as an input and output to indicate that a received
      Message 12 has been read and acknowledged on a display unit.
-    
+
      - Parameter MMSI: Identifies the distant addressed AIS unit involved with
      the acknowledgement. If more than one MMSI is being addressed
      (ITU-R M.1371 Messages 15 and 16), the MMSI of the first distant AIS
@@ -94,7 +94,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      ABM – AIS addressed binary and safety related message
-    
+
      This sentence supports ITU-R M.1371 Messages 6 and 12 and provides an
      external application with a means to exchange data via an AIS transponder.
      Data is defined by the application only, not the AIS unit. This message
@@ -108,7 +108,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      confirmed through the use of the “Addressed binary and safety related
      message acknowledgement” `ABK` sentence formatter, and the processes that
      support the generation of an `ABK` sentence.
-    
+
      - Parameter sequentialIdentifier: This sequential message identifier serves
      two purposes. It meets the requirements as stated in 7.2.5 and it is the
      sequence number utilised by ITU-R M.1371 in Message types 6 and 12. The
@@ -135,7 +135,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.5 ACA – AIS channel assignment message
-    
+
      An AIS device can receive regional channel management information in four
      ways: ITU-R M.1371 Message 22, DSC telecommand received on channel 70,
      manual operator input, and an `ACA` sentence. The AIS unit may store
@@ -144,7 +144,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      An AIS unit is “using” channel management information when the information
      is being used to manage the operation of the VHF receiver and/or
      transmitter inside the AIS unit.
-    
+
      This sentence is used both to enter and obtain channel management
      information. When sent to an AIS unit, the `ACA` sentence provides regional
      information that the unit stores and uses to manage the internal VHF radio.
@@ -154,7 +154,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      Message 22. The information contained in this sentence directly relates to
      the initialisation phase and dual channel operation and channel management
      functions of the AIS unit as described in ITU-R M.1371.
-    
+
      - Parameter sequenceNumber: This is used to bind the contents of the `ACA`
      and `ACS` sentences together. The `ACS` sentence, when provided by the
      AIS unit, should immediately follow the related `ACA` sentence,
@@ -202,21 +202,21 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.6 ACK – Acknowledge alarm
-    
+
      Acknowledge device alarm. This sentence is used to acknowledge an alarm
      condition reported by a device.
-    
+
      - Parameter identifier: Unique alarm number (identifier) at alarm source
      */
     case alarmAcknowledgement(identifier: Int)
 
     /**
      8.3.7 ACS – AIS channel management information source
-    
+
      This sentence is used in conjunction with the ACA sentence. This sentence
      identifies the originator of the information contained in the ACA sentence
      and the date and time the AIS unit received that information.
-    
+
      - Parameter sequenceNumber: This is used to bind the contents of the `ACA`
      and `ACS` sentences together. The `ACS` sentence, when provided by the
      AIS unit, should immediately follow the related `ACA` sentence,
@@ -236,7 +236,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.8 AIR – AIS interrogation request
-    
+
      This sentence supports ITU-R M.1371 Message 10 and 15. It provides an
      external application with the means to initiate requests for specific
      ITU-R M.1371 messages, from distant mobile or base station, AIS units. A
@@ -246,7 +246,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      list of messages that may be requested can be found within the Message 15
      description in ITU-R M.1371. Improper requests may be ignored. With Message
      10 always Message 11 is requested.
-    
+
      The external application initiates the interrogation. The external
      application is responsible for assessing the success or failure of the
      interrogation. After receiving this sentence, the AIS unit initiates a
@@ -258,11 +258,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
      seconds to broadcast the Message 10 or 15, and the addressed distant
      unit(s) shall take no more than another four seconds to respond – a total
      of eight seconds.
-    
+
      If the requested message type is 11 then a Message 10 is transmitted to
      only one station. The fields of station 2 should be `nil` fields in this
      case.
-    
+
      - Parameter station1: MMSI of interrogated station-1. Identifies the first
      distant AIS unit being interrogated. A single AIR sentence can be used to
      request two message numbers from the first AIS unit.
@@ -290,10 +290,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.9 AKD – Acknowledge detail alarm condition
-    
+
      This sentence provides for acknowledgement of a detailed alarm condition
      reported through `ALA`.
-    
+
      As IEC 61162-1 does not guarantee reliable transport, the designer should
      be very careful about how this sentence is used. Problems can occur either
      when the initial alarm message was lost or when the acknowledgement message
@@ -303,7 +303,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      on all subsequent acknowledgements. Acknowledgements should be sent on each
      received alarm message after acknowledgement and further on until the alarm
      acknowledgement message has been received.
-    
+
      - Parameter time: Time of acknowledgement
      - Parameter alarm: System indicator of original alarm source and type of
      alarm. Should contain the identical information of the corresponding
@@ -324,11 +324,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.10 ALA – Report detailed alarm condition
-    
+
      This sentence permits the alarm and alarm acknowledge condition of systems
      to be reported. Unlike `ALR` this sentence supports reporting multiple
      system and sub-system alarm conditions.
-    
+
      - Parameter time: Event time of alarm condition change including acknowledgement state change
      - Parameter alarm: System indicator of original alarm source
      - Parameter instance: Instance number of equipment/unit/item
@@ -364,10 +364,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.11 ALR – Set alarm state
-    
+
      Local alarm condition and status. This sentence is used to report an alarm
      condition on a device and its current state of acknowledgement.
-    
+
      - Parameter changeTime: Time of alarm condition change, UTC
      - Parameter identifier: Unique alarm number (identifier) at alarm source
      - Parameter thresholdExceeded: Alarm condition
@@ -384,13 +384,13 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.12 APB – Heading/track controller (autopilot) sentence B
-    
+
      Commonly used by autopilots, this sentence contains navigation receiver
      warning flag status, cross-track-error, waypoint arrival status, initial
      bearing from origin waypoint to the destination, continuous bearing from
      present position to destination and recommended heading to steer to
      destination waypoint for the active navigation leg of the journey.
-    
+
      - Parameter LORANC_blinkSNRFlag: LORAN-C blink or SNR warning
      - Parameter LORANC_cycleLockWarningFlag: LORAN-C cycle lock warning flag
      - Parameter crossTrackError: Magnitude and direction of XTE (left =
@@ -421,7 +421,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.13 BBM – AIS broadcast binary message
-    
+
      This sentence supports generation of ITU-R M.1371 binary Messages 8 and 14.
      This provides the application with a means to broadcast data, as defined by
      the application only. Data is defined by the application only – not the
@@ -430,7 +430,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      receiving this sentence, via the IEC 61162-2 interface, the AIS unit
      initiates a VHF broadcast of either Message 8 or 14 within 4 s. (See the
      `ABK` sentence for acknowledgement of the `BBM`.)
-    
+
      - Parameter sequentialIdentifier: Sequential message identifier, 0 to 9.
      The sequential message identifier provides a message identification
      number from 0 to 9 that is sequentially assigned and is incremented for
@@ -458,10 +458,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.14 BEC – Bearing and distance to waypoint – Dead reckoning
-    
+
      Time (UTC) and distance and bearing to, and location of, a specified
      waypoint from the dead-reckoned present position.
-    
+
      - Parameter observationTime: UTC of observation
      - Parameter waypointPosition: Waypoint position
      - Parameter bearingTrue: Bearing, degrees true
@@ -482,11 +482,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.15 BOD – Bearing origin to destination
-    
+
      Bearing angle of the line, calculated at the origin waypoint, extending to
      the destination waypoint from the origin waypoint for the active navigation
      leg of the journey.
-    
+
      - Parameter bearingTrue: Bearing, degrees true
      - Parameter bearingMagnetic: Bearing, degrees magnetic
      - Parameter destinationWaypointID: Destination waypoint ID
@@ -501,11 +501,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.16 BWC – Bearing and distance to waypoint – Great circle
-    
+
      Time (UTC) and distance and bearing to, and location of, a specified
      waypoint from present position. `BWC` data is calculated along the great
      circle path from present position rather than along the rhumb line.
-    
+
      - Parameter observationTime: UTC of observation
      - Parameter waypointPosition: Waypoint position
      - Parameter bearingTrue: Bearing, degrees true
@@ -527,11 +527,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.16 BWR – Bearing and distance to waypoint – Rhumb line
-    
+
      Time (UTC) and distance and bearing to, and location of, a specified
      waypoint from present position. `BWR` data is calculated along the great
      circle path from present position rather than along the rhumb line.
-    
+
      - Parameter observationTime: UTC of observation
      - Parameter waypointPosition: Waypoint position
      - Parameter bearingTrue: Bearing, degrees true
@@ -553,10 +553,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.18 BWW – Bearing waypoint to waypoint
-    
+
      Bearing angle of the line, between the TO and the FROM waypoints,
      calculated at the FROM waypoint for any two arbitrary waypoints.
-    
+
      - Parameter bearingTrue: Bearing, degrees
      - Parameter bearingMagnetic: Bearing, degrees magnetic
      - Parameter toWaypointID: TO waypoint ID
@@ -571,7 +571,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.19 CBR – Configure broadcast rates for AIS AtoN station message command
-    
+
      This sentence configures slots and transmission intervals that will be used
      to broadcast AIS Class A message ``AIS/MessageID/multiSlotBinary``. For
      Class A only Message ID 26 is allowed. Only the “slot interval” is used
@@ -582,11 +582,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
      the defined reporting interval. If both slot intervals are defined they
      have to be identical, and message 26 is transmitted alternating on
      channel A and B.
-    
+
      This sentence can be queried. The query response may contain one or
      more sentences and will continue until the transfer of all current
      schedule information is complete.
-    
+
      - Parameter MMSI: This is a MMSI previously defined for the AIS navaid
      station.
      - Parameter message: The number of the message being scheduled
@@ -610,7 +610,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.20 CUR – Water current layer – Multi-layer water current data
-    
+
      - Parameter isValid: Validity of the data
      - Parameter setNumber: Data set number, 0 to 9. The data set number is used
      to identify multiple sets of current data produced in one measurement
@@ -646,9 +646,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.21 DBT – Depth below transducer
-    
+
      Water depth referenced to the transducer.
-    
+
      - Parameter depths: Water depths measured in different units (feet, meters,
      fathoms).
      */
@@ -656,10 +656,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.22 DDC – Display dimming control
-    
+
      The `DDC` sentence provides controls for equipment display dimming presets
      and a display brightness percentage.
-    
+
      - Parameter preset: The display dimming preset field contains an indicator
      that may be associated with a preset dimmed level on an electronic
      device. Actual display brightness levels for the display dimming preset
@@ -695,10 +695,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.23 DOR – Door status detection
-    
+
      This sentence indicates the status of watertight doors, fire doors or other
      hull openings / doors.
-    
+
      - Parameter messageType: Message Type
      - Parameter time: Time when this status/message was valid
      - Parameter systemType: Type of door monitoring system
@@ -732,12 +732,12 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.24 DPT – Depth
-    
+
      Water depth relative to the transducer and offset of the measuring
      transducer. Positive offset numbers provide the distance from the
      transducer to the waterline. Negative offset numbers provide the distance
      from the transducer to the part of the keel of interest.
-    
+
      - Parameter depth: Water depth relative to the transducer, in metres
      - Parameter offset: Offset from transducer, in metres. Positive = distance
      from transducer to water line; negative = distance from transducer to
@@ -753,11 +753,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.25 DSC – Digital selective calling information
-    
+
      This sentence is used to receive a call from or provide data to a
      radiotelephone using digital selective calling in accordance with
      ITU-R M.493-16.
-    
+
      - Parameter format: Format specifier
      - Parameter address: Maritime Mobile Service Identifier (MMSI) for the
      station to be called or the MMSI of the calling station in a received
@@ -815,13 +815,13 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.26 DSE – Expanded digital selective calling
-    
+
      This sentence immediately follows, without intervening sentences or
      characters, `DSC`, `DSI`, or `DSR` when the DSC `expansion` field in
      these sentences is set to `true`. It is used to provide data to or
      receive DSC expansion data from a radiotelephone using digital selective
      calling in accordance with ITU-R M.821.
-    
+
      - Parameter type: Query/reply flag
      - Parameter MMSI: Vessel MMSI. Identical to the address field in the
      associated `DSC`, `DSI`, or `DSR` sentence.
@@ -832,32 +832,32 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.27 DTM – Datum reference
-    
+
      Local geodetic datum and datum offsets from a reference datum. This
      sentence is used to define the datum to which a position location, and
      geographic locations in subsequent sentences, are referenced. Latitude,
      longitude and altitude offsets from the reference datum, and the selection
      of the reference datum, are also provided.
-    
+
      Cautionary notes: the datum sentence should be transmitted immediately
      prior to every positional sentence (e.g. `GLL`, `BWC`, `WPL`) which is
      referenced to a datum other than WGS84, the datum recommended by IMO.
-    
+
      `latitudeOffset` and `longitudeOffset` are positive numbers;
      `altitudeOffset` may be negative. Offsets change with position: position
      in the local datum is offset from the position in the reference datum in
      the directions indicated:
-    
+
      P(local datum) = P(ref datum) + offset
-    
+
      When `localDatum` is ``Datum/userDefined(subdivision:)``, these fields may
      not be `nil`, and should contain the manually entered or user defined
      offsets.
-    
+
      Users should be aware that chart transformations based on IHO S60
      parameters may result in significant positional errors when applied to
      chart data.
-    
+
      - Parameter localDatum: Local datum
      - Parameter latitudeOffset: Latitude offset, minutes, N/S
      - Parameter longitudeOffset: Longitude offset, minutes, E/W
@@ -877,10 +877,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.28 ETL – Engine telegraph operation status
-    
+
      This sentence indicates engine telegraph position including operating
      location and sub-telegraph indicator.
-    
+
      - Parameter time: Event time of condition change. This may be a `nil` field.
      - Parameter type: Message type
      - Parameter position: Position indicator of engine telegraph
@@ -901,10 +901,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.29 EVE – General event message
-    
+
      This sentence is used to transmit events (e.g. actions by the crew on the
      bridge) with a time stamp.
-    
+
      - Parameter time: Event time
      - Parameter tag: Tag code used for identification of source of event
      - Parameter description: Event description
@@ -913,26 +913,26 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.30 FIR – Fire detection
-    
+
      This sentence indicates fire detection status with data on the specific
      location.
-    
+
      For a `type` of ``Fire/MessageType/section``, the number of faulty and
      activated condition reported as `number`. The section may be a whole
      section (`zone` and/or `loop` are `nil`) or a sub-section. This status is
      normally transmitted at regular intervals. In this case, `condition` and
      `isAcknowledged` are `nil`.
-    
+
      For a type of ``Fire/MessageType/event``, the individual alarm number is
      reported as `number`. `zone` and `loop` are typically provided, and
      `condition` and `isAcknowledged` are not `nil`.
-    
+
      For types of ``Fire/MessageType/disabled``, the individual alarm number is
      reported as `number`, and `isAcknowledged` is `nil`.
-    
+
      For types of ``Fire/MessageType/fault``, the individual alarm number is
      reported as `number`, and `condition` and `isAcknowledged` are `nil`.
-    
+
      - Parameter type: Message Type
      - Parameter time: Time of condition change or acknowledgement
      - Parameter detector: Type of fire detection system
@@ -963,14 +963,14 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.31 FSI – Frequency set information
-    
+
      This sentence is used to set frequency, mode of operation and transmitter
      power level of a radiotelephone; to read out frequencies, mode and power
      and to acknowledge setting commands. This is a command sentence.
-    
+
      For paired frequencies, only `transmit` needs to be included; `nil` for
      `receive`. For receive frequencies only, `transmit` should be `nil`.
-    
+
      - Parameter transmit: Transmitting frequency
      - Parameter receive: Receiving frequency
      - Parameter mode: Mode of operation, `nil` for no information
@@ -987,7 +987,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.32 GBS – GNSS satellite fault detection
-    
+
      This sentence is used to support Receiver Autonomous Integrity Monitoring
      (RAIM). Given that a GNSS receiver is tracking enough satellites to perform
      an integrity check of the position solution a sentence is needed to report
@@ -1000,13 +1000,13 @@ public struct Message: Element, Sendable, Codable, Equatable {
      the GNSS receiver should have at least two observables in addition to the
      minimum required for navigation. Normally these observables take the form
      of additional redundant satellites.
-    
+
      If only GPS, GLONASS, etc. is used for the reported position solution the
      talker ID is GP, GL, etc. and the errors pertain to the individual system.
      If satellites from multiple systems are used to obtain the reported
      position solution the talker ID is GN and the errors pertain to the
      combined solution.
-    
+
      - Parameter time: UTC time of the `GGA` or `GNS` fix associated with
      this sentence
      - Parameter latitudeError: Expected error in latitude, in metres due to
@@ -1037,7 +1037,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.33 GEN – Generic binary information
-    
+
      This sentence provides a means of transmitting generic binary information
      (e.g. lamp display status). The sentence is designed for efficient use of
      the bandwidth. In general, the proper decoding and interpretation of binary
@@ -1045,24 +1045,24 @@ public struct Message: Element, Sendable, Codable, Equatable {
      this standard. This standard contains information that describes how the
      data should be coded, decoded, and structured. The specific meaning of the
      binary data is obtained outwith this standard.
-    
+
      Data too large for a single sentence is represented by consecutive `GEN`
      sentences, where `index` increments by the number of groups in the previous
      sentence. For example, 20 bytes of generic data (encoded in 10 groups)
      must be represented as 2 sentences, one with 8 groups, and one with 2
      groups. `index` will be 0 in the first sentence, and 8 in the second
      sentence.
-    
+
      Because `GEN` sentences have no "total size" field, there is no direct
      way of knowing when a message split across group of `GEN` sentences
      has completed transmitting. Because of this, there are only two ways
      to receive a `genericBinary` message:
-    
+
      * when a subsequent message is sent that resets the running byte
      counter, the _previous_ `genericBinary` message will be returned by
      ``SwiftNMEA/SwiftNMEA/parse(data:ignoreChecksums:)``;
      * by calling ``SwiftNMEA/SwiftNMEA/flush(talker:format:includeIncomplete:)``.
-    
+
      - Parameter time: Time stamp
      - Parameter data: Generic data
      */
@@ -1070,7 +1070,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.34 GFA – GNSS fix accuracy and integrity
-    
+
      This sentence is used to report the results of the data quality and
      integrity check associated with a position solution to other systems and to
      advise the system user. If only a single constellation (GPS, GLONASS,
@@ -1081,7 +1081,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      ``Talker/GNSS`` and the parameters pertain to the combined solution. This
      sentence provides the quality data of the position fix and should be
      associated with the `GNS` sentence.
-    
+
      - Parameter time: UTC time of GNS fix associated with this sentence
      - Parameter HPL: Horizontal protection level (m)
      - Parameter VPL: Vertical protection level (m)
@@ -1113,9 +1113,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.35 GGA – Global positioning system (GPS) fix data
-    
+
      Time, position and fix-related data for a GPS receiver.
-    
+
      - Parameter position: GPS fix position
      - Parameter time: UTC of position
      - Parameter quality: GPS quality indicator
@@ -1142,9 +1142,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.36 GLL – Geographic position – Latitude/longitude
-    
+
      Latitude and longitude of vessel position, time of position fix and status.
-    
+
      - Parameter position: Fix position. Altitude will be `nil`.
      - Parameter time: UTC of position
      - Parameter isValid: Status of data (valid or invalid)
@@ -1156,7 +1156,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.37 GNS – GNSS fix data
-    
+
      Fix data for single or combined satellite navigation systems (GNSS). This
      sentence provides fix data for GPS, GLONASS, possible future satellite
      systems and systems combining these. This sentence could be used with the
@@ -1168,12 +1168,12 @@ public struct Message: Element, Sendable, Codable, Equatable {
      well as a position using only one of the satellite systems, then separate
      ``Talker/GPS``, ``Talker/GLONASS``, etc. sentences may be used to report
      the data calculated from the individual systems.
-    
+
      If a GNSS receiver is set up to use more than one satellite system, but for
      some reason one or more of the systems are not available, then it may
      continue to report the positions using ``Talker/GNSS``, and use the `mode`
      to show which satellite systems are being used.
-    
+
      When the talker is ``Talker/GNSS`` and more than one of the satellite
      systems are used in differential mode, then the `DGPSAge` and
      `DGPSReferenceStationID` fields should be `nil`. In this case, the
@@ -1185,16 +1185,16 @@ public struct Message: Element, Sendable, Codable, Equatable {
      previous `GNS` sentence with the same time tag. The `numSatellites` field
      may be used in these following sentences to denote the number of satellites
      used from that satellite system.
-    
+
      ## Age of Differential Data
-    
+
      For GPS Differential Data: This value is the average age of the most recent
      differential corrections in use. When only RTCM SC104 Type 1 corrections
      are used, the age is that of the most recent Type 1 correction. When
      RTCM SC104 Type 9 corrections are used solely, or in combination with
      Type 1 corrections, the age is the average of the most recent corrections
      for the satellites used. `nil` when Differential GPS is not used.
-    
+
      For GLONASS Differential Data: This value is the average age of the most
      recent differential corrections in use. When only RTCM SC104 Type 31
      corrections are used, the age is that of the most recent Type 31
@@ -1202,7 +1202,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      combination with Type 31 corrections, the age is the average of the most
      recent corrections for the satellites used. `nil` when differential GLONASS
      is not used.
-    
+
      For Galileo Differential Data: This value is the average age of the most
      recent differential corrections in use. When only RTCM SC104 Type 41
      corrections are used, the age is that of the most recent Type 41
@@ -1210,7 +1210,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      combination with Type 41 corrections, the age is the average of the most
      recent corrections for the satellites used. `nil` when differential Galileo
      is not used.
-    
+
      - Parameter position: Fix position, including altitude
      - Parameter time: UTC of position
      - Parameter mode: Mode indicator for each GNSS system
@@ -1244,7 +1244,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.38 GRS – GNSS range residuals
-    
+
      This sentence is used to support Receiver Autonomous Integrity Monitoring
      (RAIM). Range residuals can be computed in two ways for this process. The
      basic measurement integration cycle of most navigation filters generates a
@@ -1256,7 +1256,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      field should indicate which computation method was used. An integrity
      process that uses these range residuals would also require `GGA` or `GNS`,
      the `GSA`, and the `GSV` sentences to be sent.
-    
+
      If only GPS, GLONASS, Galileo etc. is used for the reported position
      solution the talker ID is ``Talker/GPS``, ``Talker/GLONASS``,
      ``Talker/galileo``, etc. and the range residuals pertain to the individual
@@ -1270,7 +1270,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      solution. In general the residuals for a combined solution will be
      different from the residual for a GPS-only, GLONASS-only, Galileo-only,
      etc. solution.
-    
+
      - Parameter residuals: Range residuals for satellites used in the
      navigation. If the range residual exceeds ±99,9 m, then the decimal part
      is dropped, resulting in an integer (–103,7 becomes –103). The maximum
@@ -1293,7 +1293,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.39 GSA – GNSS DOP and active satellites
-    
+
      GNSS receiver operating mode, satellites used in the navigation solution
      reported by the `GGA` or `GNS` sentences, and DOP values. If only GPS,
      GLONASS, Galileo etc. are used for the reported position solution, the
@@ -1305,7 +1305,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      sentences shall have talker ID ``Talker/GNSS``, to indicate that the
      satellites are used in a combined solution and each shall have the PDOP,
      HDOP and VDOP for the combined satellites used in the position.
-    
+
      - Parameter PDOP: Position Dilution of Precision
      - Parameter HDOP: Horizontal Dilution of Precision
      - Parameter VDOP: Vertical Dilution of Precision
@@ -1327,7 +1327,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.40 GST – GNSS pseudorange noise statistics
-    
+
      This sentence is used to support receiver autonomous integrity monitoring
      (RAIM). Pseudorange measurement noise statistics can be translated in the
      position domain in order to give statistical measures of the quality of the
@@ -1337,7 +1337,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      the individual system. If satellites from multiple systems are used to
      obtain the position solution, the talker ID is ``Talker/GNSS`` and the
      errors pertain to the combined solution.
-    
+
      - Parameter time: UTC time of the `GGA` or `GNS` fix associated with this sentence
      - Parameter rangeStddevRMS: RMS value of the standard deviation of the
      range inputs to the navigation process. Range inputs include pseudoranges
@@ -1364,7 +1364,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.41 GSV – GNSS satellites in view
-    
+
      Number of satellites (SV) in view, satellite ID numbers, elevation,
      azimuth, and SNR value. If multiple GPS, GLONASS, Galileo etc. satellites
      are in view, use separate `GSV` sentences with talker ID ``Talker/GPS`` to
@@ -1374,7 +1374,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      per satellite, also use separate `GSV` sentences with a signal ID
      corresponding to the ranging signal. The ``Talker/GNSS`` identifier shall
      not be used with this sentence.
-    
+
      - Parameter satellites: Satellite information
      - Parameter total: Total number of satellites in view
      */
@@ -1382,16 +1382,16 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.42 HBT – Heartbeat supervision sentence
-    
+
      This sentence is intended to be used to indicate that equipment is
      operating normally, or for supervision of a connection between two
      units.
-    
+
      The sentence is transmitted at regular intervals specified in the
      corresponding equipment standard. The repeat interval may be used by
      the receiving unit to set the time-out value for the connection
      supervision.
-    
+
      - Parameter interval: Configured autonomous repeat interval in seconds.
      This field should be set to NULL in response to a query if this
      feature is supported.
@@ -1407,11 +1407,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.43 HDG – Heading, deviation and variation
-    
+
      Heading (magnetic sensor reading), which if corrected for deviation
      will produce magnetic heading, which, if offset by variation, will
      provide true heading.
-    
+
      - Parameter heading: Magnetic sensor heading, degrees
      - Parameter deviation: Magnetic deviation, degrees E/W
      - Parameter variation: Magnetic variation, degrees E/W
@@ -1424,10 +1424,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.44 HDT – Heading true
-    
+
      Actual vessel heading in degrees true produced by any device or system
      producing true heading.
-    
+
      - Parameter heading: Heading, degrees true
      - Note: This is a deprecated sentence which has been replaced by `THS`.
      - SeeAlso: ``trueHeadingMode(_:mode:)``
@@ -1436,11 +1436,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.45 HMR – Heading monitor receive
-    
+
      Heading monitor receive: this sentence delivers data from the sensors
      selected by `HMS` from a central data collecting unit and delivers them
      to the heading monitor.
-    
+
      - Parameter sensor1: Heading sensor 1 info
      - Parameter sensor2: Heading sensor 2 info
      - Parameter setDifference: Set difference by HMS, degrees
@@ -1461,10 +1461,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.46 HMS – Heading monitor set
-    
+
      Set heading monitor: two heading sources may be selected and the
      permitted maximum difference may then be set.
-    
+
      - Parameter sensor1: Heading sensor 1, ID
      - Parameter sensor2: Heading sensor 2, ID
      - Parameter maxDiff: Maximum difference, degrees. Maximum difference
@@ -1474,12 +1474,12 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.47 HSC – Heading steering command
-    
+
      Commanded heading to steer vessel. This is a command sentence and may
      be used to provide input to a heading controller or to report the
      heading that has been commanded. The `HTC` and `HTD` sentences are
      preferred for new applications, rather than the `HSC` sentence.
-    
+
      - Parameter headingTrue: Commanded heading, degrees true
      - Parameter headingMagnetic: Commanded heading, degrees magnetic
      - Parameter status: This field is used to indicate a sentence that is a
@@ -1496,9 +1496,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.48 HSS – Hull stress surveillance systems
-    
+
      This sentence indicates the hull stress surveillance system measurement data.
-    
+
      - Parameter value: Measurement value
      - Parameter point: Measurement point ID
      - Parameter isValid: Data status
@@ -1507,12 +1507,12 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.49 HTC – Heading/track control command
-    
+
      `HTC` is a command sentence. Provides input to (`HTC`) a heading
      controller to set values, modes and references; or provides output
      from (`HTD`) a heading controller with information about values, modes
      and references in use.
-    
+
      - Parameter heading: Commanded heading-to-steer, degrees. Data in these
      fields should be related to the heading reference in use.
      - Parameter track: Commanded track. Commanded track represents the
@@ -1559,12 +1559,12 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.49 HTD – Heading/track control data
-    
+
      `HTC` is a command sentence. Provides input to (`HTC`) a heading
      controller to set values, modes and references; or provides output
      from (`HTD`) a heading controller with information about values, modes
      and references in use.
-    
+
      - Parameter heading: Commanded heading-to-steer, degrees. Data in these
      fields should be related to the heading reference in use.
      - Parameter track: Commanded track. Commanded track represents the
@@ -1620,7 +1620,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
     /**
      8.3.54 LRI – AIS long-range interrogation,
      8.3.53 LRF – AIS long-range function
-    
+
      The long-range interrogation of the AIS unit is accomplished through
      the use of two sentences. The pair of interrogation sentence
      formatters, a `LRI` sentence followed by a `LRF` sentence, provides the
@@ -1630,12 +1630,12 @@ public struct Message: Element, Sendable, Codable, Equatable {
      needs in order to determine if the reply sentences need to be
      constructed. The `LRF` sentence identifies the information that needs
      to be in those reply sentences.
-    
+
      The `LRF` sentence is used in both long-range interrogation requests
      and long-range interrogation replies. The `LRF`-sentence is the second
      sentence of the long-range interrogation request pair, `LRI` and `LRF`
      (see the `LRI`-sentence).
-    
+
      - Parameter replyLogic: Control flag. The control flag affects AIS
      unit’s reply logic.
      - Parameter requestorMMSI: MMSI of requestor
@@ -1657,29 +1657,29 @@ public struct Message: Element, Sendable, Codable, Equatable {
      8.3.50 LR1 – AIS long-range reply sentence 1,
      8.3.51 LR2 – AIS long-range reply sentence 2,
      8.3.52 LR3 – AIS long-range reply sentence 3
-    
+
      The `LRF`-sentence is the first sentence of the long-range
      interrogation reply. The minimum reply consists of a `LRF`-sentence
      followed by a `LR1`-sentence. The `LR2`-sentence and/or the
      `LR3`-sentence follow the `LR1`-sentence if information provided in
      these sentences was requested by the interrogation. Fields not included
      in the interrogation reply are `nil`.
-    
+
      The `LR1` sentence identifies the destination for the reply and
      contains the information items requested by the
      ``AISLongRange/Function/shipID`` function (see the `LRF` sentence).
-    
+
      The `LR2`-sentence contains the information items requested by the
      ``AISLongRange/Function/dateTime``, ``AISLongRange/Function/position``,
      ``AISLongRange/Function/course``, and ``AISLongRange/Function/speed``
      functions (see the `LRF` sentence).
-    
+
      The `LR3` sentence contains the information items requested by the
      ``AISLongRange/Function/destination``, ``AISLongRange/Function/draught``,
      ``AISLongRange/Function/cargo``, ``AISLongRange/Function/shipDimensions``,
      and ``AISLongRange/Function/soulsOnboard`` functions (see the `LRF`
      sentence).
-    
+
      - Parameter requestorMMSI: MMSI of requestor
      - Parameter requestorName: Name of requestor, 1 to 20 character
      - Parameter replyStatuses: Function reply status
@@ -1723,28 +1723,28 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.55 MEB – Message input for broadcast command
-    
+
      This sentence is used to input a message for storage or immediate
      broadcast. The sentence associates messages with real, virtual, and
      synthetic MMSIs.
-    
+
      The stored message is associated by the MMSI, Message ID, and Message
      ID Index. The combination of MMSI, Message ID, and Message ID Index are
      used to reference the stored message and link the message to a
      transmission schedule as defined by a `CBR` sentence. The stored
      message’s broadcast begins when both the message content and schedule
      have been entered.
-    
+
      For immediate message broadcast, the binary data will be broadcast
      using the slots reserved by the `CBR` sentence with both Message ID and
      Message ID Index = 0, or will be broadcast within 4 s according to
      RATDMA rules. The channel for the immediate message broadcast is
      specified by `AISChannel`.
-    
+
      This sentence can be queried. When queried, the query response may
      contain one or more sentences and will continue until the transfer of
      all stored information is complete.
-    
+
      - Parameter sequence: Sequential message identifier. This sequential
      message identifier serves two purposes. It meets the requirements as
      stated in 7.3.4 and it is the sequence number utilized by
@@ -1788,11 +1788,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.56 MSK – MSK receiver interface
-    
+
      This is a command sentence. This sentence is used to set the controls
      of a radiobeacon MSK receiver (beacon receiver) or to report the status
      of an MSK receiver’s controls in response to a query sentence.
-    
+
      - Parameter frequency: Beacon frequency, 283,5 kHz to 325,0 kHz
      - Parameter bitRate: Beacon bit rate (25, 50, 100, 200) bits/s
      - Parameter statusInterval: Interval for sending
@@ -1814,10 +1814,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.57 MSS – MSK receiver signal status
-    
+
      Signal-to-noise ratio, signal strength, frequency and bit rate from a
      MSK beacon receiver.
-    
+
      - Parameter signalStrength: Signal strength (SS), dB/1 µV/m
      - Parameter SNR: Signal-to-noise ratio (SNR), dB
      - Parameter frequency: Beacon frequency, 283,5 kHz to 325,0 kHz
@@ -1835,17 +1835,17 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.58 MTW – Water temperature
-    
+
      - Parameter temperature: Temperature, degrees C
      */
     case waterTemperature(_ temperature: Measurement<UnitTemperature>)
 
     /**
      8.3.59 MWD – Wind direction and speed
-    
+
      The direction from which the wind blows across the earth’s surface,
      with respect to north, and the speed of the wind.
-    
+
      - Parameter directionTrue: Wind direction, 0° to 359° true
      - Parameter directionMagnetic: Wind direction, 0° to 359° magnetic
      - Parameter speedKnots: Wind speed, knots
@@ -1860,9 +1860,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.60 MWV – Wind speed and angle
-    
+
      See ``RelativeWindReference`` for a discussion on relative winds.
-    
+
      - Parameter angle: Wind angle, 0° to 359°
      - Parameter speed: Wind speed
      - Parameter reference: Angle and speed reference
@@ -1877,14 +1877,14 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.61 NAK – Negative acknowledgement
-    
+
      In general, the `NAK` sentence is used when a reply to a query sentence
      cannot be provided, or when a command sentence is not accepted.
-    
+
      The `NAK` sentence reply should be generated within 1 s.
-    
+
      This sentence cannot be queried.
-    
+
      - Parameter talker: Talker identifier from the sentence formatter that
      caused the `NAK` generation.
      - Parameter format: Affected sentence formatter. Affected sentence
@@ -1909,11 +1909,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.62 NRM – NAVTEX receiver mask
-    
+
      This command is used to manipulate the configuration masks that control
      which messages are stored, printed and sent to the INS port of the
      NAVTEX receiver. This a command sentence.
-    
+
      - Parameter function: The function code is used to further identify the
      purpose of the sentence.
      - Parameter frequency: The frequency indicator identifies the frequency
@@ -1932,13 +1932,13 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.63 NRX – NAVTEX received message
-    
+
      The `NRX` sentence is used to transfer the contents of a received
      NAVTEX message from the NAVTEX receiver to another device. As the
      length of a single NAVTEX message may exceed the number of characters
      permitted in a single sentence, many `NRX` sentences may be required to
      transfer a single NAVTEX message.
-    
+
      - Parameter message: Message body
      - Parameter id: Sequential message id. The sequential message
      identifier provides a unique identifier for each NAVTEX message
@@ -1984,11 +1984,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.64 OSD – Own ship data
-    
+
      Heading, course, speed, set and drift summary. Useful for, but not
      limited to radar/ARPA applications. `OSD` gives the movement vector of
      the ship based on the sensors and parameters in use.
-    
+
      - Parameter heading: Heading, degrees true
      - Parameter headingValid: Heading status
      - Parameter course: Vessel course, degrees true
@@ -2011,7 +2011,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.65 POS – Device position and ship dimensions report or configuration command
-    
+
      This sentence is used to report the device position (X, Y, and Z) of
      the equipment such as GNSS and radar antenna installed on board a ship
      and the ship dimensions. The consistent common reference position
@@ -2020,7 +2020,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      sentence. Usage is defined in equipment standards. Possible application
      may be to transmit this sentence at power up and repeatedly at
      30 second interval.
-    
+
      - Parameter equipment: Equipment identification
      - Parameter equipmentNumber: Equipment number 00 to 99. Equipment
      number starts from one to maximum same equipment number. (e.g.
@@ -2044,12 +2044,12 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.66 PRC – Propulsion remote control status
-    
+
      This sentence indicates the engine control status (engine order) on a
      remote control system. This provides the detailed data not available
      from the engine telegraph sentence `ETL`. The sentence shall be
      transmitted at regular intervals.
-    
+
      - Parameter leverDemandPosition: Lever position of engine telegraph
      demand. −100 to 0 to 100 % from “full astern” (crash astern) to
      “full ahead” (navigation full) “ stop engine”
@@ -2073,7 +2073,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.67 RMA – Recommended minimum specific LORAN-C data
-    
+
      Position, course and speed data provided by a LORAN-C receiver. Time
      differences A and B are those used in computing latitude/longitude.
      This sentence is transmitted at intervals not exceeding 2 s and is
@@ -2081,7 +2081,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      and `RMB` are the recommended minimum data to be provided by a LORAN-C
      receiver. All data fields should be provided, `nil` fields are used only
      when data is temporarily unavailable.
-    
+
      - Parameter isValid: Data valid, or blink/cycle/SNR warning
      - Parameter position: LORAN-C position
      - Parameter timeDifferenceA: Time difference A, ms
@@ -2108,14 +2108,14 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.68 RMB – Recommended minimum navigation information
-    
+
      Navigation data from present position to a destination waypoint
      provided by a LORAN-C, GNSS, navigation computer or other integrated
      navigation system. This sentence always accompanies `RMA` or `RMC`
      sentences when a destination is active when provided by a LORAN-C, or
      GNSS receiver, other systems may transmit `RMB` without `RMA` or
      `RMC`.
-    
+
      - Parameter isValid: Data valid, or navigation receiver warning
      - Parameter crossTrackError: Cross track error, nautical miles. If
      cross track error exceeds 9,99 nautical miles, display 9,99. (left =
@@ -2147,14 +2147,14 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.69 RMC – Recommended minimum specific GNSS data
-    
+
      Time, date, position, course and speed data provided by a GNSS
      navigation receiver. This sentence is transmitted at intervals not
      exceeding 2 s and is always accompanied by `RMB` when a destination
      waypoint is active. `RMC` and `RMB` are the recommended minimum data to
      be provided by a GNSS receiver. All data fields should be provided,
      `nil` fields used only when data is temporarily unavailable.
-    
+
      - Parameter time: UTC of position fix
      - Parameter isValid: data valid, or navigation receiver warning
      - Parameter position: Latitude and longitude of position
@@ -2185,10 +2185,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.70 ROR – Rudder order status
-    
+
      Angle ordered for the rudder. Relative measurement of rudder order
      angle without units, "-" = bow turns to port.
-    
+
      - Parameter starboard: Starboard (or single) rudder order
      - Parameter port: Port rudder order
      - Parameter starboardValid: Data valid or invalid
@@ -2205,9 +2205,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.71 ROT – Rate of turn
-    
+
      Rate of turn and direction of turn.
-    
+
      - Parameter rate: Rate of turn, °/min, "-" = bow turns to port
      - Parameter isValid: Data valid or invalid
      */
@@ -2215,9 +2215,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.72 RPM – Revolutions
-    
+
      Shaft or engine revolution rate and propeller pitch
-    
+
      - Parameter source: Source, shaft or engine
      - Parameter number: Engine or shaft number, numbered from centre-line.
      Odd = starboard, even = port, 0 = single or on centre-line
@@ -2235,11 +2235,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.73 RSA – Rudder sensor angle
-    
+
      Relative rudder angle,from rudder angle sensor. Relative measurement of
      rudder angle without units, "-" = bow turns to port. Sensor output is
      proportional to rudder angle but not necessarily 1:1.
-    
+
      - Parameter starboard: Starboard (or single) rudder sensor
      - Parameter port: Port rudder sensor
      - Parameter starboardValid: Data valid or invalid
@@ -2249,12 +2249,12 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.74 RSD – Radar system data
-    
+
      Radar display setting data. Origin 1 and origin 2 are located at the
      stated range and bearing from own ship and provide for two independent
      sets of variable range markers (VRM) and electronic bearing lines (EBL)
      originating away from own ship position.
-    
+
      - Parameter origin1: Origin 1
      - Parameter VRM1: Variable range marker 1
      - Parameter EBL1: Bearing line 1, degrees from 0°
@@ -2280,7 +2280,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.75 RTE – Routes
-    
+
      Waypoint identifiers, listed in order with starting waypoint first, for
      the identified route. Two modes of transmission are provided:
      ``Navigation/RouteType/complete`` indicates that the complete list of waypoints
@@ -2290,7 +2290,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
      is always the waypoint that the vessel is currently heading for (TO)
      and the remaining list of waypoints represents the remainder of the
      route.
-    
+
      - Parameter mode: Message mode
      - Parameter identifier: Route identifier
      - Parameter waypoints: Waypoint identifiers
@@ -2299,14 +2299,14 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.76 SFI – Scanning frequency information
-    
+
      This sentence is used to set frequencies and mode of operation for
      scanning purposes and to acknowledge setting commands. Scanning
      frequencies are listed in order of scanning. For DSC distress and
      safety watchkeeping only six channels shall be scanned in the same
      scanning sequence. To indicate a frequency set at the scanning
      receiver, use `FSI` sentence.
-    
+
      - Parameter frequencies: Frequencies or ITU channels, with mode of operation
      - SeeAlso: ``frequencySetInfo(transmit:receive:mode:powerLevel:type:)``
      */
@@ -2314,11 +2314,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.77 SSD – AIS ship static data
-    
+
      This sentence is used to enter static parameters into a shipboard AIS
      unit. The parameters in this sentence support a number of the
      ITU-R M.1371 Messages.
-    
+
      - Parameter callsign: Ship’s call sign, 1 to 7 characters. A `nil`
      field indicates that the previously entered call sign is unchanged.
      - Parameter name: Ship’s name, 1 to 20 characters
@@ -2364,25 +2364,25 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.78 STN – Multiple data ID
-    
+
      This sentence is transmitted before each individual sentence where
      there is a need for the listener to determine the exact source of data
      in a system. Examples might include dual-frequency depth sounding
      equipment or equipment that integrates data from a number of sources
      and produces a single output.
-    
+
      - Parameter ID: Talker ID number, 00 to 99
      */
     case talkerID(_ ID: Int)
 
     /**
      8.3.79 THS – True heading and status
-    
+
      Actual vessel heading in degrees true produced by any device or system
      producing true heading. This sentence includes a “mode indicator” field
      providing critical safety related information about the heading data,
      and replaces the deprecated `HDT` sentence.
-    
+
      - Parameter heading: Heading, degrees true
      - Parameter mode: Mode indicator
      - Note: This sentence replaces the deprecated sentence `HDT`.
@@ -2392,13 +2392,13 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.80 TLB – Target label
-    
+
      Common target labels for tracked targets. This sentence is used to
      specify labels for tracked targets to a device that provides tracked
      target data (e.g. via `TTM`). This will allow all devices displaying
      tracked target data to use a common set of labels (e.g. targets
      reported by two radars and displayed on an ECDIS).
-    
+
      - Parameter labels: Target number ‘n’ reported by the device, and
      label assigned to target ‘n’
      - SeeAlso: ``trackedTarget(number:distance:bearing:speed:course:CPADistance:CPATime:name:status:isReference:time:acquisition:)``
@@ -2412,10 +2412,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.81 TLL – Target latitude and longitude
-    
+
      Target number, name, position and time tag for use in systems tracking
      targets.
-    
+
      - Parameter number: Target number 00 – 99
      - Parameter position: Target latitude and longitude
      - Parameter name: Target name
@@ -2435,11 +2435,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.82 TRC – Thruster control data
-    
+
      This sentence provides the status of control data for thruster devices.
      This sentence may also be used as a command sentence. When providing
      status data the sentence shall be transmitted at regular intervals.
-    
+
      - Parameter number: Number of thruster, bow or stern. This is numbered
      from centre-line. This field is single digit: Odd = Bow thruster,
      Even = Stern thrusters
@@ -2461,9 +2461,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.83 TRD – Thruster response data
-    
+
      This sentence provides the response data for thruster devices.
-    
+
      - Parameter number: Number of thruster, bow or stern. This is numbered
      from centre-line. This field is single digit: Odd = Bow thruster,
      Even = Stern thrusters
@@ -2480,13 +2480,13 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.84 TTD – Tracked target data
-    
+
      This sentence is used to transmit tracked radar targets in a compressed
      format. This enables the transfer of many targets with minimum
      overhead. New target labels are defined by the `TLB` sentence to reduce
      bandwidth use. Transmission of up to four targets in the same sentence
      is possible.
-    
+
      - Parameter targets: Tracked target data
      - SeeAlso: ``targetLabels(_:)``
      */
@@ -2494,9 +2494,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.85 TTM – Tracked target message
-    
+
      Data associated with a tracked target relative to own ship's position.
-    
+
      - Parameter number: Target number, 00 to 99
      - Parameter distance: Target distance from own ship
      - Parameter bearing: Bearing from own ship, degrees true/relative
@@ -2529,10 +2529,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.86 TUT – Transmission of multi-language text
-    
+
      A sentence to support multi-language text using a variable length Hex
      field in the sentence definition.
-    
+
      The sentence structure is similar to the `TXT` sentence, however, it
      has two additional fields. There is a “source identifier” field used to
      identify the origin of the sentence and a “translation code” field that
@@ -2540,12 +2540,12 @@ public struct Message: Element, Sendable, Codable, Equatable {
      use of multi-language codes, such as, unicode or other codes. A
      proprietary look-up table method is incorporated to allow pre-defined
      messages to be sent in short sentences.
-    
+
      If `translationCode` is `U` (Unicode, ISO 10646-1), `A` (ASCII), or `1`
      through `16` (ISO 8859-1 through -16), then `text` will contain the
      decoded string. If `translationCode` is `Pxxx` (proprietary), `text`
      will be `nil` and `data` will contain the undecoded string.
-    
+
      - Parameter source: Source identifier
      - Parameter text: Text body, if `data` is encoded in a
      non-proprietary format. `nil` if `data` is encoded in a proprietary
@@ -2561,17 +2561,17 @@ public struct Message: Element, Sendable, Codable, Equatable {
      - Parameter translationCode: Translation code for text body.
      `U` = Unicode, `A` = ASCII, `1` through `16` = subset and part number
      of ISO 8859, `Pxyz` = Proprietary (user defined).
-    
+
      - SeeAlso: ``text(_:identifier:)``
      */
     case multiLanguageText(source: Talker, text: String?, data: Data, translationCode: String)
 
     /**
      8.3.87 TXT – Text transmission
-    
+
      For the transmission of short text messages. Longer text messages may
      be transmitted by using multiple sentences.
-    
+
      - Parameter message: Text message
      - Parameter identifier: Text identifier. The text identifier is a
      number, 01 to 99, used to identify different text messages.
@@ -2580,10 +2580,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.88 UID – User identification code transmission
-    
+
      This sentence allows a user to send an identification message to a
      system.
-    
+
      - Parameter code1: User identification code 1
      - Parameter code2: User identification code 2 (optional). User
      identification code 2 is optional and allows further identification of
@@ -2598,9 +2598,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.89 VBW – Dual ground/water speed
-    
+
      Water-referenced and ground-referenced speed data.
-    
+
      - Parameter water: Longitudinal and transverse water speed, knots
      - Parameter waterValid: Water speed data validity
      - Parameter ground: Longitudinal and transverse ground speed, knots
@@ -2625,17 +2625,17 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.90 VDM – AIS VHF data-link message
-    
+
      This sentence is used to transfer the entire content of a received AIS
      message packet, as defined in ITU-R M.1371 and as received on the
      VHF Data Link (VDL), using the “six-bit” field type. The structure
      provides for the transfer of long binary messages by using multiple
      sentences.
-    
+
      Data messages should be transmitted in as few sentences as possible.
      When a data message can be accommodated in a single sentence, then it
      shall not be split.
-    
+
      - Parameter message: Encapsulated ITU-R M.1371 radio message
      - Parameter channel: AIS channel. This channel indication is relative
      to the operating conditions of the AIS unit when the packet is
@@ -2649,13 +2649,13 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.91 VDO – AIS VHF data-link own-vessel report
-    
+
      This sentence is used to transfer the entire content of an AIS unit’s
      broadcast message packet, as defined in ITU-R M.1371 and as sent out by
      the AIS unit over the VHF data link (VDL) using the “six-bit” field
      type. The sentence uses the same structure as the `VDM` sentence
      formatter.
-    
+
      - Parameter message: Encapsulated ITU-R M.1371 radio message
      - Parameter channel: AIS channel. This channel indication is relative
      to the operating conditions of the AIS unit when the packet is
@@ -2670,10 +2670,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.92 VDR – Set and drift
-    
+
      The direction towards which a current flows (set) and speed (drift) of
      a current.
-    
+
      - Parameter setTrue: Direction, degrees true
      - Parameter setMagnetic: Direction, degrees magnetic
      - Parameter drift: Current speed, knots
@@ -2682,16 +2682,16 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.93 VER – Version
-    
+
      This sentence is used to provide identification and version information
      about a device. This sentence is produced as a reply to a query sentence.
-    
+
      In order to meet the 79-character requirement, a “multi-sentence
      message” may be needed to convey all the data fields.
-    
+
      For example, an equipment may output the `VER` sentence autonomously
      upon power-up.
-    
+
      - Parameter type: Device type. The device type is used to identify the
      manufactured purpose of the device. Choice of the device type
      identifier is based upon the designed purpose of the device. It is set
@@ -2722,10 +2722,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.94 VHW – Water speed and heading
-    
+
      The compass heading to which the vessel points and the speed of the
      vessel relative to the water.
-    
+
      - Parameter true: Heading, degrees true
      - Parameter magnetic: Heading, degrees magnetic
      - Parameter speedKnots: Speed, knots
@@ -2740,9 +2740,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.95 VLW – Dual ground/water distance
-    
+
      The distance travelled, relative to the water and over the ground.
-    
+
      - Parameter waterCumulative: Total cumulative water distance, nautical miles
      - Parameter waterSinceReset: Water distance since reset, nautical miles
      - Parameter groundCumulative: Total cumulative ground distance, nautical miles
@@ -2757,11 +2757,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.96 VPW – Speed measured parallel to wind
-    
+
      The component of the vessel's velocity vector parallel to the direction
      of the true wind direction. Sometimes called "speed made good to
      windward" or "velocity made good to windward".
-    
+
      - Parameter knots: Speed, knots, "-" = downwind
      - Parameter mps: Speed, m/s, "-" = downwind
      */
@@ -2769,12 +2769,12 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.97 VSD – AIS voyage static data
-    
+
      This sentence is used to enter information about a ship’s transit that
      remains relatively static during the voyage. However, the information
      often changes from voyage to voyage. The parameters in this sentence
      support a number of the ITU-R M.1371 messages.
-    
+
      - Parameter shipType: Type of ship and cargo category. A `nil` field
      indicates that this is unchanged.
      - Parameter maxDraft: Maximum present static draught, 0 to 25,5 m. A
@@ -2806,9 +2806,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.98 VTG – Course over ground and ground speed
-    
+
      The actual course and speed relative to the ground.
-    
+
      - Parameter courseTrue: Course over ground, degrees true
      - Parameter couseMagnetic: Course over ground, degrees magnetic
      - Parameter speedKnots: Speed over ground, knots
@@ -2829,10 +2829,10 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.99 WAT – Water level detection
-    
+
      This sentence provides detection status of water leakage and bilge
      water level, with monitoring location data.
-    
+
      - Parameter messageType: Message type
      - Parameter time: Time when this status/message was valid
      - Parameter systemType: Type of water alarm system
@@ -2875,11 +2875,11 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.100 WCV – Waypoint closure velocity
-    
+
      The component of the velocity vector in the direction of the waypoint,
      from present position. Sometimes called "speed made good" or "velocity
      made good".
-    
+
      - Parameter closure: Velocity component, knots
      - Parameter identifier: Waypoint identifier
      - Parameter mode: Mode indicator
@@ -2892,9 +2892,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.101 WNC – Distance waypoint to waypoint
-    
+
      Distance between two specified waypoints.
-    
+
      - Parameter distanceNM: Distance, nautical miles
      - Parameter distanceKM: Distance, km
      - Parameter to: TO waypoint identifier
@@ -2909,9 +2909,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.102 WPL – Waypoint location
-    
+
      Latitude and longitude of specified waypoint.
-    
+
      - Parameter location: Waypoint latitude and longitude
      - Parameter identifier: Waypoint identifier
      */
@@ -2919,7 +2919,7 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.103 XDR – Transducer measurements
-    
+
      Measurement data from transducers that measure physical quantities such
      as temperature, force, pressure, frequency, angular or linear
      displacement, etc. Data from a variable number of transducers measuring
@@ -2928,17 +2928,17 @@ public struct Message: Element, Sendable, Codable, Equatable {
      transducers that may be connected in a "chain" where each transducer
      receives the sentence as an input and adds on its own data fields
      before retransmitting the sentence.
-    
+
      - Parameter measurements: The transducer measurements.
      */
     case transducerMeasurements(_ measurements: [Transducer.Value])
 
     /**
      8.3.104 XTE – Cross-track error, measured
-    
+
      Magnitude of the position error perpendicular to the intended track
      line and the direction to steer to return to track.
-    
+
      - Parameter error: Cross-track error (left is negative)
      - Parameter mode: Mode indicator
      - Parameter LORANC_blinkSNRFlag: LORAN – C blink or SNR warning
@@ -2953,19 +2953,19 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.105 XTR – Cross-track error, dead reckoning
-    
+
      Magnitude of the dead reckoned position error perpendicular to the
      intended track line and the direction to steer to return to track.
-    
+
      - Parameter error: Cross-track error (left is negative)
      */
     case crossTrackErrorDR(_ error: Measurement<UnitLength>)
 
     /**
      8.3.106 ZDA – Time and date
-    
+
      UTC, day, month, year and local time zone.
-    
+
      - Parameter date: Date, UTC
      - Parameter timeZone: Local timezone (current offset from GMT only)
      */
@@ -2973,14 +2973,14 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.107 ZDL – Time and distance to variable point
-    
+
      Time and distance to a point that might not be fixed. The point is
      generally not a specific geographic point but may vary continuously,
      and is most often determined by calculation (the recommended turning
      point for sailboats for optimum sailing to a destination, the
      wheel-over point for vessels making turns, a predicted collision point,
      etc.).
-    
+
      - Parameter time: Time to point, 00 h to 99 h
      - Parameter distance: Distance to point, nautical miles
      - Parameter type: Type of point
@@ -2993,9 +2993,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.108 ZFO – UTC and time from origin waypoint
-    
+
      UTC and elapsed time from origin waypoint.
-    
+
      - Parameter observation: UTC of observation
      - Parameter elapsedTime: Elapsed time, hh = 00 to 99
      - Parameter originID: Origin waypoint ID
@@ -3004,9 +3004,9 @@ public struct Message: Element, Sendable, Codable, Equatable {
 
     /**
      8.3.109 ZTG – UTC and time to destination waypoint
-    
+
      UTC and predicted time-to-go to destination waypoint.
-    
+
      - Parameter observation: UTC of observation
      - Parameter elapsedTime: Elapsed time, hh = 00 to 99
      - Parameter destinationID: Destination waypoint ID

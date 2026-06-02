@@ -68,7 +68,7 @@ final class GSVSpec: AsyncSpec {
 
         // MARK: Message 1 (GPS)
 
-        guard case .GNSSSatellitesInView(let satellites, let total) = payload1 else {
+        guard case let .GNSSSatellitesInView(satellites, total) = payload1 else {
           fail("expected .GNSSSatellitesInView, got \(payload1)")
           return
         }
@@ -87,7 +87,7 @@ final class GSVSpec: AsyncSpec {
 
         // MARK: Message 2 (GLONASS)
 
-        guard case .GNSSSatellitesInView(let satellites, let total) = payload2 else {
+        guard case let .GNSSSatellitesInView(satellites, total) = payload2 else {
           fail("expected .GNSSSatellitesInView, got \(payload2)")
           return
         }

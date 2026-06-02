@@ -28,12 +28,12 @@ final class ALRSpec: AsyncSpec {
           return
         }
         guard
-          case .alarmState(
-            let changeTime,
-            let identifier,
-            let thresholdExceeded,
-            let acknowledged,
-            let description
+          case let .alarmState(
+            changeTime,
+            identifier,
+            thresholdExceeded,
+            acknowledged,
+            description
           ) = payload
         else {
           fail("expected .alarmState, got \(payload)")

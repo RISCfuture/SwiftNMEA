@@ -29,15 +29,15 @@ final class GSTSpec: AsyncSpec {
           return
         }
         guard
-          case .GNSSPseudorangeNoise(
-            let actualTime,
-            let rangeStddevRMS,
-            let errorSemimajorStddev,
-            let errorSemiminorStddev,
-            let errorOrientation,
-            let errorLatitudeStddev,
-            let errorLongitudeStddev,
-            let errorAltitudeStddev
+          case let .GNSSPseudorangeNoise(
+            actualTime,
+            rangeStddevRMS,
+            errorSemimajorStddev,
+            errorSemiminorStddev,
+            errorOrientation,
+            errorLatitudeStddev,
+            errorLongitudeStddev,
+            errorAltitudeStddev
           ) = payload
         else {
           fail("expected .GNSSPseudorangeNoise, got \(payload)")

@@ -105,7 +105,7 @@ final class VDMSpec: AsyncSpec {
             fail("expected Message, got \(messages[2])")
             return
           }
-          guard case .VDLMessage(let actualData, let channel) = payload else {
+          guard case let .VDLMessage(actualData, channel) = payload else {
             fail("expected .VDLMessage, got \(payload)")
             return
           }
@@ -225,7 +225,7 @@ final class VDMSpec: AsyncSpec {
             fail("expected Message, got \(messages[0])")
             return
           }
-          guard case .VDLMessage(let message, let channel) = message.payload else {
+          guard case let .VDLMessage(message, channel) = message.payload else {
             fail("expected .VDLMessage, got \(message)")
             return
           }

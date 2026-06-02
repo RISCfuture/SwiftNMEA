@@ -31,14 +31,14 @@ final class BWRSpec: AsyncSpec {
           return
         }
         guard
-          case .bearingDistanceToWaypointRL(
-            let observationTime,
-            let waypointPosition,
-            let bearingTrue,
-            let bearingMagnetic,
-            let distance,
-            let waypointID,
-            let mode
+          case let .bearingDistanceToWaypointRL(
+            observationTime,
+            waypointPosition,
+            bearingTrue,
+            bearingMagnetic,
+            distance,
+            waypointID,
+            mode
           ) = payload
         else {
           fail("expected .bearingDistanceToWaypointRL, got \(payload)")

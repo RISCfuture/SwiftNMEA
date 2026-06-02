@@ -24,7 +24,7 @@ final class VHWSpec: AsyncSpec {
           return
         }
         guard
-          case .waterSpeedHeading(let bearingTrue, let magnetic, let speedKnots, let speedKph) =
+          case let .waterSpeedHeading(bearingTrue, magnetic, speedKnots, speedKph) =
             payload
         else {
           fail("expected .waterSpeedHeading, got \(payload)")

@@ -30,19 +30,19 @@ final class HTCSpec: AsyncSpec {
           return
         }
         guard
-          case .headingControlCommand(
-            let heading,
-            let track,
-            let rudderAngle,
-            let override,
-            let mode,
-            let turnMode,
-            let rudderLimit,
-            let headingLimit,
-            let trackLimit,
-            let radius,
-            let rate,
-            let status
+          case let .headingControlCommand(
+            heading,
+            track,
+            rudderAngle,
+            override,
+            mode,
+            turnMode,
+            rudderLimit,
+            headingLimit,
+            trackLimit,
+            radius,
+            rate,
+            status
           ) =
             payload
         else {

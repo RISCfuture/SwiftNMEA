@@ -23,7 +23,7 @@ final class RPMSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .revolutions(let source, let number, let speed, let pitch, let isValid) = payload
+        guard case let .revolutions(source, number, speed, pitch, isValid) = payload
         else {
           fail("expected .revolutions, got \(payload)")
           return

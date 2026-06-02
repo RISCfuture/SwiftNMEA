@@ -19,19 +19,19 @@ final class DSCSpec: AsyncSpec {
           return
         }
         guard
-          case .DSC(
-            let format,
-            let MMSI,
-            let area,
-            let category,
-            let message1_1,
-            let message1_2,
-            let message2,
-            let message3,
-            let distressMMSI,
-            let distressMMSINature,
-            let acknowledgement,
-            let expansion
+          case let .DSC(
+            format,
+            MMSI,
+            area,
+            category,
+            message1_1,
+            message1_2,
+            message2,
+            message3,
+            distressMMSI,
+            distressMMSINature,
+            acknowledgement,
+            expansion
           ) = payload
         else {
           fail("expected .DSC, got \(payload)")
@@ -73,22 +73,19 @@ final class DSCSpec: AsyncSpec {
           return
         }
         guard
-          case .DSC(
-            let format,
-            let MMSI,
-            let area,
-            let category,
-            let message1_1,
-            let
-              message1_2,
-            let message2,
-            let message3,
-            let distressMMSI,
-            let
-              distressMMSINature,
-            let acknowledgement,
-            let
-              expansion
+          case let .DSC(
+            format,
+            MMSI,
+            area,
+            category,
+            message1_1,
+            message1_2,
+            message2,
+            message3,
+            distressMMSI,
+            distressMMSINature,
+            acknowledgement,
+            expansion
           ) = message.payload
         else {
           fail("expected .DSC, got \(message)")
@@ -121,22 +118,19 @@ final class DSCSpec: AsyncSpec {
           return
         }
         guard
-          case .DSC(
-            let format,
-            let MMSI,
-            let area,
-            let category,
-            let message1_1,
-            let
-              message1_2,
-            let message2,
-            let message3,
-            let distressMMSI,
-            let
-              distressMMSINature,
-            let acknowledgement,
-            let
-              expansion
+          case let .DSC(
+            format,
+            MMSI,
+            area,
+            category,
+            message1_1,
+            message1_2,
+            message2,
+            message3,
+            distressMMSI,
+            distressMMSINature,
+            acknowledgement,
+            expansion
           ) = message.payload
         else {
           fail("expected .DSC, got \(message)")
@@ -178,19 +172,19 @@ final class DSCSpec: AsyncSpec {
           return
         }
         guard
-          case .DSC(
-            let format,
-            let MMSI,
-            let area,
-            let category,
-            let message1_1,
-            let message1_2,
-            let message2,
-            let message3,
-            let distressMMSI,
-            let distressMMSINature,
-            let acknowledgement,
-            let expansion
+          case let .DSC(
+            format,
+            MMSI,
+            area,
+            category,
+            message1_1,
+            message1_2,
+            message2,
+            message3,
+            distressMMSI,
+            distressMMSINature,
+            acknowledgement,
+            expansion
           ) = payload
         else {
           fail("expected .DSC, got \(payload)")

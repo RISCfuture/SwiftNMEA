@@ -33,7 +33,7 @@ final class ACSSpec: AsyncSpec {
           return
         }
         guard
-          case .AISChannelInformationSource(let sequenceNumber, let MMSI, let actualTime) = payload
+          case let .AISChannelInformationSource(sequenceNumber, MMSI, actualTime) = payload
         else {
           fail("expected .AIChannelInformationSource, got \(payload)")
           return

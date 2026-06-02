@@ -31,13 +31,13 @@ final class BECSpec: AsyncSpec {
           return
         }
         guard
-          case .bearingDistanceToWaypointDR(
-            let observationTime,
-            let waypointPosition,
-            let bearingTrue,
-            let bearingMagnetic,
-            let distance,
-            let waypointID
+          case let .bearingDistanceToWaypointDR(
+            observationTime,
+            waypointPosition,
+            bearingTrue,
+            bearingMagnetic,
+            distance,
+            waypointID
           ) = payload
         else {
           fail("expected .bearingDistanceToWaypointDR, got \(payload)")

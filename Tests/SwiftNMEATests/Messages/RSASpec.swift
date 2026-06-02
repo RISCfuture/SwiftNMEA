@@ -24,7 +24,7 @@ final class RSASpec: AsyncSpec {
           return
         }
         guard
-          case .rudderSensorAngle(let starboard, let port, let starboardValid, let portValid) =
+          case let .rudderSensorAngle(starboard, port, starboardValid, portValid) =
             payload
         else {
           fail("expected .rudderSensorAngle, got \(payload)")

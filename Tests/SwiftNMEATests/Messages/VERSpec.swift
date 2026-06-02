@@ -60,14 +60,14 @@ final class VERSpec: AsyncSpec {
             return
           }
           guard
-            case .version(
-              let type,
-              let vendorID,
-              let uniqueID,
-              let serialNumber,
-              let modelCode,
-              let softwareRevision,
-              let hardwareRevision
+            case let .version(
+              type,
+              vendorID,
+              uniqueID,
+              serialNumber,
+              modelCode,
+              softwareRevision,
+              hardwareRevision
             ) = payload
           else {
             fail("expected .route, got \(payload)")
@@ -88,14 +88,14 @@ final class VERSpec: AsyncSpec {
             return
           }
           guard
-            case .version(
-              let type,
-              let vendorID,
-              let uniqueID,
-              let serialNumber,
-              let modelCode,
-              let softwareRevision,
-              let hardwareRevision
+            case let .version(
+              type,
+              vendorID,
+              uniqueID,
+              serialNumber,
+              modelCode,
+              softwareRevision,
+              hardwareRevision
             ) = payload
           else {
             fail("expected .version, got \(payload)")
@@ -214,14 +214,14 @@ final class VERSpec: AsyncSpec {
             return
           }
           guard
-            case .version(
-              let type,
-              let vendorID,
-              let uniqueID,
-              let serialNumber,
-              let modelCode,
-              let softwareRevision,
-              let hardwareRevision
+            case let .version(
+              type,
+              vendorID,
+              uniqueID,
+              serialNumber,
+              modelCode,
+              softwareRevision,
+              hardwareRevision
             ) = message.payload
           else {
             fail("expected .version, got \(message)")

@@ -19,12 +19,12 @@ final class MSKSpec: AsyncSpec {
           return
         }
         guard
-          case .MSKReceiverInterface(
-            let frequency,
-            let bitRate,
-            let statusInterval,
-            let channel,
-            let status
+          case let .MSKReceiverInterface(
+            frequency,
+            bitRate,
+            statusInterval,
+            channel,
+            status
           ) = payload
         else {
           fail("expected .MSKReceiverInterface, got \(payload)")

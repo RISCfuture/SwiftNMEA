@@ -29,16 +29,16 @@ final class RSDSpec: AsyncSpec {
           return
         }
         guard
-          case .radarSystemData(
-            let origin1,
-            let VRM1,
-            let EBL1,
-            let origin2,
-            let VRM2,
-            let EBL2,
-            let cursor,
-            let rangeScale,
-            let rotation
+          case let .radarSystemData(
+            origin1,
+            VRM1,
+            EBL1,
+            origin2,
+            VRM2,
+            EBL2,
+            cursor,
+            rangeScale,
+            rotation
           ) = payload
         else {
           fail("expected .radarSystemData, got \(payload)")

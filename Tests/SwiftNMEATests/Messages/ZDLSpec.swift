@@ -23,7 +23,7 @@ final class ZDLSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .timeDistanceToVariablePoint(let time, let distance, let type) = payload else {
+        guard case let .timeDistanceToVariablePoint(time, distance, type) = payload else {
           fail("expected .timeDistanceToVariablePoint, got \(payload)")
           return
         }

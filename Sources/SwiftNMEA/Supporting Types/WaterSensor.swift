@@ -4,7 +4,7 @@ public struct WaterSensor {
 
   /**
    A method of ship speed used for measuring the current speed.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/currentWaterLayer(isValid:setNumber:layer:depth:direction:speed:referenceDepth:heading:speedReference:)``
    */
   public enum SpeedReference: Character, Sendable, Codable, Equatable {
@@ -21,7 +21,7 @@ public struct WaterSensor {
 
   /**
    Water level sensor types.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/waterLevel(messageType:time:systemType:location1:location2:number:alarmCondition:isOverriden:description:)``
    */
   public enum SystemType: String, Sendable, Codable, Equatable {
@@ -41,7 +41,7 @@ public struct WaterSensor {
 
   /**
    Water level sensor statuses.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/waterLevel(messageType:time:systemType:location1:location2:number:alarmCondition:isOverriden:description:)``
    */
   public enum Status: Character, Sendable, Codable, Equatable {

@@ -18,7 +18,7 @@ final class GLLSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .geoPosition(let position, let time, let isValid, let mode) = payload else {
+        guard case let .geoPosition(position, time, isValid, mode) = payload else {
           fail("expected .geoPosition, got \(payload)")
           return
         }

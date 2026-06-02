@@ -40,6 +40,7 @@ public struct GeoAreaEnhancement: RawRepresentable, Sendable, Codable, Equatable
     return "\(latStr)\(lonStr)\(latDeltaStr)\(lonDeltaStr)\(courseStr)\(speedStr)"
   }
 
+  // swiftlint:disable:next todo
   // TODO: how to handle command character 126 in course or speed?
   public init?(rawValue: String) {
     guard (String(repeating: "0", count: 24)...String(repeating: "9", count: 24)).contains(rawValue)
@@ -71,7 +72,7 @@ public struct GeoAreaEnhancement: RawRepresentable, Sendable, Codable, Equatable
 
   /**
    Refines a geographical area with the enhancement data in the receiver.
-  
+
    - Parameter area: The geographical area to refine.
    - Returns: A new `GeoArea` with latitude, longtiude, Δφ, and Δλ refined.
    **/

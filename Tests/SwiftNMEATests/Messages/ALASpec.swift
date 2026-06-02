@@ -28,13 +28,13 @@ final class ALASpec: AsyncSpec {
           return
         }
         guard
-          case .detailAlarm(
-            let actualTime,
-            let alarm,
-            let instance,
-            let condition,
-            let state,
-            let description
+          case let .detailAlarm(
+            actualTime,
+            alarm,
+            instance,
+            condition,
+            state,
+            description
           ) =
             payload
         else {

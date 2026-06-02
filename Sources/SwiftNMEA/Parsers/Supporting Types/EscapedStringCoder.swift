@@ -5,7 +5,7 @@ import Foundation
 final class EscapedStringCoder: Sendable {
   /**
    Decodes an escaped ASCII string into an ISO 8859-1 string.
-  
+
    - Parameter string: The escaped ASCII string
    - Returns: The unescaped ISO 8859-1 string, or `nil` if the string contains
      non-ASCII characters.

@@ -28,11 +28,11 @@ final class XTESpec: AsyncSpec {
           return
         }
         guard
-          case .crossTrackError(
-            let error,
-            let mode,
-            let LORANC_blinkSNRFlag,
-            let LORANC_cycleLockWarningFlag
+          case let .crossTrackError(
+            error,
+            mode,
+            LORANC_blinkSNRFlag,
+            LORANC_cycleLockWarningFlag
           ) = payload
         else {
           fail("expected .crossTrackError, got \(payload)")

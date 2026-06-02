@@ -23,7 +23,7 @@ final class HMSSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .headingMonitorSet(let sensor1, let sensor2, let maxDiff) = payload else {
+        guard case let .headingMonitorSet(sensor1, sensor2, maxDiff) = payload else {
           fail("expected .headingMonitorSet, got \(payload)")
           return
         }

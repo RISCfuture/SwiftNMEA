@@ -4,7 +4,7 @@ public struct Fire {
 
   /**
    Fire detection message type.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/fireDetection(type:time:detector:zone:loop:number:condition:isAcknowledged:description:)``
    */
   public enum MessageType: Character, Sendable, Codable, Equatable {
@@ -27,7 +27,7 @@ public struct Fire {
 
   /**
    Types of fire detectors.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/fireDetection(type:time:detector:zone:loop:number:condition:isAcknowledged:description:)``
    */
   public enum DetectorType: String, Sendable, Codable, Equatable {
@@ -73,7 +73,7 @@ public struct Fire {
 
   /**
    Fire detector condition.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/fireDetection(type:time:detector:zone:loop:number:condition:isAcknowledged:description:)``
    */
   public enum DetectorCondition: Character, Sendable, Codable, Equatable {

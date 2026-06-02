@@ -4,7 +4,7 @@ public struct EngineTelegraph {
 
   /**
    Possible `ETL` message types.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/engineTelegraph(time:type:position:subPosition:location:number:)``
    */
   public enum MessageType: Character, Sendable, Codable, Equatable {
@@ -18,7 +18,7 @@ public struct EngineTelegraph {
 
   /**
    Possible engine telegraph positions.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/engineTelegraph(time:type:position:subPosition:location:number:)``
    */
   public enum Position: String, Sendable, Codable, Equatable {
@@ -76,7 +76,7 @@ public struct EngineTelegraph {
 
   /**
    Possible engine sub-telegraph positions.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/engineTelegraph(time:type:position:subPosition:location:number:)``
    */
   public enum SubPosition: String, Sendable, Codable, Equatable {

@@ -4,7 +4,7 @@ public struct Steering {
 
   /**
    Possible values for selected steering mode.
-  
+
    All steering modes represent steering as selected by a steering selector
    switch or by a preceding `HTC` sentence. Priority levels of these inputs
    and usage/acceptance of related fields are to be defined and documented
@@ -42,7 +42,7 @@ public struct Steering {
 
   /**
    Possible values for turn mode.
-  
+
    Turn mode defines how the ship changes heading when in steering modes
    ``Mode/standalone``, ``Mode/headingControl`` or ``Mode/trackControl``
    according to the selected turn mode values given in fields “commanded

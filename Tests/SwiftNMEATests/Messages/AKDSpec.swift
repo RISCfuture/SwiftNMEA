@@ -28,12 +28,12 @@ final class AKDSpec: AsyncSpec {
           return
         }
         guard
-          case .detailAlarmAcknowledgement(
-            let actualTime,
-            let alarm,
-            let instance,
-            let sender,
-            let senderInstance
+          case let .detailAlarmAcknowledgement(
+            actualTime,
+            alarm,
+            instance,
+            sender,
+            senderInstance
           ) = payload
         else {
           fail("expected .detailAlarmAcknowledgement, got \(payload)")

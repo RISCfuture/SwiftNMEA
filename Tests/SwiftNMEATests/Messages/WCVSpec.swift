@@ -23,7 +23,7 @@ final class WCVSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .waypointClosure(let closure, let identifier, let mode) = payload else {
+        guard case let .waypointClosure(closure, identifier, mode) = payload else {
           fail("expected .waypointClosure, got \(payload)")
           return
         }

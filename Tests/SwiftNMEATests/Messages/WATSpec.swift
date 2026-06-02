@@ -29,16 +29,16 @@ final class WATSpec: AsyncSpec {
           return
         }
         guard
-          case .waterLevel(
-            let messageType,
-            let actualTime,
-            let systemType,
-            let location1,
-            let location2,
-            let number,
-            let alarmCondition,
-            let isOverriden,
-            let description
+          case let .waterLevel(
+            messageType,
+            actualTime,
+            systemType,
+            location1,
+            location2,
+            number,
+            alarmCondition,
+            isOverriden,
+            description
           ) = payload
         else {
           fail("expected .waterLevel, got \(payload)")

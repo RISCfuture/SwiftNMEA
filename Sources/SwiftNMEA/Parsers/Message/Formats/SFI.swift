@@ -49,7 +49,8 @@ class SFIParser: MessageFormat {
   }
 
   func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) -> [any Element] {
-    if !includeIncomplete { return [] }  // complete messages are flushed upon receipt of the last message
+    // complete messages are flushed upon receipt of the last message
+    if !includeIncomplete { return [] }
 
     let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
     return flushed.compactMap { recipient, element in

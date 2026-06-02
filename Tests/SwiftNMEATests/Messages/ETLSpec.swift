@@ -28,13 +28,13 @@ final class ETLSpec: AsyncSpec {
           return
         }
         guard
-          case .engineTelegraph(
-            let actualTime,
-            let type,
-            let position,
-            let subPosition,
-            let location,
-            let number
+          case let .engineTelegraph(
+            actualTime,
+            type,
+            position,
+            subPosition,
+            location,
+            number
           ) =
             payload
         else {

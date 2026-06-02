@@ -72,7 +72,7 @@ final class DSESpec: AsyncSpec {
             fail("expected Message, got \(messages[5])")
             return
           }
-          guard case .DSE(let type, let MMSI, let data) = payload2 else {
+          guard case let .DSE(type, MMSI, data) = payload2 else {
             fail("expected .DSE, got \(payload2)")
             return
           }
@@ -83,11 +83,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 0 (enhancedPositionResolution)
 
-          guard case .enhancedPositionResolution(let content) = data[0] else {
+          guard case let .enhancedPositionResolution(content) = data[0] else {
             fail("expected .enhancedPositionResolution, got \(data[0])")
             return
           }
-          guard case .data(let enhancement) = content else {
+          guard case let .data(enhancement) = content else {
             fail("expected .data, got \(content)")
             return
           }
@@ -98,11 +98,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 1 (positionSourceDatum)
 
-          guard case .positionSourceDatum(let content) = data[1] else {
+          guard case let .positionSourceDatum(content) = data[1] else {
             fail("expected .positionSourceDatum, got \(data[1])")
             return
           }
-          guard case .data(let sourceDatum) = content else {
+          guard case let .data(sourceDatum) = content else {
             fail("expected .data, got \(content)")
             return
           }
@@ -112,7 +112,7 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 2 (speed noDataAvailable)
 
-          guard case .speed(let content) = data[2] else {
+          guard case let .speed(content) = data[2] else {
             fail("expected .speed, got \(data[2])")
             return
           }
@@ -120,11 +120,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 3 (speed)
 
-          guard case .speed(let content) = data[3] else {
+          guard case let .speed(content) = data[3] else {
             fail("expected .speed, got \(data[3])")
             return
           }
-          guard case .data(let speed) = content else {
+          guard case let .data(speed) = content else {
             fail("expected .data, got \(content)")
             return
           }
@@ -132,11 +132,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 4 (course)
 
-          guard case .course(let content) = data[4] else {
+          guard case let .course(content) = data[4] else {
             fail("expected .course, got \(data[4])")
             return
           }
-          guard case .data(let course) = content else {
+          guard case let .data(course) = content else {
             fail("expected .data, got \(content)")
             return
           }
@@ -144,11 +144,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 5 (additional ID)
 
-          guard case .additionalID(let content) = data[5] else {
+          guard case let .additionalID(content) = data[5] else {
             fail("expected .additionalID, git \(data[5])")
             return
           }
-          guard case .data(let ID) = content else {
+          guard case let .data(ID) = content else {
             fail("expected .data, got \(content)")
             return
           }
@@ -156,11 +156,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 6 (geo area)
 
-          guard case .enhnancedGeoArea(let content) = data[6] else {
+          guard case let .enhnancedGeoArea(content) = data[6] else {
             fail("expected .enhnancedGeoArea, git \(data[6])")
             return
           }
-          guard case .data(let enhancement) = content else {
+          guard case let .data(enhancement) = content else {
             fail("expected .data, got \(content)")
             return
           }
@@ -179,11 +179,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 7 (souls onboard)
 
-          guard case .personsOnboard(let content) = data[7] else {
+          guard case let .personsOnboard(content) = data[7] else {
             fail("expected .personsOnboard, got \(data[7])")
             return
           }
-          guard case .data(let souls) = content else {
+          guard case let .data(souls) = content else {
             fail("expected .data, got \(content)")
             return
           }
@@ -191,7 +191,7 @@ final class DSESpec: AsyncSpec {
 
           // MARK: - Message 2
 
-          guard case .DSE(let type, let MMSI, let data) = payload1 else {
+          guard case let .DSE(type, MMSI, data) = payload1 else {
             fail("expected .DSE, got \(payload1)")
             return
           }
@@ -201,7 +201,7 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 0
 
-          guard case .enhancedPositionResolution(let content) = data[0] else {
+          guard case let .enhancedPositionResolution(content) = data[0] else {
             fail("expected .enhancedPositionResolution, got \(data[0])")
             return
           }
@@ -209,7 +209,7 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 1
 
-          guard case .enhnancedGeoArea(let content) = data[1] else {
+          guard case let .enhnancedGeoArea(content) = data[1] else {
             fail("expected .enhancedPositionResolution, got \(data[1])")
             return
           }
@@ -302,7 +302,7 @@ final class DSESpec: AsyncSpec {
             fail("expected Message, got \(messages[1])")
             return
           }
-          guard case .DSE(let type, let MMSI, let data) = message.payload else {
+          guard case let .DSE(type, MMSI, data) = message.payload else {
             fail("expected .DSE, got \(message)")
             return
           }
@@ -311,11 +311,11 @@ final class DSESpec: AsyncSpec {
           expect(MMSI).to(equal(360_123_456))
 
           expect(data).to(haveCount(1))
-          guard case .enhancedPositionResolution(let value) = data[0] else {
+          guard case let .enhancedPositionResolution(value) = data[0] else {
             fail("expected .enhancedPositionResolution, got \(data[0])")
             return
           }
-          guard case .data(let refinement) = value else {
+          guard case let .data(refinement) = value else {
             fail("expected .data, got \(value)")
             return
           }
@@ -367,7 +367,7 @@ final class DSESpec: AsyncSpec {
             fail("expected Message, got \(messages[0])")
             return
           }
-          guard case .DSE(let type, let MMSI, let data) = message.payload else {
+          guard case let .DSE(type, MMSI, data) = message.payload else {
             fail("expected .DSE, got \(message)")
             return
           }
@@ -378,11 +378,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 0 (enhancedPositionResolution)
 
-          guard case .enhancedPositionResolution(let content) = data[0] else {
+          guard case let .enhancedPositionResolution(content) = data[0] else {
             fail("expected .enhancedPositionResolution, got \(data[0])")
             return
           }
-          guard case .data(let enhancement) = content else {
+          guard case let .data(enhancement) = content else {
             fail("expected .data, got \(content)")
             return
           }
@@ -393,11 +393,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 1 (positionSourceDatum)
 
-          guard case .positionSourceDatum(let content) = data[1] else {
+          guard case let .positionSourceDatum(content) = data[1] else {
             fail("expected .positionSourceDatum, got \(data[1])")
             return
           }
-          guard case .data(let sourceDatum) = content else {
+          guard case let .data(sourceDatum) = content else {
             fail("expected .data, got \(content)")
             return
           }
@@ -407,7 +407,7 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 2 (speed noDataAvailable)
 
-          guard case .speed(let content) = data[2] else {
+          guard case let .speed(content) = data[2] else {
             fail("expected .speed, got \(data[2])")
             return
           }
@@ -415,11 +415,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 3 (speed)
 
-          guard case .speed(let content) = data[3] else {
+          guard case let .speed(content) = data[3] else {
             fail("expected .speed, got \(data[3])")
             return
           }
-          guard case .data(let speed) = content else {
+          guard case let .data(speed) = content else {
             fail("expected .data, got \(content)")
             return
           }
@@ -427,11 +427,11 @@ final class DSESpec: AsyncSpec {
 
           // MARK: data 4 (course)
 
-          guard case .course(let content) = data[4] else {
+          guard case let .course(content) = data[4] else {
             fail("expected .course, got \(data[4])")
             return
           }
-          guard case .data(let course) = content else {
+          guard case let .data(course) = content else {
             fail("expected .data, got \(content)")
             return
           }

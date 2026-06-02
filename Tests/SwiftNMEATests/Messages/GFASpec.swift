@@ -28,16 +28,16 @@ final class GFASpec: AsyncSpec {
           return
         }
         guard
-          case .GNSSAccuracyIntegrity(
-            let actualTime,
-            let HPL,
-            let VPL,
-            let semimajorStddev,
-            let semiminorStddev,
-            let semimajorErrorOrientation,
-            let altitudeStddev,
-            let selectedAccuracy,
-            let integrity
+          case let .GNSSAccuracyIntegrity(
+            actualTime,
+            HPL,
+            VPL,
+            semimajorStddev,
+            semiminorStddev,
+            semimajorErrorOrientation,
+            altitudeStddev,
+            selectedAccuracy,
+            integrity
           ) =
             payload
         else {

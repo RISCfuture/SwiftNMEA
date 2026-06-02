@@ -23,7 +23,7 @@ final class HDGSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .heading(let heading, let deviation, let variation) = payload else {
+        guard case let .heading(heading, deviation, variation) = payload else {
           fail("expected .heading, got \(payload)")
           return
         }

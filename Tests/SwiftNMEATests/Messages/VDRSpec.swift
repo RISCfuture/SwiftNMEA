@@ -23,7 +23,7 @@ final class VDRSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .currentSetDrift(let setTrue, let setMagnetic, let drift) = payload else {
+        guard case let .currentSetDrift(setTrue, setMagnetic, drift) = payload else {
           fail("expected .currentSetDrift, got \(payload)")
           return
         }

@@ -177,12 +177,12 @@ final class ABMSpec: AsyncSpec {
             return
           }
           guard
-            case .AISBinaryMessage(
-              let sequentialIdentifier,
-              let MMSI,
-              let channel,
-              let messageID,
-              let actualData
+            case let .AISBinaryMessage(
+              sequentialIdentifier,
+              MMSI,
+              channel,
+              messageID,
+              actualData
             ) =
               message.payload
           else {
@@ -226,12 +226,12 @@ final class ABMSpec: AsyncSpec {
             return
           }
           guard
-            case .AISBinaryMessage(
-              let sequentialIdentifier,
-              let MMSI,
-              let channel,
-              let messageID,
-              let actualData
+            case let .AISBinaryMessage(
+              sequentialIdentifier,
+              MMSI,
+              channel,
+              messageID,
+              actualData
             ) =
               message.payload
           else {

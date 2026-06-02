@@ -33,15 +33,15 @@ final class RMCSpec: AsyncSpec {
           return
         }
         guard
-          case .GNSSMinimumData(
-            let actualTime,
-            let isValid,
-            let position,
-            let speed,
-            let course,
-            let magneticVariation,
-            let mode,
-            let status
+          case let .GNSSMinimumData(
+            actualTime,
+            isValid,
+            position,
+            speed,
+            course,
+            magneticVariation,
+            mode,
+            status
           ) = payload
         else {
           fail("expected .GNSSMinimumData, got \(payload)")

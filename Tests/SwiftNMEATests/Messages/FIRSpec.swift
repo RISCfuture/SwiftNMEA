@@ -29,16 +29,16 @@ final class FIRSpec: AsyncSpec {
           return
         }
         guard
-          case .fireDetection(
-            let type,
-            let actualTime,
-            let detector,
-            let zone,
-            let loop,
-            let number,
-            let condition,
-            let isAcknowledged,
-            let description
+          case let .fireDetection(
+            type,
+            actualTime,
+            detector,
+            zone,
+            loop,
+            number,
+            condition,
+            isAcknowledged,
+            description
           ) = payload
         else {
           fail("expected .fireDetection, got \(payload)")

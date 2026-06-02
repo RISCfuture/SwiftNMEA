@@ -4,7 +4,7 @@ public struct Heading {
 
   /**
    Heading sensor modes.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/trueHeadingMode(_:mode:)``
    */
   public enum Mode: Character, Sendable, Codable, Equatable {

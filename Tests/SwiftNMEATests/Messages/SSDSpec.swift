@@ -28,15 +28,15 @@ final class SSDSpec: AsyncSpec {
           return
         }
         guard
-          case .AISShipStaticData(
-            let callsign,
-            let name,
-            let pointA,
-            let pointB,
-            let pointC,
-            let pointD,
-            let DTEAvailable,
-            let source
+          case let .AISShipStaticData(
+            callsign,
+            name,
+            pointA,
+            pointB,
+            pointC,
+            pointD,
+            DTEAvailable,
+            source
           ) = payload
         else {
           fail("expected .AISShipStaticData, got \(payload)")

@@ -27,7 +27,7 @@ final class WNCSpec: AsyncSpec {
           return
         }
         guard
-          case .distanceWaypointToWaypoint(let distanceNM, let distanceKM, let to, let from) =
+          case let .distanceWaypointToWaypoint(distanceNM, distanceKM, to, from) =
             payload
         else {
           fail("expected .distanceWaypointToWaypoint, got \(payload)")

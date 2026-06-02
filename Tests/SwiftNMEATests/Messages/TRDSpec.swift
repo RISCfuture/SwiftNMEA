@@ -23,7 +23,7 @@ final class TRDSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .thrusterResponse(let number, let RPM, let pitch, let azimuth) = payload else {
+        guard case let .thrusterResponse(number, RPM, pitch, azimuth) = payload else {
           fail("expected .thrusterResponse, got \(payload)")
           return
         }

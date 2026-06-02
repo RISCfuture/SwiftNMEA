@@ -20,7 +20,7 @@ final class TUTSpec: AsyncSpec {
             return
           }
           guard
-            case .multiLanguageText(let source, let text, let data, let translationCode) = payload
+            case let .multiLanguageText(source, text, data, translationCode) = payload
           else {
             fail("expected .multiLanguageText, got \(payload)")
             return
@@ -44,7 +44,7 @@ final class TUTSpec: AsyncSpec {
             fail("expected Message, got \(messages[1])")
             return
           }
-          guard case .multiLanguageText(let source, let text, _, let translationCode) = payload
+          guard case let .multiLanguageText(source, text, _, translationCode) = payload
           else {
             fail("expected .multiLanguageText, got \(payload)")
             return
@@ -66,7 +66,7 @@ final class TUTSpec: AsyncSpec {
             fail("expected Message, got \(messages[1])")
             return
           }
-          guard case .multiLanguageText(let source, let text, _, let translationCode) = payload
+          guard case let .multiLanguageText(source, text, _, translationCode) = payload
           else {
             fail("expected .multiLanguageText, got \(payload)")
             return
@@ -160,7 +160,7 @@ final class TUTSpec: AsyncSpec {
             return
           }
           guard
-            case .multiLanguageText(let source, let text, _, let translationCode) = message.payload
+            case let .multiLanguageText(source, text, _, translationCode) = message.payload
           else {
             fail("expected .multiLanguageText, got \(message)")
             return

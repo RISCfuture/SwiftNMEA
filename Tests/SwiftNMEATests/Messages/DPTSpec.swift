@@ -23,7 +23,7 @@ final class DPTSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .depth(let depth, let offset, let maxRange) = payload else {
+        guard case let .depth(depth, offset, maxRange) = payload else {
           fail("expected .depth, got \(payload)")
           return
         }

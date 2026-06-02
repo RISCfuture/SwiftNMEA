@@ -64,28 +64,25 @@ final class LRFSpec: AsyncSpec {
             return
           }
           guard
-            case .AISLongRangeReply(
-              let requestorMMSI,
-              let requestorName,
-              let replyStatuses,
-              let actualFixTime,
-              let
-                shipName,
-              let shipCallsign,
-              let shipIMO,
-              let position,
-              let course,
-              let
-                speed,
-              let destination,
-              let actualETA,
-              let shipType,
-              let shipType2,
-              let length,
-              let
-                breadth,
-              let draught,
-              let soulsOnboard
+            case let .AISLongRangeReply(
+              requestorMMSI,
+              requestorName,
+              replyStatuses,
+              actualFixTime,
+              shipName,
+              shipCallsign,
+              shipIMO,
+              position,
+              course,
+              speed,
+              destination,
+              actualETA,
+              shipType,
+              shipType2,
+              length,
+              breadth,
+              draught,
+              soulsOnboard
             ) = payload
           else {
             fail("expected .AISLongRangeReply, got \(payload)")
@@ -280,28 +277,25 @@ final class LRFSpec: AsyncSpec {
             return
           }
           guard
-            case .AISLongRangeReply(
-              let requestorMMSI,
-              let requestorName,
-              let replyStatuses,
-              let actualFixTime,
-              let
-                shipName,
-              let shipCallsign,
-              let shipIMO,
-              let position,
-              let course,
-              let
-                speed,
-              let destination,
-              let actualETA,
-              let shipType,
-              let shipType2,
-              let length,
-              let
-                breadth,
-              let draught,
-              let soulsOnboard
+            case let .AISLongRangeReply(
+              requestorMMSI,
+              requestorName,
+              replyStatuses,
+              actualFixTime,
+              shipName,
+              shipCallsign,
+              shipIMO,
+              position,
+              course,
+              speed,
+              destination,
+              actualETA,
+              shipType,
+              shipType2,
+              length,
+              breadth,
+              draught,
+              soulsOnboard
             ) = message.payload
           else {
             fail("expected .AISLongRangeReply, got \(message)")

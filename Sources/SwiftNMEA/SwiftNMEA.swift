@@ -34,7 +34,7 @@ public class SwiftNMEA {
 
   /**
    Creates a new parser with the given filter settings.
-  
+
    - Parameter typeFilter: See ``typeFilter``
    - Parameter talkerFilter: See ``talkerFilter``
    - Parameter formatFilter: See ``formatFilter``
@@ -52,20 +52,20 @@ public class SwiftNMEA {
   /**
    Buffers data and returns any detected NMEA sentences and messages in the
    data stream.
-  
+
    This method is intended to be used with a stream of data that can be
    received intermittently. It should be called any time new data is received.
    Each time new data is received, completed sentences (delimited by `\r\n`
    characters) are extracted from the data stream, parsed, and returned as
    ``Sentence`` records. If one or more Sentences can be parsed into a
    ``Message``, that Message instance is also returned.
-  
+
    Sentences can be of type ``ParametricSentence``, ``Query``, or
    ``ProprietarySentence``. ParametricSentences will also be parsed into
    Messages. Some messages are parsed from multiple sentences. In this case,
    the consolidated message will not be returned until the last sentence has
    been parsed.
-  
+
    Some messages are "open-ended", in other words, they are constructed from
    multiple sentences, but without any indication of which sentence is the
    last. The only way to receive this messages is to call
@@ -74,7 +74,7 @@ public class SwiftNMEA {
    that point. Typically these sentence groups are transmitted contiguously,
    so you could, for example, call `flush` after a period of time has elapsed
    with no new sentences from that talker.
-  
+
    - Parameter data: The data stream to parse.
    - Parameter ignoreChecksums: If `true`, does not abort parsing if checksum
    validation fails.
@@ -92,11 +92,11 @@ public class SwiftNMEA {
   /**
    Returns any multi-sentence ``Message``s that have not yet been flushed from
    their buffers.
-  
+
    Some messages are constructed from multiple sentences. These messages are
    buffered and not returned by ``parse(data:ignoreChecksums:)`` until the
    last sentence has been parsed.
-  
+
    Some messages are "open-ended", in other words, they are constructed from
    multiple ``ParametricSentence``s, but without any indication of which
    sentence is the last. The only way to receive this messages is to call this
@@ -105,14 +105,14 @@ public class SwiftNMEA {
    at that point. Typically these sentence groups are transmitted
    contiguously, so you could, for example, call this method after a period of
    time has elapsed with no new sentences from that talker.
-  
+
    By default, all known-completed messages are returned and removed from the
    buffer. You have the option of limiting the flush to only messages from a
    particular talker and format. You also have the option of including
    incomplete messages. This is the only way to receive open-ended messages.
    It's also a way of retrieving what useful data is available from an
    incomplete transmission.
-  
+
    - Parameter talker: Only flush messages from this talker.
    - Parameter format: Only flush messages with this format.
    - Parameter includeIncomplete: Include both incomplete and open-ended

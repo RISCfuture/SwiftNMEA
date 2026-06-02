@@ -29,15 +29,15 @@ final class GBSSpec: AsyncSpec {
           return
         }
         guard
-          case .GNSSFaultDetection(
-            let actualTime,
-            let latitudeError,
-            let longitudeError,
-            let altitudeError,
-            let failedSatellite,
-            let missProbability,
-            let biasEstimate,
-            let biasEstimateStddev
+          case let .GNSSFaultDetection(
+            actualTime,
+            latitudeError,
+            longitudeError,
+            altitudeError,
+            failedSatellite,
+            missProbability,
+            biasEstimate,
+            biasEstimateStddev
           ) =
             payload
         else {
@@ -52,7 +52,7 @@ final class GBSSpec: AsyncSpec {
 
         expect(failedSatellite.PRN).to(equal(122))
         expect(failedSatellite.isAugmented).to(beTrue())
-        guard case .GPS(let id, let signal) = failedSatellite else {
+        guard case let .GPS(id, signal) = failedSatellite else {
           fail("expected .GPS, got \(failedSatellite)")
           return
         }

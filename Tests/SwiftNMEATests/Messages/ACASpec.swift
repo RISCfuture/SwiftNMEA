@@ -28,32 +28,20 @@ final class ACASpec: AsyncSpec {
           return
         }
         guard
-          case .AISChannelAssignment(
-            let sequenceNumber,
-            let
-              northeastCorner,
-            let
-              southwestCorner,
-            let
-              transitionZoneSize,
-            let
-              channelA,
-            let
-              channelABandwidth,
-            let
-              channelB,
-            let
-              channelBBandwidth,
-            let
-              txRxMode,
-            let
-              powerLevel,
-            let
-              source,
-            let
-              inUse,
-            let
-              inUseChangedActual
+          case let .AISChannelAssignment(
+            sequenceNumber,
+            northeastCorner,
+            southwestCorner,
+            transitionZoneSize,
+            channelA,
+            channelABandwidth,
+            channelB,
+            channelBBandwidth,
+            txRxMode,
+            powerLevel,
+            source,
+            inUse,
+            inUseChangedActual
           ) = payload
         else {
           fail("expected .AISChannelAssignment, got \(payload)")

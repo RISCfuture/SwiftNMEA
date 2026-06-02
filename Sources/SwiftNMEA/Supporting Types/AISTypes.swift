@@ -6,7 +6,7 @@ public struct AIS {
 
   /**
    Acknowledgements provided for `ABK` messages.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISBroadcastAcknowledgement(MMSI:channel:messageID:sequence:type:)``
    */
   public enum AcknowledgementType: Int, Sendable, Codable, Equatable {
@@ -36,7 +36,7 @@ public struct AIS {
 
   /**
    The AIS channel that is to be used for a broadcast.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISBinaryMessage(sequentialIdentifier:MMSI:channel:messageID:data:)``
    - SeeAlso: ``Message/Payload-swift.enum/broadcastMessage(sequence:AISChannel:MMSI:messageID:messageIndex:broadcastBehavior:destinationMMSI:binaryStructure:sentenceType:data:)``
    */
@@ -57,7 +57,7 @@ public struct AIS {
 
   /**
    Possible values for channel bandwidths in `ACA` messages.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISChannelAssignment(sequenceNumber:northeastCorner:southwestCorner:transitionZoneSize:channelA:channelABandwidth:channelB:channelBBandwidth:txRxMode:powerLevel:source:inUse:inUseChanged:)``
    */
   public enum ChannelBandwidth: Int, Sendable, Codable, Equatable {
@@ -71,7 +71,7 @@ public struct AIS {
 
   /**
    Possible values for Tx/Rx mode control in `ACA` messages.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISChannelAssignment(sequenceNumber:northeastCorner:southwestCorner:transitionZoneSize:channelA:channelABandwidth:channelB:channelBBandwidth:txRxMode:powerLevel:source:inUse:inUseChanged:)``
    */
   public enum TransmitReceiveMode: Int, Sendable, Codable, Equatable {
@@ -97,7 +97,7 @@ public struct AIS {
 
   /**
    Possible values for power levels in `ACA` messages.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISChannelAssignment(sequenceNumber:northeastCorner:southwestCorner:transitionZoneSize:channelA:channelABandwidth:channelB:channelBBandwidth:txRxMode:powerLevel:source:inUse:inUseChanged:)``
    */
   public enum PowerLevel: Int, Sendable, Codable, Equatable {
@@ -111,7 +111,7 @@ public struct AIS {
 
   /**
    Possible values for information source in `ACA` messages.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISChannelAssignment(sequenceNumber:northeastCorner:southwestCorner:transitionZoneSize:channelA:channelABandwidth:channelB:channelBBandwidth:txRxMode:powerLevel:source:inUse:inUseChanged:)``
    */
   public enum InformationSource: Character, Sendable, Codable, Equatable {
@@ -135,7 +135,7 @@ public struct AIS {
 
   /**
    An ITU-R M.1371 message and subsection requested as part of an `AIR` sentence.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISInterrogationRequest(station1:station1Request1:station1Request2:station2:station2Request:channel:)``
    */
   public struct MessageRequest: Sendable, Codable, Equatable {
@@ -192,7 +192,7 @@ public struct AIS {
 
   /**
    A channel of interrogation for an AIS interrogation request.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISInterrogationRequest(station1:station1Request1:station1Request2:station2:station2Request:channel:)``
    - SeeAlso: ``Message/Payload-swift.enum/AISBroadcastAcknowledgement(MMSI:channel:messageID:sequence:type:)``
    */
@@ -292,7 +292,7 @@ public struct AIS {
 
   /**
    Broadcast behaviors for binary messages.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/broadcastMessage(sequence:AISChannel:MMSI:messageID:messageIndex:broadcastBehavior:destinationMMSI:binaryStructure:sentenceType:data:)``
    */
   public enum BroadcastBehavior: Int, Sendable, Codable, Equatable {
@@ -309,7 +309,7 @@ public struct AIS {
 
   /**
    Binary data types.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/broadcastMessage(sequence:AISChannel:MMSI:messageID:messageIndex:broadcastBehavior:destinationMMSI:binaryStructure:sentenceType:data:)``
    */
   public enum BinaryDataStructure: Int, Sendable, Codable, Equatable {
@@ -324,7 +324,7 @@ public struct AIS {
 
   /**
    AIS ship data (name, callsign) that can either be available or unavailable.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISShipStaticData(callsign:name:pointA:pointB:pointC:pointD:DTEAvailable:source:)``
    */
   public enum Availability<RawValue> {
@@ -363,7 +363,7 @@ public struct AIS {
 
   /**
    Navigational statuses, from ITU-R M.1371, Message 1.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISVoyageData(shipType:maxDraft:soulsOnboard:destination:destinationETA:navStatus:regionalFlags:)``
    */
   public enum NavigationalStatus: Int, Sendable, Codable, Equatable {
@@ -408,20 +408,20 @@ public struct AIS {
   /**
    A set of date components (``month``, ``day``, ``hour``, and ``minute``)
    along with their availability flags.
-  
+
    AIS data is typically in one of three states: available, unavailable, or
    unchanged. This is normally represented by the ``Availability`` enum, with
    `nil` representing unchanged data. For ETA information, any one of the date
    components (``month``, ``day``, ``hour``, or ``minute``) may be available,
    unavailable, or unchanged, with different availabilities for different
    parts of the date.
-  
+
    The ``components`` field represents the `DateComponents` object built from
    the availability fields. Only the `month`, `day`, `hour`, and `minute`
    fields of ``components`` will be specified; all others will be `nil`. If
    one of the `month`, `day`, `hour`, or `minute` fields is `nil`, that means
    that data is unchanged or unavailable.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISVoyageData(shipType:maxDraft:soulsOnboard:destination:destinationETA:navStatus:regionalFlags:)``
    */
   public struct DateAvailability: Sendable, Codable, Equatable {

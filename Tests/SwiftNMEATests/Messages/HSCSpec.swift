@@ -24,7 +24,7 @@ final class HSCSpec: AsyncSpec {
           return
         }
         guard
-          case .headingSteeringCommand(let headingTrue, let headingMagnetic, let status) = payload
+          case let .headingSteeringCommand(headingTrue, headingMagnetic, status) = payload
         else {
           fail("expected .headingSteeringCommand, got \(payload)")
           return

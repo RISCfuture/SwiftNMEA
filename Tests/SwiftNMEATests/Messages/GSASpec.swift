@@ -29,7 +29,7 @@ final class GSASpec: AsyncSpec {
           return
         }
         guard
-          case .GNSS_DOP(let PDOP, let HDOP, let VDOP, let auto3D, let solution, let ids) = payload
+          case let .GNSS_DOP(PDOP, HDOP, VDOP, auto3D, solution, ids) = payload
         else {
           fail("expected .GNSS_DOP, got \(payload)")
           return
@@ -63,7 +63,7 @@ final class GSASpec: AsyncSpec {
           return
         }
         guard
-          case .GNSS_DOP(let PDOP, let HDOP, let VDOP, let auto3D, let solution, let ids) = payload
+          case let .GNSS_DOP(PDOP, HDOP, VDOP, auto3D, solution, ids) = payload
         else {
           fail("expected .GNSS_DOP, got \(payload)")
           return

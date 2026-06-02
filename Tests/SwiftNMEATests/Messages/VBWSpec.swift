@@ -30,15 +30,15 @@ final class VBWSpec: AsyncSpec {
         }
 
         guard
-          case .speedData(
-            let water,
-            let waterValid,
-            let ground,
-            let groundValid,
-            let sternTransverseWater,
-            let sternTransverseWaterValid,
-            let sternTransverseGround,
-            let sternTransverseGroundValid
+          case let .speedData(
+            water,
+            waterValid,
+            ground,
+            groundValid,
+            sternTransverseWater,
+            sternTransverseWaterValid,
+            sternTransverseGround,
+            sternTransverseGroundValid
           ) = payload
         else {
           fail("expected .speedData, got \(payload)")

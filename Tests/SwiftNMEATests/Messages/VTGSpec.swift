@@ -28,12 +28,12 @@ final class VTGSpec: AsyncSpec {
           return
         }
         guard
-          case .groundSpeedCourse(
-            let courseTrue,
-            let courseMagnetic,
-            let speedKnots,
-            let speedKph,
-            let mode
+          case let .groundSpeedCourse(
+            courseTrue,
+            courseMagnetic,
+            speedKnots,
+            speedKph,
+            mode
           ) = payload
         else {
           fail("expected .groundSpeedCourse, got \(payload)")

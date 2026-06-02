@@ -19,7 +19,7 @@ final class FSISpec: AsyncSpec {
           return
         }
         guard
-          case .frequencySetInfo(let transmit, let receive, let mode, let powerLevel, let type) =
+          case let .frequencySetInfo(transmit, receive, mode, powerLevel, type) =
             message.payload
         else {
           fail("expected .frequencySetInfo, got \(message)")
@@ -45,7 +45,7 @@ final class FSISpec: AsyncSpec {
           return
         }
         guard
-          case .frequencySetInfo(let transmit, let receive, let mode, let powerLevel, let type) =
+          case let .frequencySetInfo(transmit, receive, mode, powerLevel, type) =
             message.payload
         else {
           fail("expected .frequencySetInfo, got \(message)")
@@ -71,7 +71,7 @@ final class FSISpec: AsyncSpec {
           return
         }
         guard
-          case .frequencySetInfo(let transmit, let receive, let mode, let powerLevel, let type) =
+          case let .frequencySetInfo(transmit, receive, mode, powerLevel, type) =
             message.payload
         else {
           fail("expected .frequencySetInfo, got \(message)")
@@ -97,7 +97,7 @@ final class FSISpec: AsyncSpec {
           return
         }
         guard
-          case .frequencySetInfo(let transmit, let receive, let mode, let powerLevel, let type) =
+          case let .frequencySetInfo(transmit, receive, mode, powerLevel, type) =
             message.payload
         else {
           fail("expected .frequencySetInfo, got \(message)")
@@ -123,7 +123,7 @@ final class FSISpec: AsyncSpec {
           return
         }
         guard
-          case .frequencySetInfo(let transmit, let receive, let mode, let powerLevel, let type) =
+          case let .frequencySetInfo(transmit, receive, mode, powerLevel, type) =
             message.payload
         else {
           fail("expected .frequencySetInfo, got \(message)")
@@ -149,7 +149,7 @@ final class FSISpec: AsyncSpec {
           return
         }
         guard
-          case .frequencySetInfo(let transmit, let receive, let mode, let powerLevel, let type) =
+          case let .frequencySetInfo(transmit, receive, mode, powerLevel, type) =
             message.payload
         else {
           fail("expected .frequencySetInfo, got \(message)")
@@ -175,7 +175,7 @@ final class FSISpec: AsyncSpec {
           return
         }
         guard
-          case .frequencySetInfo(let transmit, let receive, let mode, let powerLevel, let type) =
+          case let .frequencySetInfo(transmit, receive, mode, powerLevel, type) =
             message.payload
         else {
           fail("expected .frequencySetInfo, got \(message)")
@@ -201,7 +201,7 @@ final class FSISpec: AsyncSpec {
           return
         }
         guard
-          case .frequencySetInfo(let transmit, let receive, let mode, let powerLevel, let type) =
+          case let .frequencySetInfo(transmit, receive, mode, powerLevel, type) =
             message.payload
         else {
           fail("expected .frequencySetInfo, got \(message)")
@@ -227,7 +227,7 @@ final class FSISpec: AsyncSpec {
           return
         }
         guard
-          case .frequencySetInfo(let transmit, let receive, let mode, let powerLevel, let type) =
+          case let .frequencySetInfo(transmit, receive, mode, powerLevel, type) =
             message.payload
         else {
           fail("expected .frequencySetInfo, got \(message)")

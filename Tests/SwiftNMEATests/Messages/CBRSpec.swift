@@ -30,14 +30,14 @@ final class CBRSpec: AsyncSpec {
           return
         }
         guard
-          case .navaidMessageBroadcastRates(
-            let MMSI,
-            let message,
-            let index,
-            let channelA,
-            let scheduleType,
-            let channelB,
-            let type
+          case let .navaidMessageBroadcastRates(
+            MMSI,
+            message,
+            index,
+            channelA,
+            scheduleType,
+            channelB,
+            type
           ) = payload
         else {
           fail("expected .navaidMessageBroadcastRates, got \(payload)")
@@ -48,7 +48,7 @@ final class CBRSpec: AsyncSpec {
         expect(message).to(equal(.chain))
         expect(index).to(equal(0))
 
-        guard case .start(let start, let slot, let interval) = channelA else {
+        guard case let .start(start, slot, interval) = channelA else {
           fail("expected .start, got \(channelA)")
           return
         }

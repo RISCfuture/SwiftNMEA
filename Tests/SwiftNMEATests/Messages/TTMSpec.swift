@@ -30,19 +30,19 @@ final class TTMSpec: AsyncSpec {
           return
         }
         guard
-          case .trackedTarget(
-            let number,
-            let distance,
-            let bearing,
-            let speed,
-            let course,
-            let CPADistance,
-            let CPATime,
-            let name,
-            let status,
-            let isReference,
-            let actualTime,
-            let acquisition
+          case let .trackedTarget(
+            number,
+            distance,
+            bearing,
+            speed,
+            course,
+            CPADistance,
+            CPATime,
+            name,
+            status,
+            isReference,
+            actualTime,
+            acquisition
           ) =
             payload
         else {

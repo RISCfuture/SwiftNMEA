@@ -11,7 +11,7 @@ public struct Bearing: Sendable, Codable, Equatable, Hashable {
 
   /**
    Creates a Bearing wiith an angle and reference.
-  
+
    - Parameter angle: The bearing angle from the reference.
    - Parameter reference: The 0° reference.
    */
@@ -22,7 +22,7 @@ public struct Bearing: Sendable, Codable, Equatable, Hashable {
 
   /**
    Creates a Bearing wiith an angle (in degrees) and reference.
-  
+
    - Parameter degrees: The bearing angle (in degrees) from the reference.
    - Parameter reference: The 0° reference.
    */
@@ -36,7 +36,7 @@ public struct Bearing: Sendable, Codable, Equatable, Hashable {
   /**
    Converts this bearing from magnetic to true. Returns `nil` if
    ``reference-swift.property`` is ``Reference-swift.enum/relative``.
-  
+
    - Parameter variation: Magnetic variation (negative is east).
    - Returns: The true bearing, or `self` if ``reference-swift.property`` is
      already ``Reference-swift.enum/true``.
@@ -52,7 +52,7 @@ public struct Bearing: Sendable, Codable, Equatable, Hashable {
   /**
    Converts this bearing from true to magnetic. Returns `nil` if
    ``reference-swift.property`` is ``Reference-swift.enum/relative``.
-  
+
    - Parameter variation: Magnetic variation (negative is east).
    - Returns: The magnetic bearing, or `self` if ``reference-swift.property``
      is already ``Reference-swift.enum/magnetic``.

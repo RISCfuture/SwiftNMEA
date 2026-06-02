@@ -29,14 +29,14 @@ final class POSSpec: AsyncSpec {
           return
         }
         guard
-          case .positionDimensions(
-            let equipment,
-            let equipmentNumber,
-            let positionValid,
-            let position,
-            let dimensionsValid,
-            let dimensions,
-            let status
+          case let .positionDimensions(
+            equipment,
+            equipmentNumber,
+            positionValid,
+            position,
+            dimensionsValid,
+            dimensions,
+            status
           ) = payload
         else {
           fail("expected .positionDimensions, got \(payload)")

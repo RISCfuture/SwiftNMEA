@@ -18,12 +18,12 @@ final class NRMSpec: AsyncSpec {
           return
         }
         guard
-          case .NAVTEXReceiverMask(
-            let function,
-            let frequency,
-            let coverageAreaMask,
-            let messageTypeMask,
-            let status
+          case let .NAVTEXReceiverMask(
+            function,
+            frequency,
+            coverageAreaMask,
+            messageTypeMask,
+            status
           ) =
             payload
         else {
@@ -59,12 +59,12 @@ final class NRMSpec: AsyncSpec {
           return
         }
         guard
-          case .NAVTEXReceiverMask(
-            let function,
-            let frequency,
-            let coverageAreaMask,
-            let messageTypeMask,
-            let status
+          case let .NAVTEXReceiverMask(
+            function,
+            frequency,
+            coverageAreaMask,
+            messageTypeMask,
+            status
           ) =
             payload
         else {

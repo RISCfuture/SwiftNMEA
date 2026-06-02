@@ -29,15 +29,15 @@ final class OSDSpec: AsyncSpec {
           return
         }
         guard
-          case .ownshipData(
-            let heading,
-            let headingValid,
-            let course,
-            let courseReference,
-            let speed,
-            let speedReference,
-            let set,
-            let drift
+          case let .ownshipData(
+            heading,
+            headingValid,
+            course,
+            courseReference,
+            speed,
+            speedReference,
+            set,
+            drift
           ) = payload
         else {
           fail("expected .ownshipData, got \(payload)")

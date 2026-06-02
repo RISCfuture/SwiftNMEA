@@ -28,15 +28,15 @@ final class NRXSpec: AsyncSpec {
             return
           }
           guard
-            case .NAVTEXMessage(
-              let message,
-              let id,
-              let frequency,
-              let code,
-              let time,
-              let totalCharacters,
-              let badCharacters,
-              let isValid
+            case let .NAVTEXMessage(
+              message,
+              id,
+              frequency,
+              code,
+              time,
+              totalCharacters,
+              badCharacters,
+              isValid
             ) = payload
           else {
             fail("expected .NAVTEXMessage, got \(payload)")
@@ -170,15 +170,15 @@ final class NRXSpec: AsyncSpec {
             return
           }
           guard
-            case .NAVTEXMessage(
-              let message,
-              let id,
-              let frequency,
-              let code,
-              let time,
-              let totalCharacters,
-              let badCharacters,
-              let isValid
+            case let .NAVTEXMessage(
+              message,
+              id,
+              frequency,
+              code,
+              time,
+              totalCharacters,
+              badCharacters,
+              isValid
             ) = message.payload
           else {
             fail("expected .NAVTEXMessage, got \(message)")

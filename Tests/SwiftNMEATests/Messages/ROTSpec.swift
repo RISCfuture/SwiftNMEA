@@ -23,7 +23,7 @@ final class ROTSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .rateOfTurn(let rate, let isValid) = payload else {
+        guard case let .rateOfTurn(rate, isValid) = payload else {
           fail("expected .rateOfTurn, got \(payload)")
           return
         }

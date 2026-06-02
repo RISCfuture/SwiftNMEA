@@ -8,7 +8,7 @@ public struct NAVTEX {
   /**
    Possible function codes. The function code is used to further identify the
    purpose of the `NRM` sentence.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/NAVTEXReceiverMask(function:frequency:coverageAreaMask:messageTypeMask:status:)``
    */
   public enum FunctionCode: Int, Sendable, Codable, Equatable {
@@ -28,7 +28,7 @@ public struct NAVTEX {
 
   /**
    A frequency that a NAVTEX message was received on.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/NAVTEXReceiverMask(function:frequency:coverageAreaMask:messageTypeMask:status:)``
    - SeeAlso: ``Message/Payload-swift.enum/NAVTEXMessage(_:id:frequency:code:time:totalCharacters:badCharacters:isValid:)``
    */
@@ -56,7 +56,7 @@ public struct NAVTEX {
   /**
    A coverage area or message type mask, with boolean values in slots named
    `A` through `Z`.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/NAVTEXReceiverMask(function:frequency:coverageAreaMask:messageTypeMask:status:)``
    */
   public struct Mask: RawRepresentable, Sendable, Codable, Equatable {
@@ -75,7 +75,7 @@ public struct NAVTEX {
 
     /**
      Creates a mask from a hexadecimal string.
-    
+
      - Parameter rawValue: The hexadecimal string.
      */
     public init?(rawValue: String) {
@@ -90,7 +90,7 @@ public struct NAVTEX {
 
     /**
      Gets a mask element by its slot name.
-    
+
      - Parameter index: The named slot, `A` to `Z`.
      */
     public subscript(index: Character) -> Bool {
@@ -100,7 +100,7 @@ public struct NAVTEX {
 
     /**
      Gets a mask element by its index.
-    
+
      - Parameter index: The slot index, 0 through 25.
      */
     public subscript(index: Int) -> Bool {

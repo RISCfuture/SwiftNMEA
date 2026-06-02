@@ -58,7 +58,8 @@ class NRXParser: MessageFormat {
   }
 
   func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
-    if !includeIncomplete { return [] }  // complete messages are flushed upon receipt of the last message
+    // complete messages are flushed upon receipt of the last message
+    if !includeIncomplete { return [] }
 
     let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
     return try flushed.map { recipient, element in

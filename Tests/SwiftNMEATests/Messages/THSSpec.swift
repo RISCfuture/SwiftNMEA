@@ -23,7 +23,7 @@ final class THSSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .trueHeadingMode(let heading, let mode) = payload else {
+        guard case let .trueHeadingMode(heading, mode) = payload else {
           fail("expected .trueHeading, got \(payload)")
           return
         }

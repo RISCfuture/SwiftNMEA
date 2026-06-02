@@ -29,13 +29,13 @@ final class PRCSpec: AsyncSpec {
           return
         }
         guard
-          case .propulsionRemoteControl(
-            let leverDemandPosition,
-            let leverDemandValid,
-            let RPMDemand,
-            let pitchDemand,
-            let location,
-            let engineNumber
+          case let .propulsionRemoteControl(
+            leverDemandPosition,
+            leverDemandValid,
+            RPMDemand,
+            pitchDemand,
+            location,
+            engineNumber
           ) = payload
         else {
           fail("expected .propulsionRemoteControl, got \(payload)")

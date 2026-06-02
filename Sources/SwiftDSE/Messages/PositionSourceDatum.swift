@@ -73,7 +73,7 @@ public enum PositionSource: String, Sendable, Codable, Equatable {
   /**
    Datum for calculating position with the VTS area, as described in
    Rec. ITU-R M.821-1, table 5.
-  
+
    - SeeAlso: ``PositionSourceDatum``
    */
   public enum Datum: String, Sendable, Codable, Equatable {

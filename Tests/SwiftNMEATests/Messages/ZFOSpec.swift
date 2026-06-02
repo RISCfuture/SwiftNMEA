@@ -24,7 +24,7 @@ final class ZFOSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .timeFromOrigin(let observation, let elapsedTime, let originID) = payload else {
+        guard case let .timeFromOrigin(observation, elapsedTime, originID) = payload else {
           fail("expected .timeFromOrigin, got \(payload)")
           return
         }

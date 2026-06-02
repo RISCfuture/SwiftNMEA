@@ -175,11 +175,11 @@ final class BBMSpec: AsyncSpec {
             return
           }
           guard
-            case .AISBroadcastBinaryMessage(
-              let sequentialIdentifier,
-              let channel,
-              let messageID,
-              let actualData
+            case let .AISBroadcastBinaryMessage(
+              sequentialIdentifier,
+              channel,
+              messageID,
+              actualData
             ) = message
               .payload
           else {

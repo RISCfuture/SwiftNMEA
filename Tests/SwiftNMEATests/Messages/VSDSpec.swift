@@ -31,14 +31,14 @@ final class VSDSpec: AsyncSpec {
           return
         }
         guard
-          case .AISVoyageData(
-            let shipType,
-            let maxDraft,
-            let soulsOnboard,
-            let destination,
-            let destinationETA,
-            let navStatus,
-            let regionalFlags
+          case let .AISVoyageData(
+            shipType,
+            maxDraft,
+            soulsOnboard,
+            destination,
+            destinationETA,
+            navStatus,
+            regionalFlags
           ) = payload
         else {
           fail("expected .AISVoyageData, got \(payload)")
@@ -78,14 +78,14 @@ final class VSDSpec: AsyncSpec {
           return
         }
         guard
-          case .AISVoyageData(
-            let shipType,
-            let maxDraft,
-            let soulsOnboard,
-            let destination,
-            let destinationETA,
-            let navStatus,
-            let regionalFlags
+          case let .AISVoyageData(
+            shipType,
+            maxDraft,
+            soulsOnboard,
+            destination,
+            destinationETA,
+            navStatus,
+            regionalFlags
           ) = payload
         else {
           fail("expected .AISVoyageData, got \(payload)")

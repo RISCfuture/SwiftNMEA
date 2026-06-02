@@ -30,12 +30,12 @@ final class DTMSpec: AsyncSpec {
           return
         }
         guard
-          case .datumReference(
-            let localDatum,
-            let latitudeOffset,
-            let longitudeOffset,
-            let altitudeOffset,
-            let referenceDatum
+          case let .datumReference(
+            localDatum,
+            latitudeOffset,
+            longitudeOffset,
+            altitudeOffset,
+            referenceDatum
           ) = payload
         else {
           fail("expected .datumReference, got \(payload)")

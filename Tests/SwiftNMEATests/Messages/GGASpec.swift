@@ -32,15 +32,15 @@ final class GGASpec: AsyncSpec {
           return
         }
         guard
-          case .GPSFix(
-            let position,
-            let actualTime,
-            let quality,
-            let numSatellites,
-            let HDOP,
-            let geoidalSeparation,
-            let DGPSAge,
-            let DGPSReferenceStationID
+          case let .GPSFix(
+            position,
+            actualTime,
+            quality,
+            numSatellites,
+            HDOP,
+            geoidalSeparation,
+            DGPSAge,
+            DGPSReferenceStationID
           ) = payload
         else {
           fail("expected .GNSSAccuracyIntegrity, got \(payload)")
@@ -72,15 +72,15 @@ final class GGASpec: AsyncSpec {
           return
         }
         guard
-          case .GPSFix(
-            let position,
+          case let .GPSFix(
+            position,
             _,
-            let quality,
-            let numSatellites,
-            let HDOP,
-            let geoidalSeparation,
-            let DGPSAge,
-            let DGPSReferenceStationID
+            quality,
+            numSatellites,
+            HDOP,
+            geoidalSeparation,
+            DGPSAge,
+            DGPSReferenceStationID
           ) = payload
         else {
           fail("expected .GNSSAccuracyIntegrity, got \(payload)")

@@ -19,12 +19,12 @@ final class MSSSpec: AsyncSpec {
           return
         }
         guard
-          case .MSKReceiverSignalStatus(
-            let signalStrength,
-            let SNR,
-            let frequency,
-            let bitRate,
-            let channel
+          case let .MSKReceiverSignalStatus(
+            signalStrength,
+            SNR,
+            frequency,
+            bitRate,
+            channel
           ) = payload
         else {
           fail("expected .MSKReceiverSignalStatus, got \(payload)")

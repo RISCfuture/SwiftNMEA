@@ -538,7 +538,7 @@ public struct Fields: Sendable, Codable, Equatable {
   /**
    Returns the value for a field. Index #0 is the first field _after_ the
    ``address``.
-  
+
    - Parameter index: The field index.
    - Returns: The value at that index.
    */

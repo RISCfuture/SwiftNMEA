@@ -19,15 +19,15 @@ final class RMASpec: AsyncSpec {
           return
         }
         guard
-          case .LORANCMinimumData(
-            let isValid,
-            let position,
-            let timeDifferenceA,
-            let timeDifferenceB,
-            let speed,
-            let course,
-            let magneticVariation,
-            let mode
+          case let .LORANCMinimumData(
+            isValid,
+            position,
+            timeDifferenceA,
+            timeDifferenceB,
+            speed,
+            course,
+            magneticVariation,
+            mode
           ) = payload
         else {
           fail("expected .LORANCMinimumData, got \(payload)")
@@ -56,15 +56,15 @@ final class RMASpec: AsyncSpec {
           return
         }
         guard
-          case .LORANCMinimumData(
-            let isValid,
-            let position,
-            let timeDifferenceA,
-            let timeDifferenceB,
-            let speed,
-            let course,
-            let magneticVariation,
-            let mode
+          case let .LORANCMinimumData(
+            isValid,
+            position,
+            timeDifferenceA,
+            timeDifferenceB,
+            speed,
+            course,
+            magneticVariation,
+            mode
           ) = payload
         else {
           fail("expected .LORANCMinimumData, got \(payload)")
@@ -93,15 +93,15 @@ final class RMASpec: AsyncSpec {
           return
         }
         guard
-          case .LORANCMinimumData(
-            let isValid,
-            let position,
-            let timeDifferenceA,
-            let timeDifferenceB,
-            let speed,
-            let course,
-            let magneticVariation,
-            let mode
+          case let .LORANCMinimumData(
+            isValid,
+            position,
+            timeDifferenceA,
+            timeDifferenceB,
+            speed,
+            course,
+            magneticVariation,
+            mode
           ) = payload
         else {
           fail("expected .LORANCMinimumData, got \(payload)")
@@ -130,15 +130,15 @@ final class RMASpec: AsyncSpec {
           return
         }
         guard
-          case .LORANCMinimumData(
-            let isValid,
-            let position,
-            let timeDifferenceA,
-            let timeDifferenceB,
-            let speed,
-            let course,
-            let magneticVariation,
-            let mode
+          case let .LORANCMinimumData(
+            isValid,
+            position,
+            timeDifferenceA,
+            timeDifferenceB,
+            speed,
+            course,
+            magneticVariation,
+            mode
           ) = payload
         else {
           fail("expected .LORANCMinimumData, got \(payload)")
@@ -169,15 +169,15 @@ final class RMASpec: AsyncSpec {
           return
         }
         guard
-          case .LORANCMinimumData(
-            let isValid,
-            let position,
-            let timeDifferenceA,
-            let timeDifferenceB,
-            let speed,
-            let course,
-            let magneticVariation,
-            let mode
+          case let .LORANCMinimumData(
+            isValid,
+            position,
+            timeDifferenceA,
+            timeDifferenceB,
+            speed,
+            course,
+            magneticVariation,
+            mode
           ) = payload
         else {
           fail("expected .LORANCMinimumData, got \(payload)")
@@ -208,15 +208,15 @@ final class RMASpec: AsyncSpec {
           return
         }
         guard
-          case .LORANCMinimumData(
-            let isValid,
-            let position,
-            let timeDifferenceA,
-            let timeDifferenceB,
-            let speed,
-            let course,
-            let magneticVariation,
-            let mode
+          case let .LORANCMinimumData(
+            isValid,
+            position,
+            timeDifferenceA,
+            timeDifferenceB,
+            speed,
+            course,
+            magneticVariation,
+            mode
           ) = payload
         else {
           fail("expected .LORANCMinimumData, got \(payload)")

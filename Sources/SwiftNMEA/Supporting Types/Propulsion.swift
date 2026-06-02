@@ -7,7 +7,7 @@ public struct Propulsion {
 
   /**
    RPM demand or response values.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/propulsionRemoteControl(leverDemandPosition:leverDemandValid:RPMDemand:pitchDemand:location:engineNumber:)``
    - SeeAlso: ``Message/Payload-swift.enum/thrusterControl(number:RPM:pitch:azimuth:location:status:)``
    - SeeAlso: ``Message/Payload-swift.enum/thrusterResponse(number:RPM:pitch:azimuth:)``
@@ -26,7 +26,7 @@ public struct Propulsion {
 
   /**
    Propeller pitch demand or response values.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/propulsionRemoteControl(leverDemandPosition:leverDemandValid:RPMDemand:pitchDemand:location:engineNumber:)``
    - SeeAlso: ``Message/Payload-swift.enum/thrusterControl(number:RPM:pitch:azimuth:location:status:)``
    - SeeAlso: ``Message/Payload-swift.enum/thrusterResponse(number:RPM:pitch:azimuth:)``
@@ -45,7 +45,7 @@ public struct Propulsion {
 
   /**
    Possible engine control or telegraph locations.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/engineTelegraph(time:type:position:subPosition:location:number:)``
    - SeeAlso: ``Message/Payload-swift.enum/propulsionRemoteControl(leverDemandPosition:leverDemandValid:RPMDemand:pitchDemand:location:engineNumber:)``
    - SeeAlso: ``Message/Payload-swift.enum/thrusterControl(number:RPM:pitch:azimuth:location:status:)``
@@ -74,7 +74,7 @@ public struct Propulsion {
 
   /**
    Revolution rate or thrust data sources.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/revolutions(source:number:speed:pitch:isValid:)``
    */
   public enum ThrustSource: Character, Sendable, Codable, Equatable {

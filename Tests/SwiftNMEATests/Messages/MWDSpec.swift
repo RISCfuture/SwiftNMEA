@@ -27,11 +27,11 @@ final class MWDSpec: AsyncSpec {
           return
         }
         guard
-          case .windDirectionSpeed(
-            let directionTrue,
-            let directionMagnetic,
-            let speedKnots,
-            let speedMps
+          case let .windDirectionSpeed(
+            directionTrue,
+            directionMagnetic,
+            speedKnots,
+            speedMps
           ) = payload
         else {
           fail("expected .windDirectionSpeed, got \(payload)")

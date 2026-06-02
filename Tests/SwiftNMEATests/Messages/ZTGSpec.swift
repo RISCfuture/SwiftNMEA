@@ -24,7 +24,7 @@ final class ZTGSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .timeToDestination(let observation, let timeToGo, let destinationID) = payload
+        guard case let .timeToDestination(observation, timeToGo, destinationID) = payload
         else {
           fail("expected .timeToDestination, got \(payload)")
           return

@@ -31,17 +31,17 @@ final class RMBSpec: AsyncSpec {
           return
         }
         guard
-          case .destinationMinimumData(
-            let isValid,
-            let crossTrackError,
-            let originID,
-            let destinationID,
-            let destination,
-            let rangeToDestination,
-            let bearingToDestination,
-            let closingVelocity,
-            let isArrived,
-            let mode
+          case let .destinationMinimumData(
+            isValid,
+            crossTrackError,
+            originID,
+            destinationID,
+            destination,
+            rangeToDestination,
+            bearingToDestination,
+            closingVelocity,
+            isArrived,
+            mode
           ) = payload
         else {
           fail("expected .destinationMinimumData, got \(payload)")

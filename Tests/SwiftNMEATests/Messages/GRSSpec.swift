@@ -28,7 +28,7 @@ final class GRSSpec: AsyncSpec {
           fail("expected Message, got \(messages[1])")
           return
         }
-        guard case .GNSSRangeResiduals(let residuals, let actualTime, let recomputed) = payload
+        guard case let .GNSSRangeResiduals(residuals, actualTime, recomputed) = payload
         else {
           fail("expected .GNSSRangeResiduals, got \(payload)")
           return

@@ -35,7 +35,7 @@ public struct PositionEnhancement: RawRepresentable, Sendable, Codable, Equatabl
   /**
    Refines a latitude and longitude given the refinement data contained in
    this message. Returns the refined position.
-  
+
    - Parameter position: The position to refine. Altitude is unchanged.
    - Returns: The refined position.
    */

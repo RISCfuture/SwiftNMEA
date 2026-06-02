@@ -30,22 +30,22 @@ final class HTDSpec: AsyncSpec {
           return
         }
         guard
-          case .headingControlData(
-            let heading,
-            let track,
-            let rudderAngle,
-            let override,
-            let mode,
-            let turnMode,
-            let rudderLimit,
-            let headingLimit,
-            let trackLimit,
-            let radius,
-            let rate,
-            let rudderLimitExceeded,
-            let offHeading,
-            let offTrack,
-            let currentHeading
+          case let .headingControlData(
+            heading,
+            track,
+            rudderAngle,
+            override,
+            mode,
+            turnMode,
+            rudderLimit,
+            headingLimit,
+            trackLimit,
+            radius,
+            rate,
+            rudderLimitExceeded,
+            offHeading,
+            offTrack,
+            currentHeading
           ) = payload
         else {
           fail("expected .headingControlCommand, got \(payload)")

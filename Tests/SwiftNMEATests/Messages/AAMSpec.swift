@@ -18,11 +18,11 @@ final class AAMSpec: AsyncSpec {
           return
         }
         guard
-          case .waypointArrivalAlarm(
-            let arrivalCircleEntered,
-            let perpendicularPassed,
-            let arrivalCircleRadius,
-            let waypoint
+          case let .waypointArrivalAlarm(
+            arrivalCircleEntered,
+            perpendicularPassed,
+            arrivalCircleRadius,
+            waypoint
           ) = payload
         else {
           fail("expected .waypointArrivalAlarm, got \(payload)")

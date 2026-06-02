@@ -6,31 +6,31 @@ public struct AISLongRange {
 
   /**
    AIS unit reply logic.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISLongRangeInterrogation(replyLogic:requestorMMSI:requestorName:destination:functions:)``
    */
   public enum ReplyLogic: Int, Sendable, Codable, Equatable {
 
     /**
      Normal AIS unit reply logic.
-    
+
      Under “normal” operation, the AIS unit responds if either:
-    
+
      * the AIS unit is within the geographic rectangle provided, and
      * the AIS unit has not responded to the requesting MMSI in the last 24 hours, and
      * the MMSI “destination” field is null.
-    
+
      or
-    
+
      * The AIS unit’s MMSI appears in the MMSI “destination” field in the LRI sentence.
      */
     case normal = 0
 
     /**
      Geographic AIS unit reply logic.
-    
+
      the AIS unit responds if:
-    
+
      * the AIS unit is within the geographic rectangle provided.
      */
     case geographic = 1
@@ -38,7 +38,7 @@ public struct AISLongRange {
 
   /**
    AIS request destinations.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISLongRangeInterrogation(replyLogic:requestorMMSI:requestorName:destination:functions:)``
    */
   public enum Destination: Sendable, Codable, Equatable {
@@ -52,9 +52,9 @@ public struct AISLongRange {
 
   /**
    AIS function request items.
-  
+
    See IMO Resolution A.851(20).
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISLongRangeInterrogation(replyLogic:requestorMMSI:requestorName:destination:functions:)``
    - SeeAlso: ``Message/Payload-swift.enum/AISLongRangeReply(requestorMMSI:requestorName:replyStatuses:time:shipName:shipCallsign:shipIMO:position:course:speed:destination:ETA:shipType:shipType2:length:breadth:draught:soulsOnboard:)``
    */
@@ -93,7 +93,7 @@ public struct AISLongRange {
 
   /**
    Function reply statuses.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISLongRangeReply(requestorMMSI:requestorName:replyStatuses:time:shipName:shipCallsign:shipIMO:position:course:speed:destination:ETA:shipType:shipType2:length:breadth:draught:soulsOnboard:)``
    */
   public enum FunctionStatus: Int, Sendable, Codable, Equatable {
@@ -113,7 +113,7 @@ public struct AISLongRange {
   /**
    Identifiers to be used by ships to report their type, as defined in
    ITU-R M.1371-5, table 53.
-  
+
    - SeeAlso: ``Message/Payload-swift.enum/AISLongRangeReply(requestorMMSI:requestorName:replyStatuses:time:shipName:shipCallsign:shipIMO:position:course:speed:destination:ETA:shipType:shipType2:length:breadth:draught:soulsOnboard:)``
    */
   public enum ShipType: RawRepresentable, Sendable, Codable, Equatable {
@@ -252,7 +252,7 @@ public struct AISLongRange {
 
     /**
      Hazardous cargo categories, as defined in ITU-R M.1371-5, table 53.
-    
+
      DG: dangerous goods, HS: harmful substances, MP: marine pollutants
      */
     public enum CargoType: Int, Sendable, Codable, Equatable {
@@ -262,7 +262,7 @@ public struct AISLongRange {
 
       /**
        Carrying DG, HS, or MP, IMO hazard or pollutant category X.
-      
+
        Category X: Noxious Liquid Substances which, if discharged into the
        sea from tank cleaning or deballasting operations, are deemed to
        present a major hazard to either marine resources or human health
@@ -273,7 +273,7 @@ public struct AISLongRange {
 
       /**
        Carrying DG, HS, or MP, IMO hazard or pollutant category Y.
-      
+
        Category Y: Noxious Liquid Substances which, if discharged into the
        sea from tank cleaning or deballasting operations, are deemed to
        present a hazard to either marine resources or human health or
@@ -285,7 +285,7 @@ public struct AISLongRange {
 
       /**
        Carrying DG, HS, or MP, IMO hazard or pollutant category Z.
-      
+
        Category Z: Noxious Liquid Substances which, if discharged into the
        sea from tank cleaning or deballasting operations, are deemed to
        present a minor hazard to either marine resources or human health
@@ -297,7 +297,7 @@ public struct AISLongRange {
       /**
        Carrying DG, HS, or MP, IMO hazard or pollutant category OS (other
        substances).
-      
+
        Other Substances: substances which have been evaluated and found to
        fall outside Category X, Y or Z because they are considered to
        present no harm to marine resources, human health, amenities or

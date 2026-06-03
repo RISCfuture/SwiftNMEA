@@ -6,7 +6,7 @@ import Quick
 
 final class HBTSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.42 HBT") {
+    describe("8.3.49 HBT") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

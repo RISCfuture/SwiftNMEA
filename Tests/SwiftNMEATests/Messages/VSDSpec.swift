@@ -6,7 +6,7 @@ import Quick
 
 final class VSDSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.97 VSD") {
+    describe("8.3.121 VSD") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: 259_200)
@@ -102,6 +102,33 @@ final class VSDSpec: AsyncSpec {
         expect(destinationETA.minute).to(equal(.unavailable))
         expect(navStatus).to(beNil())
         expect(regionalFlags).to(equal(0))
+      }
+
+      it("parses a navigational status added in M.1371-6") {
+        let parser = SwiftNMEA()
+        let time = Date(timeIntervalSinceNow: 259_200)
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .commVHF,
+          format: .AISVoyageData,
+          fields: [
+            51, 25.5, 8191, "KOAK",
+            hmsFractionFormatter.string(from: time), dayFormatter.string(from: time),
+            monthFormatter.string(from: time),
+            14, 0
+          ]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        expect(messages).to(haveCount(2))
+        guard let payload = (messages[1] as? Message)?.payload,
+          case let .AISVoyageData(_, _, _, _, _, navStatus, _) = payload
+        else {
+          fail("expected .AISVoyageData, got \(messages[1])")
+          return
+        }
+        expect(navStatus).to(equal(.activeEmergencyBeacon))
       }
     }
   }

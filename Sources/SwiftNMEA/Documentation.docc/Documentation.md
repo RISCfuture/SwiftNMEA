@@ -4,7 +4,7 @@ SwiftNMEA is a Swift-native, strongly-typed NMEA sentence parser and
 interpreter. It's designed to work with streams of data, and emit parsed and
 interpreted data extracted from NMEA sentences.
 
-SwiftNMEA primarily implements IEC 61162-1, edition 4.0 (2010-11). Some
+SwiftNMEA primarily implements IEC 61162-1, edition 6.0 (2024-04). Some
 additional support is added for differences in real-world NMEA applications,
 such as GPS receiver ICs, but it is expected that users of this library will
 need to extend it at least slightly to conform to real-world deviations from the
@@ -66,14 +66,14 @@ that deviate from these assumptions.
 
 SwiftNMEA has been written to conform to the following specs as published:
 
-- IEC 61162-1, edition 4.0, 2010-11: "Maritime navigation and radiocommunication
+- IEC 61162-1, edition 6.0, 2024-04: "Maritime navigation and radiocommunication
   equipment and systems – Digital interfaces – Part 1: Single talker and multiple
   listeners"
 - Rec. ITU-R M.493-16 (12/2023): "Digital selective-calling system for use in the
   maritime mobile service"
 - Rec. ITU-R M.821-1 (1992–1997): "Optional expansion of the digital selective-calling
   system for use in the maritime mobile service"
-- Rec. ITU-R M.1371-5 (02/2014): "Technical characteristics for an automatic
+- Rec. ITU-R M.1371-6 (02/2026): "Technical characteristics for an automatic
   identification system using time division multiple access in the VHF maritime
   mobile frequency band"
 
@@ -119,27 +119,43 @@ SwiftNMEA has been written to conform to the following specs as published:
 - ``AIS``
 - ``AlarmCondition``
 - ``AlarmAcknowledgementState``
+- ``Alert``
+- ``AlertGroupEntry``
 - ``Comm``
 - ``CourseSpeedReference``
 - ``Datum``
 - ``DimmingPreset``
 - ``DisplayRotation``
+- ``DockingSpeedVector``
 - ``Doors``
 - ``DSC``
 - ``DSE``
 - ``EngineTelegraph``
+- ``EquipmentProperty``
 - ``Fire``
 - ``GNSS``
 - ``Heading``
 - ``HeadingSensor``
+- ``ManOverboard``
 - ``MSK``
 - ``NAKReason``
 - ``Navaid``
 - ``Navigation``
+- ``NavigationLight``
+- ``NavigationStatus``
 - ``NAVTEX``
 - ``Propulsion``
 - ``Radar``
+- ``ReturnLink``
+- ``RouteTransfer``
+- ``SafetyNET``
+- ``SecurityPassword``
+- ``Selection``
+- ``SM2``
+- ``SM3``
+- ``SM4``
 - ``Steering``
+- ``SteeringLocationMode``
 - ``Transducer``
 - ``WaterSensor``
 

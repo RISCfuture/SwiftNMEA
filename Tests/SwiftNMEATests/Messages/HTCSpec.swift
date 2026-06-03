@@ -6,7 +6,7 @@ import Quick
 
 final class HTCSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.49 HTC") {
+    describe("8.3.58 HTC") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

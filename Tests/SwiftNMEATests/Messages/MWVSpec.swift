@@ -6,7 +6,7 @@ import Quick
 
 final class MWVSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.60 MWV") {
+    describe("8.3.69 MWV") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

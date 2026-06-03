@@ -6,7 +6,7 @@ import Quick
 
 final class TUTSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.86 TUT") {
+    describe("8.3.109 TUT") {
       describe(".parse") {
         it("parses the proprietary example from the spec") {
           let parser = SwiftNMEA()

@@ -385,12 +385,11 @@
         codes: [
           "bearingLubOilInletPressLo": 1,
           "armatureVoltageOffLimit": 2,
-          "freqOffLimit": 3,
-          "stationaryWindingsTempHi": 4,
-          "onlineGenFail": 5,
-          "standbyGenTransferFail": 6,
-          "coolingTempHi": 7,
-          "coolingPumpFail": 8
+          "overspeed": 3,
+          "onlineGenFail": 4,
+          "standbyGenTransferFail": 5,
+          "coolingTempHi": 6,
+          "coolingPumpFail": 7
         ]
       ),
       (
@@ -481,7 +480,7 @@
         ]
       ),
       (
-        name: "boilerDrum", id: "PD",
+        name: "boilerDrum", id: "BD",
         codes: [
           "waterLevelAbnormal": 1
         ]

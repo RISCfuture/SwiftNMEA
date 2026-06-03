@@ -7,7 +7,7 @@ import Quick
 
 final class DSESpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.26 DSE") {
+    describe("8.3.30 DSE") {
       describe(".parse") {
         it("parses a query and a reply") {
           let parser = SwiftNMEA()

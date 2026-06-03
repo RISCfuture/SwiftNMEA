@@ -6,7 +6,7 @@ import Quick
 
 final class WNCSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.101 WNC") {
+    describe("8.3.125 WNC") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

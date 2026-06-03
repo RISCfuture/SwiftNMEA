@@ -116,9 +116,6 @@ class MEBParser: MessageFormat {
   private func makePayload(recipient: Recipient, element: BufferElement, sentence: String? = nil)
     throws -> Message.Payload?
   {
-    guard let AISChannel = element.AISChannel else {
-      throw NMEAError(type: .missingRequiredValue, line: sentence, fieldNumber: 3)
-    }
     guard let MMSI = element.MMSI else {
       throw NMEAError(type: .missingRequiredValue, line: sentence, fieldNumber: 4)
     }
@@ -141,7 +138,7 @@ class MEBParser: MessageFormat {
 
     return .broadcastMessage(
       sequence: recipient.sequentialID,
-      AISChannel: AISChannel,
+      AISChannel: element.AISChannel,
       MMSI: MMSI,
       messageID: messageID,
       messageIndex: messageIndex,

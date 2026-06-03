@@ -6,7 +6,7 @@ import Quick
 
 final class SFISpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.76 SFI") {
+    describe("8.3.90 SFI") {
       describe(".parse") {
         it("parses a sentence") {
 

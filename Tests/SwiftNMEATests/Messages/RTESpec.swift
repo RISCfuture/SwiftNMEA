@@ -6,7 +6,7 @@ import Quick
 
 final class RTESpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.75 RTE") {
+    describe("8.3.88 RTE") {
       describe(".parse") {
         it("parses a sentence") {
 

@@ -6,7 +6,7 @@ import Quick
 
 final class BWWSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.18 BWW") {
+    describe("8.3.23 BWW") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

@@ -6,7 +6,7 @@ import Quick
 
 final class ZFOSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.108 ZFO") {
+    describe("8.3.132 ZFO") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -1)

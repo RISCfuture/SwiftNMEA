@@ -6,7 +6,7 @@ import Quick
 
 final class ZDLSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.107 ZDL") {
+    describe("8.3.131 ZDL") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

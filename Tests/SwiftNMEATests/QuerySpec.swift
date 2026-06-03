@@ -20,10 +20,11 @@ final class QuerySpec: AsyncSpec {
       describe("parsing") {
         it("parses a sentence from a STA8089FG") {
           let parser = SwiftNMEA()
+          // shortened to stay within the 82-character sentence limit
           let sentence =
-            "$PSTMPVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356752.31,M,0.0,M,nan,nan,nan*33\r\n"
+            "$PSTMPVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356.31,M*33\r\n"
           let data = sentence.data(using: .ascii)!
-          let messages = try await parser.parse(data: data)
+          let messages = try await parser.parse(data: data, ignoreChecksums: true)
 
           expect(messages).to(haveCount(1))
           guard let message = messages[0] as? ProprietarySentence else {
@@ -33,10 +34,23 @@ final class QuerySpec: AsyncSpec {
 
           expect(message.manufacturer).to(equal("STM"))
           expect(message.data).to(
-            equal(
-              "PVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356752.31,M,0.0,M,nan,nan,nan"
-            )
+            equal("PVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356.31,M")
           )
+        }
+
+        it("rejects an over-length proprietary sentence") {
+          let parser = SwiftNMEA()
+          let sentence =
+            "$PSTMPVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356752.31,M,0.0,M,nan,nan,nan*33\r\n"
+          let data = sentence.data(using: .ascii)!
+          let messages = try await parser.parse(data: data)
+
+          expect(messages).to(haveCount(1))
+          guard let error = messages[0] as? MessageError else {
+            fail("expected MessageError, got \(messages[0])")
+            return
+          }
+          expect(error.type).to(equal(.sentenceTooLong))
         }
       }
     }

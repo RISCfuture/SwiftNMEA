@@ -6,7 +6,7 @@ import Quick
 
 final class BODSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.15 BOD") {
+    describe("8.3.20 BOD") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

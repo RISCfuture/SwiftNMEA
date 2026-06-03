@@ -6,7 +6,7 @@ import Quick
 
 final class ZDASpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.106 ZDA") {
+    describe("8.3.130 ZDA") {
       it("parses the first example from the spec (corrected)") {
         let parser = SwiftNMEA()
         let sentence = applyChecksum(to: "$GPZDA,234500.00,09,06,1995,-12,45")

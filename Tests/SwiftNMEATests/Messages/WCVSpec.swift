@@ -6,7 +6,7 @@ import Quick
 
 final class WCVSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.100 WCV") {
+    describe("8.3.124 WCV") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

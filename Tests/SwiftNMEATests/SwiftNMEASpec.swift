@@ -183,6 +183,52 @@ final class NMEASpec: AsyncSpec {
             expect(query.data).to(equal("A003[470738][1224523]???RST47, 3809, A004"))
           }
         }
+
+        context("malformed sentences") {
+          it("surfaces a sentence-like garbage line as an unknownSentenceType error") {
+            let parser = SwiftNMEA()
+            let data = "$not a real sentence\r\n".data(using: .ascii)!
+            let messages = try await parser.parse(data: data)
+
+            expect(messages).to(haveCount(1))
+            guard let error = messages[0] as? MessageError else {
+              fail("expected MessageError, got \(messages[0])")
+              return
+            }
+            expect(error.type).to(equal(.unknownSentenceType))
+          }
+
+          it("surfaces an over-long sentence-like line as a sentenceTooLong error") {
+            let parser = SwiftNMEA()
+            let longField = String(repeating: "K", count: 90)
+            let data = "$GPAAM,A,V,0.5,N,\(longField)*15\r\n".data(using: .ascii)!
+            let messages = try await parser.parse(data: data)
+
+            expect(messages).to(haveCount(1))
+            guard let error = messages[0] as? MessageError else {
+              fail("expected MessageError, got \(messages[0])")
+              return
+            }
+            expect(error.type).to(equal(.sentenceTooLong))
+          }
+
+          it("silently drops a non-sentence-like noise line") {
+            let parser = SwiftNMEA()
+            let data = "\\s:foo,c:1234*hh\\\r\n".data(using: .ascii)!
+            let messages = try await parser.parse(data: data)
+
+            expect(messages).to(beEmpty())
+          }
+
+          it("still parses a valid sentence") {
+            let parser = SwiftNMEA()
+            let data = "$GPAAM,A,V,0.5,N,KSFO*15\r\n".data(using: .ascii)!
+            let messages = try await parser.parse(data: data)
+
+            expect(messages.filter { $0 is ParametricSentence }).to(haveCount(1))
+            expect(messages.filter { $0 is MessageError }).to(beEmpty())
+          }
+        }
       }
     }
   }

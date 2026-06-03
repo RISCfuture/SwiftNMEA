@@ -6,7 +6,7 @@ import Quick
 
 final class GRSSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.38 GRS") {
+    describe("8.3.45 GRS") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -2)

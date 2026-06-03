@@ -6,7 +6,7 @@ import Quick
 
 final class RPMSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.72 RPM") {
+    describe("8.3.84 RPM") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

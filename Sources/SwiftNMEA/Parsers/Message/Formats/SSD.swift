@@ -7,7 +7,7 @@ class SSDParser: MessageFormat {
 
   func parse(sentence: ParametricSentence) throws -> Message.Payload? {
     let callsignStr = try sentence.fields.string(at: 0, optional: true)
-    let nameStr = try sentence.fields.string(at: 1)!
+    let nameStr = try sentence.fields.string(at: 1, optional: true)
     let pointAValue = try sentence.fields.measurement(
       at: 2,
       valueType: .integer,

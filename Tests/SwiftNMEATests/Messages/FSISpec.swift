@@ -6,7 +6,7 @@ import Quick
 
 final class FSISpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.31 FSI") {
+    describe("8.3.37 FSI") {
       it("parses example (a) from the spec") {
         let parser = SwiftNMEA()
         let sentence = applyChecksum(to: "$CTFSI,020230,026140,m,0,C")

@@ -6,7 +6,7 @@ import Quick
 
 final class DORSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.23 DOR") {
+    describe("8.3.27 DOR") {
       it("parses the example from the spec") {
         let parser = SwiftNMEA()
         let sentences = [

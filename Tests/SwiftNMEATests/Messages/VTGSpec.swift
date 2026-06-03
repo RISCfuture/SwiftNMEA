@@ -6,7 +6,7 @@ import Quick
 
 final class VTGSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.98 VTG") {
+    describe("8.3.122 VTG") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

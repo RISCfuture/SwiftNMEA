@@ -112,12 +112,27 @@ public struct AISLongRange {
 
   /**
    Identifiers to be used by ships to report their type, as defined in
-   ITU-R M.1371-5, table 53.
+   ITU-R M.1371-6, Table 51.
 
    - SeeAlso: ``Message/Payload-swift.enum/AISLongRangeReply(requestorMMSI:requestorName:replyStatuses:time:shipName:shipCallsign:shipIMO:position:course:speed:destination:ETA:shipType:shipType2:length:breadth:draught:soulsOnboard:)``
    */
   public enum ShipType: RawRepresentable, Sendable, Codable, Equatable {
     public typealias RawValue = Int
+
+    /// Special purpose ship (01–09)
+    case specialPurpose(SpecialPurpose)
+
+    /// Support vessel (10–19)
+    case supportVessel(SupportVessel)
+
+    /// Wing In Ground effect (WIG)
+    case groundEffect(cargo: CargoType)
+
+    /// Special craft / vessel engaged in a particular operation (30–39)
+    case vessel(operation: Operation)
+
+    /// High-speed craft (HSC)
+    case highSpeedCraft(HSC)
 
     /// Pilot vessel
     case pilot
@@ -128,38 +143,35 @@ public struct AISLongRange {
     /// Tugs
     case tug
 
-    /// Port tenders
+    /// Port or fish tenders
     case tender
 
-    /// Vessels with anti-pollution facilities or equipment
+    /// Anti-pollution or firefighting responder
     case antiPollution
 
     /// Law enforcement vessels
     case lawEnforcement
 
+    /// Spare 1 – for assignments to local vessels
+    case localVessel1
+
+    /// Spare 2 – for assignments to local vessels
+    case localVessel2
+
     /// Medical transports (as defined in the 1949 Geneva Conventions and Additional Protocols)
     case medical
 
-    /// Ships and aircraft of States not parties to an armed conflict
+    /// Ships of States not parties to an armed conflict
     case nonparticipant
 
-    /// Wing In Ground effect (WIG)
-    case groundEffect(cargo: CargoType)
-
-    /// Vessel
-    case vessel(operation: Operation)
-
-    /// High-speed craft (HSC)
-    case highSpeedCraft(cargo: CargoType)
-
     /// Passenger ships
-    case passengerShip(cargo: CargoType)
+    case passengerShip(Passenger)
 
     /// Cargo ships
-    case cargoShip(cargo: CargoType)
+    case cargoShip(Cargo)
 
     /// Tanker(s)
-    case tanker(cargo: CargoType)
+    case tanker(Tanker)
 
     /// Other types of ship
     case other(cargo: CargoType)
@@ -172,15 +184,19 @@ public struct AISLongRange {
         case .tender: return 53
         case .antiPollution: return 54
         case .lawEnforcement: return 55
+        case .localVessel1: return 56
+        case .localVessel2: return 57
         case .medical: return 58
         case .nonparticipant: return 59
 
+        case .specialPurpose(let type): return type.rawValue
+        case .supportVessel(let type): return 10 + type.rawValue
         case .groundEffect(let cargo): return 20 + cargo.rawValue
         case .vessel(let operation): return 30 + operation.rawValue
-        case .highSpeedCraft(let cargo): return 40 + cargo.rawValue
-        case .passengerShip(let cargo): return 60 + cargo.rawValue
-        case .cargoShip(let cargo): return 70 + cargo.rawValue
-        case .tanker(let cargo): return 80 + cargo.rawValue
+        case .highSpeedCraft(let type): return 40 + type.rawValue
+        case .passengerShip(let type): return 60 + type.rawValue
+        case .cargoShip(let type): return 70 + type.rawValue
+        case .tanker(let type): return 80 + type.rawValue
         case .other(let cargo): return 90 + cargo.rawValue
       }
     }
@@ -193,27 +209,35 @@ public struct AISLongRange {
         case 53: self = .tender
         case 54: self = .antiPollution
         case 55: self = .lawEnforcement
+        case 56: self = .localVessel1
+        case 57: self = .localVessel2
         case 58: self = .medical
         case 59: self = .nonparticipant
 
+        case 1...9:
+          guard let type = SpecialPurpose(rawValue: rawValue) else { return nil }
+          self = .specialPurpose(type)
+        case 10...19:
+          guard let type = SupportVessel(rawValue: rawValue - 10) else { return nil }
+          self = .supportVessel(type)
         case 20...29:
           guard let cargo = CargoType(rawValue: rawValue - 20) else { return nil }
           self = .groundEffect(cargo: cargo)
         case 30...39:
           guard let operation = Operation(rawValue: rawValue - 30) else { return nil }
           self = .vessel(operation: operation)
-        case 40...59:
-          guard let cargo = CargoType(rawValue: rawValue - 40) else { return nil }
-          self = .highSpeedCraft(cargo: cargo)
+        case 40...49:
+          guard let type = HSC(rawValue: rawValue - 40) else { return nil }
+          self = .highSpeedCraft(type)
         case 60...69:
-          guard let cargo = CargoType(rawValue: rawValue - 60) else { return nil }
-          self = .passengerShip(cargo: cargo)
+          guard let type = Passenger(rawValue: rawValue - 60) else { return nil }
+          self = .passengerShip(type)
         case 70...79:
-          guard let cargo = CargoType(rawValue: rawValue - 70) else { return nil }
-          self = .cargoShip(cargo: cargo)
+          guard let type = Cargo(rawValue: rawValue - 70) else { return nil }
+          self = .cargoShip(type)
         case 80...89:
-          guard let cargo = CargoType(rawValue: rawValue - 80) else { return nil }
-          self = .tanker(cargo: cargo)
+          guard let type = Tanker(rawValue: rawValue - 80) else { return nil }
+          self = .tanker(type)
         case 90...99:
           guard let cargo = CargoType(rawValue: rawValue - 90) else { return nil }
           self = .other(cargo: cargo)
@@ -222,10 +246,185 @@ public struct AISLongRange {
       }
     }
 
-    /// Maritime operations, as defined in ITU-R M.1371-5, table 53
+    /// Special purpose ships, as defined in ITU-R M.1371-6, Table 51 (01–09).
+    public enum SpecialPurpose: Int, Sendable, Codable, Equatable {
+
+      /// Science / Research vessel
+      case research = 1
+
+      /// Training vessel
+      case training = 2
+
+      /// Ship owned or operated by a government
+      case government = 3
+
+      /// Ice breaker
+      case iceBreaker = 4
+
+      /// Buoy (Aids to Navigation) tender
+      case buoyTender = 5
+
+      /// Cable layer
+      case cableLayer = 6
+
+      /// Pipe layer
+      case pipeLayer = 7
+
+      /// Special purpose ship, no additional information
+      case noInfo = 9
+    }
+
+    /// Support vessels, as defined in ITU-R M.1371-6, Table 51 (10–19).
+    public enum SupportVessel: Int, Sendable, Codable, Equatable {
+
+      /// FPSO (Floating, Production, Storage, Offloading) vessel
+      case FPSO = 1
+
+      /// Fish factory ship
+      case fishFactory = 2
+
+      /// Fish farm support vessel
+      case fishFarm = 3
+
+      /// Offshore support vessel, etc.
+      case offshoreSupport = 4
+
+      /// Construction vessel
+      case construction = 7
+
+      /// Crew boat
+      case crewBoat = 8
+
+      /// Support vessel, no additional information
+      case noInfo = 9
+    }
+
+    /// High-speed craft sub-types, as defined in ITU-R M.1371-6, Table 51 (40–49).
+    public enum HSC: Int, Sendable, Codable, Equatable {
+
+      /// All ships of this type
+      case all = 0
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category X
+      case categoryX = 1
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category Y
+      case categoryY = 2
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category Z
+      case categoryZ = 3
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category OS
+      case categoryOS = 4
+
+      /// Carrying passengers
+      case passengers = 5
+
+      /// Ro-Ro ship (vehicle / rail)
+      case rollOnRollOff = 6
+
+      /// No additional information
+      case noInfo = 9
+    }
+
+    /// Passenger ship sub-types, as defined in ITU-R M.1371-6, Table 51 (60–69).
+    public enum Passenger: Int, Sendable, Codable, Equatable {
+
+      /// All ships of this type
+      case all = 0
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category X
+      case categoryX = 1
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category Y
+      case categoryY = 2
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category Z
+      case categoryZ = 3
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category OS
+      case categoryOS = 4
+
+      /// Cruise ship
+      case cruise = 5
+
+      /// Ferry
+      case ferry = 6
+
+      /// Excursion ship (i.e. harbour cruise boat, whale watcher, etc.)
+      case excursion = 7
+
+      /// No additional information
+      case noInfo = 9
+    }
+
+    /// Cargo ship sub-types, as defined in ITU-R M.1371-6, Table 51 (70–79).
+    public enum Cargo: Int, Sendable, Codable, Equatable {
+
+      /// All ships of this type
+      case all = 0
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category X
+      case categoryX = 1
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category Y
+      case categoryY = 2
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category Z
+      case categoryZ = 3
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category OS
+      case categoryOS = 4
+
+      /// Bulk carrier
+      case bulkCarrier = 5
+
+      /// Container ship
+      case containerShip = 6
+
+      /// Roll-on-roll-off carrier
+      case rollOnRollOff = 7
+
+      /// Landing craft
+      case landingCraft = 8
+
+      /// No additional information
+      case noInfo = 9
+    }
+
+    /// Tanker sub-types, as defined in ITU-R M.1371-6, Table 51 (80–89).
+    public enum Tanker: Int, Sendable, Codable, Equatable {
+
+      /// All ships of this type
+      case all = 0
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category X
+      case categoryX = 1
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category Y
+      case categoryY = 2
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category Z
+      case categoryZ = 3
+
+      /// Carrying DG, HS, or MP, IMO hazard or pollutant category OS
+      case categoryOS = 4
+
+      /// Non-hazardous or non-pollutant carrier
+      case nonHazardous = 5
+
+      /// Integrated / articulated tug and tank barge (ABCD values should
+      /// reflect tug and barge dimensions)
+      case integratedTugBarge = 6
+
+      /// No additional information
+      case noInfo = 9
+    }
+
+    /// Maritime operations / special craft, as defined in ITU-R M.1371-6, Table 51 (30–39).
     public enum Operation: Int, Sendable, Codable, Equatable {
 
-      /// Fishing
+      /// Fishing vessel
       case fishing = 0
 
       /// Towing
@@ -234,24 +433,30 @@ public struct AISLongRange {
       /// Towing and length of the tow exceeds 200 m or breadth exceeds 25 m
       case longTow = 2
 
-      /// Engaged in dredging or underwater operations
+      /// Dredger
       case dredging = 3
 
-      /// Engaged in diving operations
+      /// Diving vessel
       case diving = 4
 
-      /// Engaged in military operations
+      /// Warship or naval auxiliary
       case military = 5
 
-      /// Sailing
+      /// Sailing vessel
       case sailing = 6
 
-      /// Pleasure craft
+      /// Pleasure motor craft
       case pleasure = 7
+
+      /// Trawler
+      case trawler = 8
+
+      /// Patrol vessel
+      case patrol = 9
     }
 
     /**
-     Hazardous cargo categories, as defined in ITU-R M.1371-5, table 53.
+     Hazardous cargo categories, as defined in ITU-R M.1371-6, Table 51.
 
      DG: dangerous goods, HS: harmful substances, MP: marine pollutants
      */

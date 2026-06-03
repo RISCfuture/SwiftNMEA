@@ -6,7 +6,7 @@ import Quick
 
 final class CURSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.20 CUR") {
+    describe("8.3.24 CUR") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

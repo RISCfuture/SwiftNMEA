@@ -6,7 +6,7 @@ import Quick
 
 final class GLLSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.36 GLL") {
+    describe("8.3.43 GLL") {
       it("parses the example from the spec") {
         let parser = SwiftNMEA()
         let sentence = "$LCGLL,4728.31,N,12254.25,W,091342,A,A*4C\r\n"

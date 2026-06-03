@@ -6,7 +6,7 @@ import Quick
 
 final class TRCSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.82 TRC") {
+    describe("8.3.104 TRC") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

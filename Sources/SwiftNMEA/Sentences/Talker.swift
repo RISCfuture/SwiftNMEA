@@ -83,6 +83,9 @@ public enum Talker: RawRepresentable, Sendable, Codable, Equatable, Hashable {
   /// Quasi-Zenith Satellite System (みちびき)
   case QZSS
 
+  /// NavIC / IRNSS positioning system (Indian Regional Navigation Satellite System)
+  case navIC
+
   /// Heading sensor: compass, magnetic
   case magneticCompass
 
@@ -249,6 +252,7 @@ public enum Talker: RawRepresentable, Sendable, Codable, Equatable, Hashable {
       case .userConfigured(let number): return "U\(number)"
       case .beidou: return "GB"
       case .QZSS: return "GQ"
+      case .navIC: return "GI"
       case .unknown(let ID): return ID
     }
   }
@@ -282,6 +286,7 @@ public enum Talker: RawRepresentable, Sendable, Codable, Equatable, Hashable {
       case "GL": self = .GLONASS
       case "GN": self = .GNSS
       case "GQ": self = .QZSS
+      case "GI": self = .navIC
       case "HC": self = .magneticCompass
       case "HE": self = .gyroCompassSlaved
       case "HF": self = .fluxgate

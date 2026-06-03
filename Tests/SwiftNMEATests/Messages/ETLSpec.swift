@@ -6,7 +6,7 @@ import Quick
 
 final class ETLSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.28 ETL") {
+    describe("8.3.34 ETL") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -12)

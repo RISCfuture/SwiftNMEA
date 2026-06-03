@@ -5,7 +5,7 @@ import Quick
 
 final class VDOSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.91 VDO") {
+    describe("8.3.115 VDO") {
       describe(".parse") {
         it("parses a sentence") {
           let parser = SwiftNMEA()

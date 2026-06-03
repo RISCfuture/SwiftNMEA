@@ -6,7 +6,7 @@ import Quick
 
 final class NRXSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.63 NRX") {
+    describe("8.3.73 NRX") {
       describe(".parse") {
         it("parses the example sentence group") {
           let parser = SwiftNMEA()
@@ -78,11 +78,33 @@ final class NRXSpec: AsyncSpec {
           expect(isValid).to(beTrue())
         }
 
+        it("parses a message with a null code when the source is not NAVTEX") {
+          let parser = SwiftNMEA()
+          let sentence = applyChecksum(
+            to: "$CRNRX,001,001,00,,1,135600,27,06,2001,26,0,A,HF-MSI BODY"
+          )
+          let data = sentence.data(using: .utf8)!
+          let messages = try await parser.parse(data: data)
+
+          expect(messages).to(haveCount(2))
+          guard let payload = (messages[1] as? Message)?.payload else {
+            fail("expected Message, got \(messages[1])")
+            return
+          }
+          guard case let .NAVTEXMessage(message, _, _, code, _, _, _, _) = payload else {
+            fail("expected .NAVTEXMessage, got \(payload)")
+            return
+          }
+
+          expect(code).to(beNil())
+          expect(message).to(equal("HF-MSI BODY"))
+        }
+
         it("throws an error for a missing field") {
           let parser = SwiftNMEA()
           let sentences = [
             applyChecksum(
-              to: "$CRNRX,007,001,00,,1,135600,27,06,2001,241,3,A,=========================="
+              to: "$CRNRX,007,001,00,IE69,,135600,27,06,2001,241,3,A,=========================="
             ),
             applyChecksum(
               to: "$CRNRX,007,002,00,,,,,,,,,,========^0D^0AISSUED ON SATURDAY 06 JANUARY 2001."
@@ -110,7 +132,7 @@ final class NRXSpec: AsyncSpec {
             return
           }
           expect(error.type).to(equal(.missingRequiredValue))
-          expect(error.fieldNumber).to(equal(3))
+          expect(error.fieldNumber).to(equal(4))
         }
 
         it("throws an error for a wrong sentence number") {
@@ -217,13 +239,21 @@ final class NRXSpec: AsyncSpec {
 
         it("throws an error for a missing field") {
           let parser = SwiftNMEA()
-          let string = """
-            $CRNRX,007,001,00,,1,135600,27,06,2001,241,3,A,==========================*0A\r
-            $CRNRX,007,002,00,,,,,,,,,,========^0D^0AISSUED ON SATURDAY 06 JANUARY 2001.*29\r
-            $CRNRX,007,003,00,,,,,,,,,,^0D^0AINSHORE WATERS FORECAST TO 12 MILES^0D^0AOFF*0D\r
-            $CRNRX,007,004,00,,,,,,,,,,SHORE FROM 1700 UT^2A TO 0500 UTC.^0D^0A^0D^0ANORT*70\r\n
-            """
-          let data = string.data(using: .utf8)!
+          let sentences = [
+            applyChecksum(
+              to: "$CRNRX,007,001,00,IE69,,135600,27,06,2001,241,3,A,=========================="
+            ),
+            applyChecksum(
+              to: "$CRNRX,007,002,00,,,,,,,,,,========^0D^0AISSUED ON SATURDAY 06 JANUARY 2001."
+            ),
+            applyChecksum(
+              to: "$CRNRX,007,003,00,,,,,,,,,,^0D^0AINSHORE WATERS FORECAST TO 12 MILES^0D^0AOFF"
+            ),
+            applyChecksum(
+              to: "$CRNRX,007,004,00,,,,,,,,,,SHORE FROM 1700 UT^2A TO 0500 UTC.^0D^0A^0D^0ANORT"
+            )
+          ]
+          let data = sentences.joined().data(using: .utf8)!
 
           let parsed = try await parser.parse(data: data)
           expect(parsed).to(haveCount(4))
@@ -236,7 +266,7 @@ final class NRXSpec: AsyncSpec {
             return
           }
           expect(error.type).to(equal(.missingRequiredValue))
-          expect(error.fieldNumber).to(equal(3))
+          expect(error.fieldNumber).to(equal(4))
         }
       }
     }

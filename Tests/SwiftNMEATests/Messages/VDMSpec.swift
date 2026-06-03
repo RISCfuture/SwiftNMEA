@@ -6,7 +6,7 @@ import Quick
 
 final class VDMSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.90 VDM") {
+    describe("8.3.114 VDM") {
       describe(".parse") {
         let VDLBinaryData = """
           000001

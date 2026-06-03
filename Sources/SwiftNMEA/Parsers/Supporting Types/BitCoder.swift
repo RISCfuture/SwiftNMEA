@@ -4,8 +4,17 @@ struct BitReader {
   private let data: Data
   private var offset = 0
 
+  /// Number of bits not yet consumed from the underlying data.
+  var remainingBits: Int { data.count * 8 - offset }
+
   init(data: Data) {
     self.data = data
+  }
+
+  /// Reads `bits` bits without advancing the read position.
+  func peek<T: FixedWidthInteger>(bits: Int) -> T {
+    var copy = self
+    return copy.read(bits: bits)
   }
 
   mutating func read<T: FixedWidthInteger>(bits: Int) -> T {

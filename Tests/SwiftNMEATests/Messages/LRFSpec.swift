@@ -6,7 +6,7 @@ import Quick
 
 final class LRFSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.53 LRF and friends") {
+    describe("8.3.62 LRF and friends") {
       describe(".parse") {
         it("parses a sentence") {
           let parser = SwiftNMEA()
@@ -48,7 +48,7 @@ final class LRFSpec: AsyncSpec {
             format: .AISLongRangeReply3,
             fields: [
               1, 1_234_567_890,
-              "PORT OF OAKLAND",
+              "OAKLAND",
               dateFormatter.string(from: ETA), hmsFractionFormatter.string(from: ETA),
               1.2, 31, 34.5, 12.3, 81, 123
             ]
@@ -116,13 +116,13 @@ final class LRFSpec: AsyncSpec {
           expect(course!.reference).to(equal(.true))
           expect(speed).to(equal(.init(value: 12.3, unit: .knots)))
 
-          expect(destination).to(equal("PORT OF OAKLAND"))
+          expect(destination).to(equal("OAKLAND"))
           expect(actualETA).to(beCloseTo(ETA, within: 0.01))
           expect(draught).to(equal(.init(value: 1.2, unit: .meters)))
           expect(shipType).to(equal(.vessel(operation: .towing)))
           expect(length).to(equal(.init(value: 34.5, unit: .meters)))
           expect(breadth).to(equal(.init(value: 12.3, unit: .meters)))
-          expect(shipType2).to(equal(.tanker(cargo: .categoryX)))
+          expect(shipType2).to(equal(.tanker(.categoryX)))
           expect(soulsOnboard).to(equal(123))
         }
 
@@ -213,7 +213,7 @@ final class LRFSpec: AsyncSpec {
             format: .AISLongRangeReply3,
             fields: [
               1, 1_234_567_890,
-              "PORT OF OAKLAND",
+              "OAKLAND",
               dateFormatter.string(from: ETA), hmsFractionFormatter.string(from: ETA),
               1.2, 31, 34.5, 12.3, 81, 123
             ]

@@ -11,12 +11,14 @@ final class MEBSpec: AsyncSpec {
           let parser = SwiftNMEA()
           let sixBit = SixBitCoder()
 
-          let data1 = "This is some very interesting binary data".data(using: .ascii)!
-          let data2 =
-            "Each message must be no more than 82 characters. Each message must be no more than 82 characters."
-            .data(using: .ascii)!
-          let (chunks1, fillBits1) = sixBit.encode(data1, chunkSize: 82)
-          let (chunks2, fillBits2) = sixBit.encode(data2, chunkSize: 82)
+          // MEB has a large header, so a single encapsulated data field is
+          // limited to 28 six-bit characters (21 bytes) to stay within the
+          // 82-character sentence limit. data1 fits in one sentence; data2
+          // spans two.
+          let data1 = "interesting binary".data(using: .ascii)!
+          let data2 = "A message spanning two MEB sentences.".data(using: .ascii)!
+          let (chunks1, fillBits1) = sixBit.encode(data1, chunkSize: 28)
+          let (chunks2, fillBits2) = sixBit.encode(data2, chunkSize: 28)
 
           let sentences1 = encapsulatedSentences(
             format: .broadcastCommandMessage,
@@ -79,6 +81,39 @@ final class MEBSpec: AsyncSpec {
           )
         }
 
+        it("parses a stored message with a null channel") {
+          let parser = SwiftNMEA()
+          let sixBit = SixBitCoder()
+
+          let data = "interesting binary".data(using: .ascii)!
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 28)
+
+          // channel (field 3) is null; broadcast behaviour (field 7) is store (0)
+          let sentences = encapsulatedSentences(
+            format: .broadcastCommandMessage,
+            from: chunks,
+            fillBits: fillBits,
+            sequenceID: 0,
+            otherFields: [nil, 1_234_567_890, 6, 3, 0, 9_876_543_210, 1, "C"]
+          )
+          let sentenceData = sentences.joined().data(using: .ascii)!
+          let messages = try await parser.parse(data: sentenceData)
+
+          expect(messages).to(haveCount(2))
+          guard let payload = (messages[1] as? Message)?.payload else {
+            fail("expected Message, got \(messages[1])")
+            return
+          }
+          guard case let .broadcastMessage(_, AISChannel, _, _, _, behavior, _, _, _, _) = payload
+          else {
+            fail("expected .broadcastMessage, got \(payload)")
+            return
+          }
+
+          expect(AISChannel).to(beNil())
+          expect(behavior).to(equal(.store))
+        }
+
         it("throws an error for a missing field") {
           let parser = SwiftNMEA()
           let sixBit = SixBitCoder()
@@ -86,7 +121,7 @@ final class MEBSpec: AsyncSpec {
           let data =
             "Each message must be no more than 82 characters. Each message must be no more than 82 characters."
             .data(using: .ascii)!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 82)
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 28)
           let sentences = [
             createSentence(
               delimiter: .encapsulated,
@@ -138,7 +173,7 @@ final class MEBSpec: AsyncSpec {
           let data =
             "Each message must be no more than 82 characters. Each message must be no more than 82 characters."
             .data(using: .ascii)!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 82)
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 28)
           let sentences = [
             createSentence(
               delimiter: .encapsulated,
@@ -184,7 +219,7 @@ final class MEBSpec: AsyncSpec {
           let data =
             "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
             .data(using: .ascii)!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 82)
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 28)
 
           let sentences = encapsulatedSentences(
             format: .broadcastCommandMessage,
@@ -233,9 +268,7 @@ final class MEBSpec: AsyncSpec {
           expect(binaryStructure).to(equal(.application))
           expect(sentenceType).to(equal(.command))
           expect(actualData).to(
-            equal(
-              "1234567890123456789012345678901234567890123456789012345678901".data(using: .ascii)!
-            )
+            equal("123456789012345678901".data(using: .ascii)!)
           )
         }
       }
@@ -247,7 +280,7 @@ final class MEBSpec: AsyncSpec {
         let data =
           "Each message must be no more than 82 characters. Each message must be no more than 82 characters."
           .data(using: .ascii)!
-        let (chunks, fillBits) = sixBit.encode(data, chunkSize: 82)
+        let (chunks, fillBits) = sixBit.encode(data, chunkSize: 28)
         let sentence = createSentence(
           delimiter: .encapsulated,
           talker: .commVHF,

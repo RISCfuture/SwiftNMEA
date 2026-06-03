@@ -6,7 +6,7 @@ import Quick
 
 final class FIRSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.30 FIR") {
+    describe("8.3.36 FIR") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -10)

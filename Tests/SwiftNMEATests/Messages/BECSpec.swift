@@ -6,7 +6,7 @@ import Quick
 
 final class BECSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.14 BEC") {
+    describe("8.3.19 BEC") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -1200)

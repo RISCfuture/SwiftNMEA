@@ -6,7 +6,7 @@ import Quick
 
 final class UIDSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.88 UID") {
+    describe("8.3.111 UID") {
       it("parses the example from the spec") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

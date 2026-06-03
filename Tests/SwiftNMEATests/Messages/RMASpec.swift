@@ -6,7 +6,7 @@ import Quick
 
 final class RMASpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.67 RMA") {
+    describe("8.3.79 RMA") {
       it("parses example (a) from the spec") {
         let parser = SwiftNMEA()
         let sentence = "$LCRMA,V,,,,,14162.8,,,,,,N*6F\r\n"

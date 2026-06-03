@@ -6,7 +6,7 @@ import Quick
 
 final class LRISpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.54 LRI and friends") {
+    describe("8.3.63 LRI and friends") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let LRI = createSentence(

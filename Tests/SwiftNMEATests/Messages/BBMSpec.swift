@@ -5,7 +5,7 @@ import Quick
 
 final class BBMSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.13 BBM") {
+    describe("8.3.18 BBM") {
       describe(".parse") {
         it("parses a sentence") {
           let parser = SwiftNMEA()
@@ -15,8 +15,8 @@ final class BBMSpec: AsyncSpec {
           let data2 =
             "Each message must be no more than 60 characters (117 bytes) -- this one is longer"
             .data(using: .ascii)!
-          let (chunks1, fillBits1) = sixBit.encode(data1, chunkSize: 60)
-          let (chunks2, fillBits2) = sixBit.encode(data2, chunkSize: 60)
+          let (chunks1, fillBits1) = sixBit.encode(data1, chunkSize: 57)
+          let (chunks2, fillBits2) = sixBit.encode(data2, chunkSize: 57)
 
           let sentences1 = encapsulatedSentences(
             format: .AISBroadcastBinaryMessage,
@@ -73,7 +73,7 @@ final class BBMSpec: AsyncSpec {
           let data = "Each message must be no more than 58 characters (117 bytes)".data(
             using: .ascii
           )!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 60)
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 57)
 
           let sentences = [
             createSentence(
@@ -116,7 +116,7 @@ final class BBMSpec: AsyncSpec {
           let data = "Each message must be no more than 58 characters (117 bytes)".data(
             using: .ascii
           )!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 60)
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 57)
 
           let sentences = [
             createSentence(
@@ -153,7 +153,7 @@ final class BBMSpec: AsyncSpec {
           let data = "1234567890123456789012345678901234567890123456789012345678901234567890".data(
             using: .ascii
           )!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 60)
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 57)
 
           let sentences = encapsulatedSentences(
             format: .AISBroadcastBinaryMessage,
@@ -191,7 +191,7 @@ final class BBMSpec: AsyncSpec {
           expect(channel).to(equal(.noPreference))
           expect(messageID).to(equal(.positionReportSOTDMA))
           expect(actualData).to(
-            equal("12345678901234567890123456789012345678901234".data(using: .ascii)!)
+            equal("123456789012345678901234567890123456789012".data(using: .ascii)!)
           )
         }
       }

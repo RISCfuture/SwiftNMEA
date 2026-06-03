@@ -89,9 +89,6 @@ class NRXParser: MessageFormat {
     guard let frequency = element.frequency else {
       throw NRXErrors.missingValue(index: 4)
     }
-    guard let code = element.messageCode else {
-      throw NRXErrors.missingValue(index: 3)
-    }
     guard let time = element.time else {
       throw NRXErrors.missingValue(index: 5)
     }
@@ -109,7 +106,7 @@ class NRXParser: MessageFormat {
       message,
       id: recipient.messageID,
       frequency: frequency,
-      code: code,
+      code: element.messageCode,
       time: time,
       totalCharacters: totalChars,
       badCharacters: badChars,

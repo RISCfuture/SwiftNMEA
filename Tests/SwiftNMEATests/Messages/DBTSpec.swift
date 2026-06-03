@@ -6,7 +6,7 @@ import Quick
 
 final class DBTSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.21 DBT") {
+    describe("8.3.25 DBT") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

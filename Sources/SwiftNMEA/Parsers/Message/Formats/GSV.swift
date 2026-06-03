@@ -11,7 +11,10 @@ class GSVParser: MessageFormat {
     let totalMessages = try sentence.fields.int(at: 0)!
     let messageNumber = try sentence.fields.int(at: 1)!
     let totalSatellites = try sentence.fields.int(at: 2, optional: true)
-    let signalID = try sentence.fields.int(at: sentence.fields.endIndex - 1)!
+    // Signal ID is a hex ('h') field reaching A–F; the System is identified by
+    // the talker (GP/GL/GA/GB/GQ/GI), not the satellite ID range
+    let signalID = Int(try sentence.fields.hex(at: sentence.fields.endIndex - 1, width: nil)!)
+    let systemID = GNSS.systemID(forTalker: sentence.talker)
     let satelliteData = try (3..<(sentence.fields.endIndex - 1)).chunks(ofCount: 4).compactMap {
       chunk in
       guard let svID = try sentence.fields.int(at: chunk.startIndex, optional: true) else {
@@ -27,8 +30,13 @@ class GSVParser: MessageFormat {
         valueType: .integer,
         reference: .true
       )!
-      let SNR = try sentence.fields.int(at: chunk.index(chunk.startIndex, offsetBy: 3))!
-      let id = try GNSS.SatelliteID(svID: svID, signalID: signalID)
+      let SNR = try sentence.fields.int(
+        at: chunk.index(chunk.startIndex, offsetBy: 3),
+        optional: true
+      )
+      let id =
+        try systemID.map { try GNSS.SatelliteID(systemID: $0, svID: svID, signalID: signalID) }
+        ?? GNSS.SatelliteID(svID: svID, signalID: signalID)
       return GNSS.SatelliteInView(
         id: id,
         position: .init(elevation: elevation, azimuth: azimuth),

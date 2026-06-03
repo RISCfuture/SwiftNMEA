@@ -6,7 +6,7 @@ import Quick
 
 final class ALRSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.11 ALR") {
+    describe("8.3.15 ALR") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -1500)

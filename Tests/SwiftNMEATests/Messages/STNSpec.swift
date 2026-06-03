@@ -6,7 +6,7 @@ import Quick
 
 final class STNSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.78 STN") {
+    describe("8.3.100 STN") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

@@ -6,7 +6,7 @@ import Quick
 
 final class TLLSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.81 TLL") {
+    describe("8.3.103 TLL") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -10)

@@ -4,6 +4,22 @@ import Foundation
 public struct GNSS {
   private init() {}
 
+  /// The GNSS System ID (per IEC 61162-1 ed.6.0) identified by a talker, used
+  /// by sentences (e.g. GSV) that convey the constellation via the talker
+  /// rather than an explicit System ID field. Returns `nil` for non-GNSS
+  /// talkers and the combined-GNSS talker (GN), whose system is ambiguous.
+  static func systemID(forTalker talker: Talker) -> Int? {
+    switch talker {
+      case .GPS: 1
+      case .GLONASS: 2
+      case .galileo: 3
+      case .beidou: 4
+      case .QZSS: 5
+      case .navIC: 6
+      default: nil
+    }
+  }
+
   /**
    The ID number of a satellite in a GNSS constellation.
 
@@ -29,6 +45,15 @@ public struct GNSS {
     /// Galileo positioning system
     case galileo(_ id: Int, signal: Signal.Galileo?)
 
+    /// BeiDou Navigation Satellite System (北斗, China)
+    case beidou(_ id: Int, signal: Signal.BDS?)
+
+    /// Quasi-Zenith Satellite System (みちびき, Japan)
+    case QZSS(_ id: Int, signal: Signal.QZSS?)
+
+    /// NavIC / IRNSS (Indian Regional Navigation Satellite System)
+    case navIC(_ id: Int, signal: Signal.NavIC?)
+
     /// The pseudo-random number ID for GPS and Galileo satellites, or the
     /// slot number for GLONASS satellites.
     public var PRN: Int? {
@@ -38,6 +63,8 @@ public struct GNSS {
         case .GLONASS(let id, _):
           id - 64
         case .galileo(let id, _):
+          id
+        case .beidou(let id, _), .QZSS(let id, _), .navIC(let id, _):
           id
       }
     }
@@ -49,6 +76,9 @@ public struct GNSS {
         case .GPS(let id, _): (33...64).contains(id)
         case .GLONASS(let id, _): (33...64).contains(id)
         case .galileo(let id, _): (37...64).contains(id)
+        case .beidou(let id, _): (65...85).contains(id)
+        case .QZSS: false
+        case .navIC(let id, _): (33...64).contains(id)
       }
     }
 
@@ -81,6 +111,33 @@ public struct GNSS {
             throw Errors.badSignalID(signalID)
           }
           self = .galileo(svID, signal: signal)
+        case 4:
+          guard let signalID else {
+            self = .beidou(svID, signal: nil)
+            return
+          }
+          guard let signal = GNSS.Signal.BDS(rawValue: signalID) else {
+            throw Errors.badSignalID(signalID)
+          }
+          self = .beidou(svID, signal: signal)
+        case 5:
+          guard let signalID else {
+            self = .QZSS(svID, signal: nil)
+            return
+          }
+          guard let signal = GNSS.Signal.QZSS(rawValue: signalID) else {
+            throw Errors.badSignalID(signalID)
+          }
+          self = .QZSS(svID, signal: signal)
+        case 6:
+          guard let signalID else {
+            self = .navIC(svID, signal: nil)
+            return
+          }
+          guard let signal = GNSS.Signal.NavIC(rawValue: signalID) else {
+            throw Errors.badSignalID(signalID)
+          }
+          self = .navIC(svID, signal: signal)
         default:
           throw Errors.badSystemID(systemID)
       }
@@ -199,6 +256,108 @@ public struct GNSS {
       /// L1-BC
       case L1_BC = 7
     }
+
+    /// BeiDou (BDS) signals/channels
+    public enum BDS: Int, Sendable, Codable, Equatable {
+
+      /// All signals
+      case all = 0
+
+      /// B1I
+      case B1I = 1
+
+      /// B1Q
+      case B1Q = 2
+
+      /// B1C
+      case B1C = 3
+
+      /// B1A
+      case B1A = 4
+
+      /// B2a
+      case B2a = 5
+
+      /// B2b
+      case B2b = 6
+
+      /// B2 a+b
+      case B2ab = 7
+
+      /// B3I
+      case B3I = 8
+
+      /// B3Q
+      case B3Q = 9
+
+      /// B3A
+      case B3A = 10
+
+      /// B2I
+      case B2I = 11
+
+      /// B2Q
+      case B2Q = 12
+    }
+
+    /// QZSS signals/channels
+    public enum QZSS: Int, Sendable, Codable, Equatable {
+
+      /// All signals
+      case all = 0
+
+      /// L1 C/A
+      case L1_CA = 1
+
+      /// L1C (D)
+      case L1C_D = 2
+
+      /// L1C (P)
+      case L1C_P = 3
+
+      /// L1S
+      case L1S = 4
+
+      /// L2C-M
+      case L2C_M = 5
+
+      /// L2C-L
+      case L2C_L = 6
+
+      /// L5-I
+      case L5_I = 7
+
+      /// L5-Q
+      case L5_Q = 8
+
+      /// L6D
+      case L6D = 9
+
+      /// L6E
+      case L6E = 10
+    }
+
+    /// NavIC (IRNSS) signals/channels
+    public enum NavIC: Int, Sendable, Codable, Equatable {
+
+      /// All signals
+      case all = 0
+
+      /// L5-SPS
+      case L5_SPS = 1
+
+      /// S-SPS
+      case S_SPS = 2
+
+      /// L5-RS
+      case L5_RS = 3
+
+      /// S-RS
+      case S_RS = 4
+
+      /// L1-SPS
+      case L1_SPS = 5
+    }
   }
 
   /**
@@ -227,7 +386,7 @@ public struct GNSS {
    */
   public enum IntegrityStatus: Character, Sendable, Codable, Equatable {
 
-    ///  avigational status not valid, equipment is not providing
+    ///  Navigational status not valid, equipment is not providing
     /// navigational status indication.
     case notInUse = "V"
 
@@ -309,6 +468,15 @@ public struct GNSS {
 
     /// Galileo positioning system
     case galileo
+
+    /// BeiDou Navigation Satellite System (北斗, China)
+    case beidou
+
+    /// Quasi-Zenith Satellite System (みちびき, Japan)
+    case QZSS
+
+    /// NavIC / IRNSS (Indian Regional Navigation Satellite System)
+    case navIC
   }
 
   /**
@@ -353,6 +521,6 @@ public struct GNSS {
 
     /// SNR (C/N₀) [carrier-to-noise density ratio], 00-99 dB-Hz.
     /// `nil` when not tracking.
-    public let SNR: Int
+    public let SNR: Int?
   }
 }

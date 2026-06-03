@@ -9,14 +9,15 @@ final class ACASpec: AsyncSpec {
     describe("8.3.5 ACA") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
-        let inUseChanged = Date(timeIntervalSinceNow: -1000)
+        // the “in-use changed” time field is null to keep the sentence within
+        // the 82-character limit
         let sentence = createSentence(
           delimiter: .parametric,
           talker: .commVHF,
           format: .AISChannelAssignment,
           fields: [
             0, 3712.12, "N", 12112.35, "W", 3615.09, "N", 12011.11, "W", 2, 5, 0, 12, 1, 2, 0, "C",
-            1, hmsFractionFormatter.string(from: inUseChanged)
+            1, nil
           ]
         )
         let data = sentence.data(using: .ascii)!
@@ -60,7 +61,30 @@ final class ACASpec: AsyncSpec {
         expect(powerLevel).to(equal(.high))
         expect(source).to(equal(.AISAssignmentSentence))
         expect(inUse).to(equal(true))
-        expect(inUseChangedActual).to(beCloseTo(inUseChanged, within: 0.01))
+        expect(inUseChangedActual).to(beNil())
+      }
+
+      it("rejects an over-length sentence") {
+        let parser = SwiftNMEA()
+        let inUseChanged = Date(timeIntervalSinceNow: -1000)
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .commVHF,
+          format: .AISChannelAssignment,
+          fields: [
+            0, 3712.12, "N", 12112.35, "W", 3615.09, "N", 12011.11, "W", 2, 5, 0, 12, 1, 2, 0, "C",
+            1, hmsFractionFormatter.string(from: inUseChanged)
+          ]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        expect(messages).to(haveCount(1))
+        guard let error = messages[0] as? MessageError else {
+          fail("expected MessageError, got \(messages[0])")
+          return
+        }
+        expect(error.type).to(equal(.sentenceTooLong))
       }
     }
   }

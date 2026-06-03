@@ -16,6 +16,9 @@ public class UnitFlow: Dimension, @unchecked Sendable {
   /// Liters per minute (LPM)
   public static let litersPerMinute: UnitFlow = unit(UnitVolume.liters, per: UnitDuration.minutes)
 
+  /// Liters per hour (L/h)
+  public static let litersPerHour: UnitFlow = unit(UnitVolume.liters, per: UnitDuration.hours)
+
   /// Cubic meters per hour (m^3/hr)
   public static let cubicMetersPerHour: UnitFlow = unit(
     UnitVolume.cubicMeters,

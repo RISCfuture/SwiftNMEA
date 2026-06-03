@@ -18,7 +18,11 @@ class VERParser: MessageFormat {
     let modelCode = try sentence.fields.string(at: 6, optional: true)
     let softwareRevision = try sentence.fields.string(at: 7, optional: true)
     let hardwareRevision = try sentence.fields.string(at: 8, optional: true)
-    let sequentialID = try sentence.fields.int(at: 9)!
+    // the sequential message identifier may be null only for single-sentence messages
+    let sequentialID = try sentence.fields.int(at: 9, optional: true)
+    if sequentialID == nil, totalSentences > 1 {
+      throw sentence.fields.fieldError(type: .missingRequiredValue, index: 9)
+    }
 
     do {
       let recipient = Recipient(sentence: sentence, uniqueID: uniqueID, sequentialID: sequentialID)
@@ -100,9 +104,9 @@ class VERParser: MessageFormat {
     let format = Format.version
 
     let uniqueID: String
-    let sequentialID: Int
+    let sequentialID: Int?
 
-    init(sentence: ParametricSentence, uniqueID: String, sequentialID: Int) {
+    init(sentence: ParametricSentence, uniqueID: String, sequentialID: Int?) {
       talker = sentence.talker
       self.uniqueID = uniqueID
       self.sequentialID = sequentialID

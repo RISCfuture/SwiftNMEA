@@ -6,7 +6,7 @@ import Quick
 
 final class GSTSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.40 GST") {
+    describe("8.3.47 GST") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -12)

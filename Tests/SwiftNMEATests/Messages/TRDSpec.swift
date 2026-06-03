@@ -6,7 +6,7 @@ import Quick
 
 final class TRDSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.83 TRD") {
+    describe("8.3.105 TRD") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

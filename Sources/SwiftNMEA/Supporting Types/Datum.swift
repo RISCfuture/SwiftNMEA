@@ -17,6 +17,9 @@ public enum Datum: Sendable, Codable, Equatable {
   /// Parametry Zemli 1990 goda (Параметры Земли 1990 года)
   case PE90
 
+  /// BDCS (BeiDou Coordinate System)
+  case BDCS
+
   /**
    Manually entered or user defined offsets.
 
@@ -40,6 +43,7 @@ public enum Datum: Sendable, Codable, Equatable {
       case "W72": self = .WGS72
       case "S85": self = .SGS85
       case "P90": self = .PE90
+      case "C00": self = .BDCS
       case "999": self = .userDefined(subdivision: subdivision)
       default:
         guard let code = Int(rawValue) else { return nil }
@@ -72,6 +76,8 @@ public enum Datum: Sendable, Codable, Equatable {
         try container.encode("S85", forKey: .datum)
       case .PE90:
         try container.encode("P90", forKey: .datum)
+      case .BDCS:
+        try container.encode("C00", forKey: .datum)
       case .userDefined(let subdivision):
         try container.encode("999", forKey: .datum)
         try container.encode(

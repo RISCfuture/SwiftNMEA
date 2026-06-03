@@ -6,7 +6,7 @@ class DTMParser: MessageFormat {
   }
 
   func parse(sentence: ParametricSentence) throws -> Message.Payload? {
-    let localDatumStr = try sentence.fields.string(at: 0)!
+    let localDatumStr = try sentence.fields.string(at: 0, optional: true)
     let localSubdivision = try sentence.fields.character(at: 1, optional: true)
     let latOffsetMag = try sentence.fields.measurement(
       at: 2,
@@ -30,11 +30,34 @@ class DTMParser: MessageFormat {
     )
     let referenceDatumStr = try sentence.fields.string(at: 7)!
 
-    guard let localDatum = Datum(rawValue: localDatumStr, subdivision: localSubdivision) else {
-      throw sentence.fields.fieldError(type: .unknownValue, index: 0)
+    let localDatum = try localDatumStr.map { localDatumStr in
+      guard let datum = Datum(rawValue: localDatumStr, subdivision: localSubdivision) else {
+        throw sentence.fields.fieldError(type: .unknownValue, index: 0)
+      }
+      return datum
     }
     guard let referenceDatum = Datum(rawValue: referenceDatumStr) else {
       throw sentence.fields.fieldError(type: .unknownValue, index: 7)
+    }
+
+    // §8.3.31 footnote 3: when the local datum is user-defined (code 999), the
+    // offset fields shall not be null.
+    if case .userDefined = localDatum {
+      if latOffsetMag == nil {
+        throw sentence.fields.fieldError(type: .missingRequiredValue, index: 2)
+      }
+      if latOffsetHemisphere == nil {
+        throw sentence.fields.fieldError(type: .missingRequiredValue, index: 3)
+      }
+      if lonOffsetMag == nil {
+        throw sentence.fields.fieldError(type: .missingRequiredValue, index: 4)
+      }
+      if lonOffsetHemisphere == nil {
+        throw sentence.fields.fieldError(type: .missingRequiredValue, index: 5)
+      }
+      if altOffset == nil {
+        throw sentence.fields.fieldError(type: .missingRequiredValue, index: 6)
+      }
     }
 
     let latOffset = try latOffsetMag.map { latOffsetMag in

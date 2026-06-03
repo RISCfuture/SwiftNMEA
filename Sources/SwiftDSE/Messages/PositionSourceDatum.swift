@@ -17,11 +17,12 @@ public struct PositionSourceDatum: RawRepresentable, Sendable, Codable, Equatabl
 
   public var rawValue: String {
     let resolutionStr = String(format: "%02.0f", fixResolution * 10)
-    return "\(source.rawValue)\(resolutionStr)"
+    // six digits: source (2) + fix resolution (2) + datum (2)
+    return "\(source.rawValue)\(resolutionStr)\(datum.rawValue)"
   }
 
   public init?(rawValue: String) {
-    guard ("000000"..."999999").contains(rawValue) else { return nil }
+    guard rawValue.count == 6, ("000000"..."999999").contains(rawValue) else { return nil }
 
     let sourceStr = rawValue.slice(from: 0, to: 1)
     let resolutionStr = rawValue.slice(from: 2, to: 3)

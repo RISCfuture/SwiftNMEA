@@ -25,6 +25,26 @@ final class TLBSpec: AsyncSpec {
         }
         expect(payload).to(equal(.targetLabels([1: "A", 2: "B", 3: nil])))
       }
+
+      it("throws an error for a duplicate target number") {
+        let parser = SwiftNMEA()
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .radar,
+          format: .targetLabels,
+          fields: [1, "A", 1, "B"]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        expect(messages).to(haveCount(2))
+        guard let error = messages[1] as? MessageError else {
+          fail("expected MessageError, got \(messages[1])")
+          return
+        }
+        expect(error.type).to(equal(.badValue))
+        expect(error.fieldNumber).to(equal(2))
+      }
     }
   }
 }

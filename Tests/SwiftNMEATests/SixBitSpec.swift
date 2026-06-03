@@ -59,6 +59,13 @@ final class SixBitSpec: AsyncSpec {
         expect(chunks[0]).to(equal(encodedString))
         expect(fillBits).to(equal(0))
       }
+
+      it("rejects characters outside the six-bit alphabet") {
+        let coder = SixBitCoder()
+        // 'X' (0x58) and 'z' (0x7A) fall in the gaps between the armoring ranges
+        expect(coder.decode("X", fillBits: 0)).to(beNil())
+        expect(coder.decode("1P00z", fillBits: 0)).to(beNil())
+      }
     }
   }
 }

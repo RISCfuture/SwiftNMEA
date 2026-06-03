@@ -19,9 +19,9 @@ final class ACSSpec: AsyncSpec {
             1,
             123_456_789,
             hmsFractionFormatter.string(from: time),
-            components.year,
+            components.day,
             components.month,
-            components.day
+            components.year
           ]
         )
         let data = sentence.data(using: .ascii)!

@@ -37,6 +37,15 @@ struct SentenceCountingBuffer<Recipient: BufferRecipient, Element: SentenceCount
   mutating func add(element: Element, optionallyFor recipient: Recipient?) throws -> (
     Recipient, Element
   )? {
+    // reject out-of-range counts before they reach `1...totalSentences`, which
+    // would trap on a non-positive total
+    guard element.totalSentences >= 1,
+      element.lastSentence >= 1,
+      element.lastSentence <= element.totalSentences
+    else {
+      throw BufferErrors.wrongSentenceNumber
+    }
+
     if let recipient {
       if let message = try add(element: element, for: recipient) {
         lastRecipient = nil

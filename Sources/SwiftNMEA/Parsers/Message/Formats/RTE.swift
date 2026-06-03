@@ -36,7 +36,8 @@ class RTEParser: MessageFormat {
     } catch let error as BufferErrors {
       switch error {
         case .missingRecipient:
-          fatalError("Unexpected missingRecipient error")
+          // the first sentence of a route must carry the route mode and identifier
+          throw sentence.fields.lineError(type: .missingRequiredValue)
         case .wrongSentenceNumber:
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }

@@ -111,16 +111,16 @@ public struct Radar {
       heading = Self.decodeDecimal(headingValue, unit: UnitAngle.degrees, nilSentinel: 4094, 4095)
       isRadarTarget = headingValue == 4095
       status = .init(rawValue: reader.read(bits: 3))
-      isTestTarget = reader.read(bits: 1) == 1
+      isTestTarget = reader.readFlag()
       let distanceValue: UInt16 = reader.read(bits: 14)
       distance = Self.decodeDecimal(
         distanceValue,
         unit: UnitLength.nauticalMiles,
         step: 0.01,
-        nilSentinel: 16384
+        nilSentinel: 16383
       )
-      speedCourseRelative = reader.read(bits: 1) == 1
-      waterStabilized = reader.read(bits: 1) == 1
+      speedCourseRelative = reader.readFlag()
+      waterStabilized = reader.readFlag()
       let _: UInt8 = reader.read(bits: 2)
       let corr: UInt8 = reader.read(bits: 8)
       correlationNumber = corr == 0 ? nil : corr

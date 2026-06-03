@@ -55,19 +55,31 @@ final class BitCoderSpec: AsyncSpec {
       let data = Data([0x07, 0xB4, 0xD2, 0x09, 0xB5, 0x4D, 0xFF, 0xF8, 0xFE, 0xB2, 0x20, 0x00])
       var reader = BitReader(data: data)
 
-      expect(reader.read(bits: 2)).to(equal(0))
-      expect(reader.read(bits: 10)).to(equal(123))
-      expect(reader.read(bits: 12)).to(equal(1234))
-      expect(reader.read(bits: 12)).to(equal(155))
-      expect(reader.read(bits: 12)).to(equal(1357))
-      expect(reader.read(bits: 12)).to(equal(4095))
-      expect(reader.read(bits: 3)).to(equal(0b100))
-      expect(reader.read(bits: 1)).to(equal(0))
-      expect(reader.read(bits: 14)).to(equal(16300))
-      expect(reader.read(bits: 1)).to(equal(1))
-      expect(reader.read(bits: 1)).to(equal(0))
-      expect(reader.read(bits: 2)).to(equal(0))
-      expect(reader.read(bits: 8)).to(equal(128))
+      // these are unsigned fields, read into unsigned types as the real callers do
+      expect(reader.read(bits: 2) as UInt).to(equal(0))
+      expect(reader.read(bits: 10) as UInt).to(equal(123))
+      expect(reader.read(bits: 12) as UInt).to(equal(1234))
+      expect(reader.read(bits: 12) as UInt).to(equal(155))
+      expect(reader.read(bits: 12) as UInt).to(equal(1357))
+      expect(reader.read(bits: 12) as UInt).to(equal(4095))
+      expect(reader.read(bits: 3) as UInt).to(equal(0b100))
+      expect(reader.read(bits: 1) as UInt).to(equal(0))
+      expect(reader.read(bits: 14) as UInt).to(equal(16300))
+      expect(reader.read(bits: 1) as UInt).to(equal(1))
+      expect(reader.read(bits: 1) as UInt).to(equal(0))
+      expect(reader.read(bits: 2) as UInt).to(equal(0))
+      expect(reader.read(bits: 8) as UInt).to(equal(128))
+    }
+
+    it("sign-extends two's-complement reads into signed types") {
+      var signedReader = BitReader(data: Data([0x8F]))
+      expect(signedReader.read(bits: 4) as Int).to(equal(-8))  // 1000
+      expect(signedReader.read(bits: 4) as Int).to(equal(-1))  // 1111
+
+      // the same bits read into an unsigned type are not sign-extended
+      var unsignedReader = BitReader(data: Data([0x8F]))
+      expect(unsignedReader.read(bits: 4) as UInt8).to(equal(8))
+      expect(unsignedReader.read(bits: 4) as UInt8).to(equal(15))
     }
   }
 }

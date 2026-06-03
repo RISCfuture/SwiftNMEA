@@ -65,7 +65,9 @@ final class SixBitCoder: Sendable {
     result.reserveCapacity(totalBits / 8)
 
     for char in value.unicodeScalars {
-      let hexad = charToHexad(char)
+      // reject characters outside the six-bit armoring alphabet rather than
+      // silently coercing them; callers turn the nil result into .badSixBitEncoding
+      guard let hexad = charToHexad(char) else { return nil }
       // add the hexad to the bit buffer
       bitBuffer = (bitBuffer << 6) | UInt(hexad)
       bitCount += 6
@@ -94,9 +96,14 @@ final class SixBitCoder: Sendable {
     return UnicodeScalar(ascii)
   }
 
-  private func charToHexad(_ char: UnicodeScalar) -> UInt8 {
-    var code = char.utf8.first! + 0b101000
-    code += (code > 0b10000000) ? 0b100000 : 0b101000
-    return code & 0b00111111
+  private func charToHexad(_ char: UnicodeScalar) -> UInt8? {
+    // inverse of hexadToChar: 0x30…0x57 map to hexads 0…39, 0x60…0x77 to 40…63
+    guard char.isASCII else { return nil }
+    let ascii = UInt8(char.value)
+    switch ascii {
+      case 0x30...0x57: return ascii - 0b00110000
+      case 0x60...0x77: return ascii - 0b00111000
+      default: return nil
+    }
   }
 }

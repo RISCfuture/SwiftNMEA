@@ -17,13 +17,14 @@ public struct PositionEnhancement: RawRepresentable, Sendable, Codable, Equatabl
   public var rawValue: String {
     let latMin = latitudeRefinement.converted(to: .arcMinutes).value
     let lonMin = longitudeRefinement.converted(to: .arcMinutes).value
-    let latStr = String(format: "%04d", latMin * 10000)
-    let lonStr = String(format: "%04d", lonMin * 1000)
+    // both refinements are four digits expressing tenths…ten-thousandths of minutes
+    let latStr = String(format: "%04d", Int((latMin * 10000).rounded()))
+    let lonStr = String(format: "%04d", Int((lonMin * 10000).rounded()))
     return "\(latStr)\(lonStr)"
   }
 
   public init?(rawValue: String) {
-    guard ("00000000"..."99999999").contains(rawValue) else { return nil }
+    guard rawValue.count == 8, ("00000000"..."99999999").contains(rawValue) else { return nil }
 
     let latStr = rawValue.slice(from: 0, to: 3)
     let lonStr = rawValue.slice(from: 4, to: 7)

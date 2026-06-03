@@ -192,7 +192,7 @@ public enum Talker: RawRepresentable, Sendable, Codable, Equatable, Hashable {
   public var rawValue: String {
     switch self {
       case .autopilotGeneral: return "AG"
-      case .autopilotMagnetic: return "AM"
+      case .autopilotMagnetic: return "AP"
       case .automaticID: return "AI"
       case .bilgeSystem: return "BI"
       case .navWatchAlarm: return "BN"
@@ -215,7 +215,7 @@ public enum Talker: RawRepresentable, Sendable, Codable, Equatable, Hashable {
       case .galileo: return "GA"
       case .GPS: return "GP"
       case .GLONASS: return "GL"
-      case .GNSS: return "GS"
+      case .GNSS: return "GN"
       case .magneticCompass: return "HC"
       case .gyroCompassSlaved: return "HE"
       case .fluxgate: return "HF"
@@ -256,7 +256,7 @@ public enum Talker: RawRepresentable, Sendable, Codable, Equatable, Hashable {
   public init?(rawValue: RawValue) {
     switch rawValue {
       case "AG": self = .autopilotGeneral
-      case "AM": self = .autopilotMagnetic
+      case "AP": self = .autopilotMagnetic
       case "AI": self = .automaticID
       case "BI": self = .bilgeSystem
       case "BN": self = .navWatchAlarm
@@ -280,7 +280,7 @@ public enum Talker: RawRepresentable, Sendable, Codable, Equatable, Hashable {
       case "GB": self = .beidou
       case "GP": self = .GPS
       case "GL": self = .GLONASS
-      case "GN", "GS": self = .GNSS
+      case "GN": self = .GNSS
       case "GQ": self = .QZSS
       case "HC": self = .magneticCompass
       case "HE": self = .gyroCompassSlaved

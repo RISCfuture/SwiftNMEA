@@ -8,7 +8,7 @@ final class EscapedStringCoder: Sendable {
 
    - Parameter string: The escaped ASCII string
    - Returns: The unescaped ISO 8859-1 string, or `nil` if the string contains
-     non-ASCII characters.
+     non-ASCII characters or a malformed `^HH` escape sequence.
    */
   func decode(string: String) -> String? {
     guard string.data(using: .ascii) != nil else { return nil }
@@ -18,11 +18,13 @@ final class EscapedStringCoder: Sendable {
     decoded.reserveCapacity(string.count)
 
     while let char = iterator.next() {
-      if char == "^",
-        let firstHex = iterator.next(),
-        let secondHex = iterator.next(),
-        let byte = UInt8("\(firstHex)\(secondHex)", radix: 16)
-      {
+      if char == "^" {
+        // a caret must be followed by exactly two hex digits; anything else is
+        // a malformed escape, not silently-passed data
+        guard let firstHex = iterator.next(),
+          let secondHex = iterator.next(),
+          let byte = UInt8("\(firstHex)\(secondHex)", radix: 16)
+        else { return nil }
         decoded.append(byte)
       } else {
         decoded.append(char.asciiValue!)

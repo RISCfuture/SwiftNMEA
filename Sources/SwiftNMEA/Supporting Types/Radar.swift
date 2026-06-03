@@ -92,7 +92,26 @@ public struct Radar {
     /// correlation / association.
     public let correlationNumber: UInt8?
 
-    init(reader: inout BitReader) {
+    /// Distance of closest point of approach. Only present for protocol
+    /// version one structures. `nil` = invalid or N/A data.
+    public let CPADistance: Measurement<UnitLength>?
+
+    /// Time to closest point of approach. Only present for protocol version
+    /// one structures. "-" = increasing. `nil` = invalid or N/A data.
+    public let CPATime: Measurement<UnitDuration>?
+
+    init(reader: inout BitReader) throws {
+      let version: UInt8 = reader.peek(bits: 2)
+      switch version {
+        case 0: try self.init(protocolZeroReader: &reader)
+        case 1: try self.init(protocolOneReader: &reader)
+        default: throw DecodingError.unknownProtocolVersion
+      }
+    }
+
+    private init(protocolZeroReader reader: inout BitReader) throws {
+      guard reader.remainingBits >= 90 else { throw DecodingError.truncated }
+
       protocolVersion = reader.read(bits: 2)
       let trackNum: UInt = reader.read(bits: 10)
       number = trackNum == 0 ? nil : trackNum
@@ -124,6 +143,43 @@ public struct Radar {
       let _: UInt8 = reader.read(bits: 2)
       let corr: UInt8 = reader.read(bits: 8)
       correlationNumber = corr == 0 ? nil : corr
+      CPADistance = nil
+      CPATime = nil
+    }
+
+    private init(protocolOneReader reader: inout BitReader) throws {
+      guard reader.remainingBits >= 42 else { throw DecodingError.truncated }
+
+      protocolVersion = reader.read(bits: 2)
+      let trackNum: UInt = reader.read(bits: 10)
+      number = trackNum == 0 ? nil : trackNum
+      let CPAValue: UInt16 = reader.read(bits: 14)
+      CPADistance = Self.decodeDecimal(
+        CPAValue,
+        unit: UnitLength.nauticalMiles,
+        step: 0.01,
+        nilSentinel: 16383
+      )
+      // TCPA is encoded as a 14-bit two's-complement value; -8192 (-81,92 min)
+      // is the invalid / not-available sentinel.
+      let TCPAValue: Int16 = reader.read(bits: 14)
+      CPATime =
+        TCPAValue == -8192
+        ? nil : Measurement(value: Double(TCPAValue) * 0.01, unit: .minutes)
+      let _: UInt8 = reader.read(bits: 2)
+
+      // Fields that only exist in protocol version zero structures.
+      bearing = nil
+      speed = nil
+      course = nil
+      heading = nil
+      isRadarTarget = false
+      status = nil
+      isTestTarget = false
+      distance = nil
+      speedCourseRelative = false
+      waterStabilized = false
+      correlationNumber = nil
     }
 
     private static func decodeDecimal<Unit: Dimension>(
@@ -136,6 +192,16 @@ public struct Radar {
 
       let value = Double(rawValue) * step
       return Measurement(value: value, unit: unit)
+    }
+
+    /// An error decoding a tracked target bit structure.
+    enum DecodingError: Error {
+
+      /// The protocol version is neither zero nor one.
+      case unknownProtocolVersion
+
+      /// The bitstream ended before a complete target structure could be read.
+      case truncated
     }
 
     /// Tracked / AIS target status

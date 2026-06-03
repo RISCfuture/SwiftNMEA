@@ -6,7 +6,7 @@ import Quick
 
 final class ACSSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.7 ACS") {
+    describe("8.3.8 ACS") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -120)

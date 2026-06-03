@@ -6,7 +6,7 @@ import Quick
 
 final class TLBSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.80 TLB") {
+    describe("8.3.102 TLB") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

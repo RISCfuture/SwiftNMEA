@@ -6,7 +6,7 @@ import Quick
 
 final class HDTSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.44 HDT") {
+    describe("8.3.52 HDT") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

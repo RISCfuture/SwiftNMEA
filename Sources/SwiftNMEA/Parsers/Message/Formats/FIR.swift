@@ -11,7 +11,11 @@ class FIRParser: MessageFormat {
     let detector = try sentence.fields.enumeration(at: 2, ofType: Fire.DetectorType.self)!
     let zone = try sentence.fields.string(at: 3, optional: true)
     let loop = try sentence.fields.int(at: 4, optional: true)
-    let number = try sentence.fields.int(at: 5)!
+    // the detector number/count is a null field only for fault (F) messages
+    let number = try sentence.fields.int(at: 5, optional: true)
+    if number == nil, type != .fault {
+      throw sentence.fields.fieldError(type: .missingRequiredValue, index: 5)
+    }
     let condition = try sentence.fields.enumeration(
       at: 6,
       ofType: Fire.DetectorCondition.self,

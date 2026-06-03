@@ -162,32 +162,6 @@ public struct AIS {
      data field.
      */
     public let replySlot: Int?
-
-    init(number: Int, subsection: Int?, replySlot: Int?) {
-      self.number = number
-      self.subsection = subsection
-      self.replySlot = replySlot
-    }
-
-    init?(ID: String, replySlot: Int?) {
-      let parts = ID.split(separator: ".")
-      switch parts.count {
-        case 1:
-          guard let number = Int(parts[0]) else { return nil }
-          self.number = number
-          self.subsection = nil
-        case 2:
-          guard let number = Int(parts[0]),
-            let subsection = Int(parts[1])
-          else { return nil }
-          self.number = number
-          self.subsection = subsection
-        default:
-          return nil
-      }
-
-      self.replySlot = replySlot
-    }
   }
 
   /**
@@ -203,9 +177,16 @@ public struct AIS {
 
     /// Channel B
     case B = "B"
+
+    /// Long-range channel 75 (used by VDM/VDO long-range reports)
+    case C = "C"
+
+    /// Long-range channel 76 (used by VDM/VDO long-range reports)
+    case D = "D"
   }
 
-  /// Possible message IDs, from ITU-R M.1371-5.
+  /// Possible message IDs, from ITU-R M.1371-6. Values 70 and 71 are IEC
+  /// 61162-1 ABM/BBM codes for the unstructured variants of Messages 25 and 26.
   public enum MessageID: Int, Sendable, Codable, Equatable {
 
     /// 3.1 Messages 1: Position reports (SOTDMA)
@@ -238,7 +219,7 @@ public struct AIS {
     /// 3.8 Message 10: Coordinated universal time and date inquiry
     case UTCInquiry = 10
 
-    /// 3.2 Message 11: Mobile station report
+    /// 3.2 Message 11: UTC and date response
     case mobileStationReport = 11
 
     /// 3.10 Message 12: Addressed safety related message
@@ -286,8 +267,14 @@ public struct AIS {
     /// 3.24 Message 26: Multiple slot binary message with communications state
     case multiSlotBinary = 26
 
-    /// 3.25 Message 27: Long-range automatic identification system broadcast message
+    /// 3.25 Message 27: Long-range AIS broadcast message (AIS satellite message)
     case LRITBroadcast = 27
+
+    /// IEC 61162-1 ABM/BBM code for an unstructured single-slot binary message (Message 25)
+    case singleSlotBinaryUnstructured = 70
+
+    /// IEC 61162-1 ABM/BBM code for an unstructured multiple-slot binary message (Message 26)
+    case multiSlotBinaryUnstructured = 71
   }
 
   /**
@@ -395,11 +382,23 @@ public struct AIS {
     /// Under way sailing
     case sailing = 8
 
-    /// Reserved for High Speed Craft (HSC)
+    /// Reserved for High Speed Craft (HSC); reserved for future use in M.1371-6
     case highSpeedCraft = 9
 
-    /// Reserved for Wing In Ground (WIG)
+    /// Reserved for Wing In Ground (WIG); reserved for future use in M.1371-6
     case wingInGround = 10
+
+    /// Power-driven vessel towing astern (regional use)
+    case poweredTowingAstern = 11
+
+    /// Power-driven vessel pushing ahead or towing alongside (regional use)
+    case poweredPushingAhead = 12
+
+    /// Reserved for future use
+    case reserved = 13
+
+    /// Active AIS-SART, active MOB-AIS, or active EPIRB-AIS
+    case activeEmergencyBeacon = 14
 
     /// Default
     case `default` = 15

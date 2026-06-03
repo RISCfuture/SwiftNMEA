@@ -1,6 +1,6 @@
 import Foundation
 
-/// Encodes and decodes USO 8859-1 strings according to IEC 61162-1,
+/// Encodes and decodes ISO 8859-1 strings according to IEC 61162-1,
 /// paragraph 7.1.4
 final class EscapedStringCoder: Sendable {
   /**

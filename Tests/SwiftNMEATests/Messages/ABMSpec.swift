@@ -15,8 +15,8 @@ final class ABMSpec: AsyncSpec {
           let data2 = "Each message must be no more than 58 characters (117 bytes)".data(
             using: .ascii
           )!
-          let (chunks1, fillBits1) = sixBit.encode(data1, chunkSize: 48)
-          let (chunks2, fillBits2) = sixBit.encode(data2, chunkSize: 48)
+          let (chunks1, fillBits1) = sixBit.encode(data1, chunkSize: 47)
+          let (chunks2, fillBits2) = sixBit.encode(data2, chunkSize: 47)
 
           let sentences1 = encapsulatedSentences(
             format: .AISBinaryMessage,
@@ -73,7 +73,7 @@ final class ABMSpec: AsyncSpec {
           let sixBit = SixBitCoder()
 
           let data = "This is some very interesting binary data".data(using: .ascii)!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 48)
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 47)
           let sentences = encapsulatedSentences(
             format: .AISBinaryMessage,
             from: chunks,
@@ -110,7 +110,7 @@ final class ABMSpec: AsyncSpec {
           let data = "Each message must be no more than 58 characters (117 bytes)".data(
             using: .ascii
           )!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 48)
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 47)
           let sentences = [
             createSentence(
               delimiter: .encapsulated,
@@ -155,7 +155,7 @@ final class ABMSpec: AsyncSpec {
           let data = "1234567890123456789012345678901234567890123456789012345678901234567890".data(
             using: .ascii
           )!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 48)
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 47)
 
           let sentences = encapsulatedSentences(
             format: .AISBinaryMessage,
@@ -194,7 +194,7 @@ final class ABMSpec: AsyncSpec {
           expect(MMSI).to(equal(123_456_789))
           expect(channel).to(equal(.noPreference))
           expect(messageID).to(equal(.positionReportSOTDMA))
-          expect(actualData).to(equal("12345678901234567890123456789012345".data(using: .ascii)!))
+          expect(actualData).to(equal("1234567890123456789012345678901234".data(using: .ascii)!))
         }
 
         it("throws an error for missing fields") {
@@ -204,7 +204,7 @@ final class ABMSpec: AsyncSpec {
           let data = "1234567890123456789012345678901234567890123456789012345678901234567890".data(
             using: .ascii
           )!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 48)
+          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 47)
 
           let sentences = encapsulatedSentences(
             format: .AISBinaryMessage,
@@ -243,7 +243,7 @@ final class ABMSpec: AsyncSpec {
           expect(MMSI).to(equal(123_456_789))
           expect(channel).to(equal(.noPreference))
           expect(messageID).to(equal(.positionReportSOTDMA))
-          expect(actualData).to(equal("12345678901234567890123456789012345".data(using: .ascii)!))
+          expect(actualData).to(equal("1234567890123456789012345678901234".data(using: .ascii)!))
         }
       }
     }

@@ -6,7 +6,7 @@ import Quick
 
 final class XTRSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.105 XTR") {
+    describe("8.3.129 XTR") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

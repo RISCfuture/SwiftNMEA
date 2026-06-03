@@ -6,7 +6,7 @@ import Quick
 
 final class NAKSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.61 NAK") {
+    describe("8.3.70 NAK") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

@@ -6,7 +6,7 @@ import Quick
 
 final class PRCSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.66 PRC") {
+    describe("8.3.77 PRC") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

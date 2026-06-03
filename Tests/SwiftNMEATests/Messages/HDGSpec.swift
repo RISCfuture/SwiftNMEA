@@ -6,7 +6,7 @@ import Quick
 
 final class HDGSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.43 HDG") {
+    describe("8.3.51 HDG") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

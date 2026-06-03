@@ -6,7 +6,7 @@ import Quick
 
 final class SSDSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.77 SSD") {
+    describe("8.3.99 SSD") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

@@ -6,7 +6,7 @@ import Quick
 
 final class POSSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.65 POS") {
+    describe("8.3.76 POS") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

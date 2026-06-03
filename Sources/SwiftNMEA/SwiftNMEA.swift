@@ -5,6 +5,15 @@ import Foundation
 public class SwiftNMEA {
   private static let lineSeparator: [UInt8] = [0x0D, 0x0A]  // CRLF
 
+  /// The maximum length of a sentence-like line, excluding the trailing
+  /// `<CR><LF>` (which is stripped before parsing).
+  ///
+  /// IEC 61162-1 / NMEA 0183 §7 limits a sentence to 82 characters,
+  /// consisting of a maximum of 79 characters between the starting delimiter
+  /// (`$` or `!`) and the terminating `<CR><LF>`. With the delimiter included
+  /// but the `<CR><LF>` removed, that leaves 80 characters.
+  private static let maxLineLength = 80
+
   /// The subtypes of ``Element`` that will not be ignored. If empty, no types
   /// are ignored.
   public var typeFilter: [any Element.Type]
@@ -147,7 +156,13 @@ public class SwiftNMEA {
   {
     var messages: [any Element] = []
     for line in lines {
+      let isSentenceLike = line.first == "$" || line.first == "!"
+
       do {
+        if isSentenceLike, line.count > Self.maxLineLength {
+          throw NMEAError(type: .sentenceTooLong, line: line)
+        }
+
         if let query = try await Query(sentence: line, ignoreChecksum: ignoreChecksums) {
           // we have to parse queries unconditionally because otherwise they'll be caught by ParametricParser
           addIfFilterMatches(query, to: &messages)
@@ -170,6 +185,10 @@ public class SwiftNMEA {
           {
             addIfFilterMatches(message, to: &messages)
           }
+        } else if isSentenceLike, try await !lineIsRecognizable(line) {
+          // a sentence-like line that matches none of the parsers (and wasn't merely
+          // excluded by a filter) is malformed
+          throw NMEAError(type: .unknownSentenceType, line: line)
         }
       } catch let error as NMEAError {
         messages.append(MessageError(from: error))
@@ -178,6 +197,19 @@ public class SwiftNMEA {
     }
 
     return messages
+  }
+
+  /// Returns whether a sentence-like line matches the shape of any sentence
+  /// parser, regardless of the active filters. Checksums are ignored, because
+  /// shape recognition (not validity) is all that matters here: a line that
+  /// matches a parser shape is "recognized" even if it was excluded by a
+  /// filter or has a bad checksum. Used to distinguish a line that was merely
+  /// filtered out from one that is genuinely unparseable.
+  private func lineIsRecognizable(_ line: String) async throws -> Bool {
+    if try await Query(sentence: line, ignoreChecksum: true) != nil { return true }
+    if try await ProprietarySentence(sentence: line, ignoreChecksum: true) != nil { return true }
+    if try await ParametricSentence(sentence: line, ignoreChecksum: true) != nil { return true }
+    return false
   }
 
   private func typeFilterMatches(element: any Element) -> Bool {

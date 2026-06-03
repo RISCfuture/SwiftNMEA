@@ -26,7 +26,7 @@ let pressureUnits: [String: UnitPressure] = [
 
 let temperatureUnits: [String: UnitTemperature] = [
   "C": .celsius,
-  "F": .fahrenheit
+  "K": .kelvin
 ]
 
 let angleUnits: [String: UnitAngle] = [
@@ -48,13 +48,10 @@ let densityUnits: [String: UnitDensity] = [
   "K": .kilogramsPerCubicMeter
 ]
 
-let volumeUnits: [String: UnitVolume] = [
-  "l": .liters,
-  "M": .cubicMeters
-]
-
 let flowUnits: [String: UnitFlow] = [
-  "l": .litersPerSecond
+  "l": .litersPerSecond,  // maintained for legacy purposes
+  "L": .litersPerSecond,
+  "H": .litersPerHour
 ]
 
 let forceUnits: [String: UnitForce] = [

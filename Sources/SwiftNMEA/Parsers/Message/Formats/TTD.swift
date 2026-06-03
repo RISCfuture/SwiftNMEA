@@ -11,7 +11,7 @@ class TTDParser: MessageFormat {
   func parse(sentence: ParametricSentence) throws -> Message.Payload? {
     let totalSentences = try sentence.fields.hex(at: 0, width: 2)!
     let sentenceNumber = try sentence.fields.hex(at: 1, width: 2)!
-    let sequentialID = try sentence.fields.int(at: 2)!
+    let sequentialID = try sentence.fields.int(at: 2, optional: true)
     let data = try sentence.fields.string(at: 3)!
     let fillBits = try sentence.fields.int(at: 4)!
 
@@ -69,16 +69,16 @@ class TTDParser: MessageFormat {
   private func makePayload(recipient _: Recipient, element: BufferElement) throws -> Message
     .Payload?
   {
-    guard let targets = element.targets else { throw TTDErrors.badData }
+    guard let targets = try element.targets() else { throw TTDErrors.badData }
     return .trackedTargets(targets)
   }
 
   private struct Recipient: BufferRecipient {
     let talker: Talker
     let format: Format
-    var sequentialID: Int
+    var sequentialID: Int?
 
-    init(sentence: ParametricSentence, sequentialID: Int) {
+    init(sentence: ParametricSentence, sequentialID: Int?) {
       talker = sentence.talker
       format = sentence.format
       self.sequentialID = sequentialID
@@ -93,13 +93,26 @@ class TTDParser: MessageFormat {
     var encapsulatedData: String
     var fillBits: Int
 
-    var targets: [Radar.TrackedTarget]? {
+    func targets() throws -> [Radar.TrackedTarget]? {
       guard let data else { return nil }
-      let totalBits = data.count * 8
-      let totalTargets = totalBits / 90
       var reader = BitReader(data: data)
+      var targets: [Radar.TrackedTarget] = []
 
-      return Array(0..<totalTargets).map { _ in .init(reader: &reader) }
+      // A sentence may mix protocol-zero (90-bit) and protocol-one (42-bit)
+      // structures. Consume them sequentially until fewer than the smallest
+      // structure remains (the tail is fill/padding bits).
+      while reader.remainingBits >= 42 {
+        do {
+          targets.append(try .init(reader: &reader))
+        } catch Radar.TrackedTarget.DecodingError.unknownProtocolVersion {
+          throw TTDErrors.badData
+        } catch Radar.TrackedTarget.DecodingError.truncated {
+          // Remaining bits are padding, not a complete structure.
+          break
+        }
+      }
+
+      return targets
     }
 
     mutating func append(otherFields _: Self) {

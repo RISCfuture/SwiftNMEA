@@ -271,6 +271,12 @@ public struct DSC {
    */
   public enum Telecommand1: String, Sendable, Codable, Equatable {
 
+    /// F3E/G3E all-modes telephony
+    case telephonyAllModes = "00"
+
+    /// F3E/G3E duplex telephony
+    case telephonyDuplex = "01"
+
     /// Polling
     case polling = "03"
 
@@ -283,11 +289,20 @@ public struct DSC {
     /// Data
     case data = "06"
 
+    /// J3E telephony
+    case telephonyJ3E = "09"
+
     /// Distress acknowledgement
     case distressAcknowledge = "10"
 
     /// Distress alert relay
     case distressRelay = "12"
+
+    /// F1B/J2B teletype, forward error correction
+    case teletypeFEC = "13"
+
+    /// F1B/J2B teletype, automatic repeat request
+    case teletypeARQ = "15"
 
     /// Test
     case test = "18"
@@ -423,8 +438,13 @@ public struct DSC {
   public enum FrequencyChannel: RawRepresentable, Sendable, Codable, Equatable {
     public typealias RawValue = String
 
-    /// Frequency value. This should be used for MF, HF equipment except
-    /// when using seven-digit frequencies.
+    /// Frequency value. This should be used for MF, HF equipment. Frequencies
+    /// that are a whole multiple of 100 Hz are coded into a six-digit field
+    /// (multiples of 100 Hz); frequencies requiring 10 Hz resolution are coded
+    /// into an eight-digit field (multiples of 10 Hz), per the seven-digit
+    /// frequency form of Table A1-5. Only frequencies below 30 MHz are
+    /// representable; values outside the range 0 Hz…29.999990 MHz are clamped,
+    /// and all frequencies are rounded to the nearest 10 Hz.
     case frequency(_ frequency: Measurement<UnitFrequency>)
 
     /// The HF/MF working channel number. This should be used for backward
@@ -437,54 +457,69 @@ public struct DSC {
     /// The VHF working channel number.
     case channelVHF(_ channel: Int)
 
+    /// Highest frequency representable in the six-digit (multiples of 100 Hz)
+    /// form, in hertz (HM digit ≤ 2).
+    private static let maxFrequency100Hz = 29_999_900.0
+
+    /// Highest frequency representable in the eight-digit (multiples of 10 Hz)
+    /// form, in hertz (HM digit 4, TM digit ≤ 2).
+    private static let maxFrequency10Hz = 29_999_990.0
+
     public var rawValue: String {
       switch self {
         case .frequency(let frequency):
-          let hz = frequency.converted(to: .hertz).value
-          if hz <= 2_999_990 {
-            return String(format: "4%05.2f", hz / 1000)
-          }
-          if hz <= 29_999_900 {
-            return String(format: "%06.0f", hz / 100)
-          }
-          fatalError("Frequency uncodable by ITU-R M.493-16")
+          return Self.encodeFrequency(frequency)
         case .channelHF_MF(let channel):
           return String(format: "3%05d", channel)
         case .autoVHF(let channel):
           return String(format: "8%05d", channel)
         case .channelVHF(let channel):
-          return String(format: "9%05d", channel)
+          return String(format: "90%04d", channel)
       }
     }
 
     public init?(rawValue: String) {
+      guard rawValue.allSatisfy(\.isNumber) else { return nil }
       switch rawValue.first {
         case "0", "1", "2":
-          guard let freq100 = Int(rawValue) else { return nil }
-          let freq = Double(freq100 * 100)
-          self = .frequency(.init(value: freq, unit: .hertz))
+          // Six-digit field: HM TM M H T U, frequency in multiples of 100 Hz.
+          guard rawValue.count == 6, let hundreds = Int(rawValue) else { return nil }
+          self = .frequency(.init(value: Double(hundreds) * 100, unit: .hertz))
         case "3":
-          guard let chan = Int(rawValue.slice(from: 1)) else {
-            return nil
-          }
-          self = .channelHF_MF(chan)
+          // 3 + five-digit HF/MF channel number (TM M H T U, and 3 is HM).
+          guard rawValue.count == 6, let channel = Int(rawValue.slice(from: 1)) else { return nil }
+          self = .channelHF_MF(channel)
         case "4":
-          guard let freq10 = Double(rawValue.slice(from: 1)) else {
-            return nil
-          }
-          self = .frequency(.init(value: freq10 * 10, unit: .hertz))
+          // 4 + seven-digit field: TM M H T U T1 U1, frequency in multiples of 10 Hz.
+          guard rawValue.count == 8, let tens = Int(rawValue.slice(from: 1)) else { return nil }
+          self = .frequency(.init(value: Double(tens) * 10, unit: .hertz))
         case "8":
-          guard let chan = Int(rawValue.slice(from: 1)) else {
-            return nil
-          }
-          self = .autoVHF(chan)
+          // 8 + five-digit auto-VHF channel number (Rec. ITU-R M.586).
+          guard rawValue.count == 6, let channel = Int(rawValue.slice(from: 1)) else { return nil }
+          self = .autoVHF(channel)
         case "9":
-          guard let chan = Int(rawValue.slice(from: 2)) else {
-            return nil
-          }
-          self = .channelVHF(chan)
+          // 90 + four-digit VHF working channel number (M H T U).
+          guard rawValue.count == 6, rawValue.char(at: 1) == "0",
+            let channel = Int(rawValue.slice(from: 2))
+          else { return nil }
+          self = .channelVHF(channel)
         default: return nil
       }
+    }
+
+    /// Encodes a frequency into the fixed-width digit field of Table A1-5,
+    /// choosing the six-digit (multiples of 100 Hz) form when the rounded
+    /// frequency is a whole multiple of 100 Hz, and otherwise the eight-digit
+    /// (multiples of 10 Hz, seven-digit-frequency) form.
+    private static func encodeFrequency(_ frequency: Measurement<UnitFrequency>) -> String {
+      let hz = frequency.converted(to: .hertz).value
+      let tens = (hz / 10).rounded()
+      let clampedTens = min(max(tens, 0), maxFrequency10Hz / 10)
+      let tensInt = Int(clampedTens)
+      if tensInt.isMultiple(of: 10), Double(tensInt) * 10 <= maxFrequency100Hz {
+        return String(format: "%06d", tensInt / 10)
+      }
+      return String(format: "4%07d", tensInt)
     }
   }
 }

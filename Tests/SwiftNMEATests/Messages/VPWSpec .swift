@@ -6,7 +6,7 @@ import Quick
 
 final class VPWSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.96 VPW") {
+    describe("8.3.120 VPW") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

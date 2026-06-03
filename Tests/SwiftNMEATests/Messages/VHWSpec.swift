@@ -6,7 +6,7 @@ import Quick
 
 final class VHWSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.94 VHW") {
+    describe("8.3.118 VHW") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

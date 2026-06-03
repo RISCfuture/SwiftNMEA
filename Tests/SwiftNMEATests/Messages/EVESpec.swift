@@ -6,7 +6,7 @@ import Quick
 
 final class EVESpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.29 EVE") {
+    describe("8.3.35 EVE") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -33)

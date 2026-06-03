@@ -63,6 +63,9 @@ public enum ErrorType: Sendable, Codable, Equatable {
   /// Sentence type did not have an associated MessageFormat subclass.
   case unknownSentenceType
 
+  /// Sentence exceeded the maximum permitted length.
+  case sentenceTooLong
+
   /// Expected a single character.
   case badCharacterValue
 

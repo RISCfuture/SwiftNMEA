@@ -6,7 +6,7 @@ import Quick
 
 final class RSDSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.74 RSD") {
+    describe("8.3.87 RSD") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

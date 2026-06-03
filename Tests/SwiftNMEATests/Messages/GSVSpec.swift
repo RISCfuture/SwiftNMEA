@@ -6,7 +6,7 @@ import Quick
 
 final class GSVSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.41 GSV") {
+    describe("8.3.48 GSV") {
       it("parses a sentence") {
 
         // MARK: Setup
@@ -103,6 +103,33 @@ final class GSVSpec: AsyncSpec {
           )
           expect(satellites[i - 1].SNR).to(equal(i + 34))
         }
+      }
+
+      it("derives the constellation from the talker and parses a hex signal ID") {
+        let parser = SwiftNMEA()
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .beidou,
+          format: .GNSSSatellitesInView,
+          fields: [
+            1, 1, 1,
+            "05", 15, 25, 35,
+            "C"  // BDS Signal ID B2Q (hex)
+          ]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        expect(messages).to(haveCount(2))
+        guard let payload = (messages[1] as? Message)?.payload,
+          case let .GNSSSatellitesInView(satellites, _) = payload
+        else {
+          fail("expected .GNSSSatellitesInView, got \(messages[1])")
+          return
+        }
+        expect(satellites).to(haveCount(1))
+        let expectedID: GNSS.SatelliteID = .beidou(5, signal: .B2Q)
+        expect(satellites[0].id).to(equal(expectedID))
       }
     }
   }

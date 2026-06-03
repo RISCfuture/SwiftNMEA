@@ -6,7 +6,7 @@ import Quick
 
 final class ZTGSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.109 ZTG") {
+    describe("8.3.133 ZTG") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -1)

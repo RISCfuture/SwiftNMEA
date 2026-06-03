@@ -30,6 +30,9 @@ extension StringProtocol {
   }
 
   package func char(at: Int) -> Character? {
-    self[safe: index(startIndex, offsetBy: at)]
+    guard at >= 0,
+      let charIndex = index(startIndex, offsetBy: at, limitedBy: endIndex)
+    else { return nil }
+    return self[safe: charIndex]
   }
 }

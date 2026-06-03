@@ -6,7 +6,7 @@ import Quick
 
 final class GBSSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.32 GBS") {
+    describe("8.3.38 GBS") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -10)

@@ -6,7 +6,7 @@ import Quick
 
 final class ROTSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.71 ROT") {
+    describe("8.3.83 ROT") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

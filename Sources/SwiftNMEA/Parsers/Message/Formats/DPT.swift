@@ -10,8 +10,9 @@ class DPTParser: MessageFormat {
     let offset = try sentence.fields.measurement(
       at: 1,
       valueType: .float,
-      units: UnitLength.meters
-    )!
+      units: UnitLength.meters,
+      optional: true
+    )
     let maxRange = try sentence.fields.measurement(
       at: 2,
       valueType: .float,

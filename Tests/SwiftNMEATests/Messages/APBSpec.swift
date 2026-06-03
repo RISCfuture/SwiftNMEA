@@ -6,7 +6,7 @@ import Quick
 
 final class APBSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.12 APB") {
+    describe("8.3.16 APB") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

@@ -6,7 +6,7 @@ import Quick
 
 final class BWRSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.17 BWR") {
+    describe("8.3.22 BWR") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -1200)

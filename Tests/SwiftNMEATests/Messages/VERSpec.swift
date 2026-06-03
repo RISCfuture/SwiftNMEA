@@ -6,7 +6,7 @@ import Quick
 
 final class VERSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.93 VER") {
+    describe("8.3.117 VER") {
       describe(".parse") {
         it("parses a sentence") {
 

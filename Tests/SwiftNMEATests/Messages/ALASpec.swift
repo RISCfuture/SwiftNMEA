@@ -6,7 +6,7 @@ import Quick
 
 final class ALASpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.10 ALA") {
+    describe("8.3.12 ALA") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -2000)
@@ -47,6 +47,60 @@ final class ALASpec: AsyncSpec {
         expect(condition).to(equal(.high))
         expect(state).to(equal(.notAcknowledged))
         expect(description).to(equal("example alarm"))
+      }
+
+      it("parses a DC propulsion motor overspeed alarm (EP/PD code 3)") {
+        let parser = SwiftNMEA()
+        let time = Date(timeIntervalSinceNow: -120)
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .commVHF,
+          format: .detailAlarm,
+          fields: [
+            hmsFractionFormatter.string(from: time),
+            "EP", "PD", 1, 3, "H", "V", "overspeed"
+          ]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        expect(messages).to(haveCount(2))
+        guard let payload = (messages[1] as? Message)?.payload else {
+          fail("expected Message, got \(messages[1])")
+          return
+        }
+        guard case let .detailAlarm(_, alarm, _, _, _, _) = payload else {
+          fail("expected .detailAlarm, got \(payload)")
+          return
+        }
+        expect(alarm).to(equal(.electricPlant(subsystem: .DCPropulsionMotor(type: .overspeed))))
+      }
+
+      it("does not recognize the removed DC propulsion motor code 8") {
+        let parser = SwiftNMEA()
+        let time = Date(timeIntervalSinceNow: -120)
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .commVHF,
+          format: .detailAlarm,
+          fields: [
+            hmsFractionFormatter.string(from: time),
+            "EP", "PD", 1, 8, "H", "V", "removed code"
+          ]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        expect(messages).to(haveCount(2))
+        guard let payload = (messages[1] as? Message)?.payload else {
+          fail("expected Message, got \(messages[1])")
+          return
+        }
+        guard case let .detailAlarm(_, alarm, _, _, _, _) = payload else {
+          fail("expected .detailAlarm, got \(payload)")
+          return
+        }
+        expect(alarm).to(equal(.electricPlant(subsystem: .DCPropulsionMotor(type: nil))))
       }
     }
   }

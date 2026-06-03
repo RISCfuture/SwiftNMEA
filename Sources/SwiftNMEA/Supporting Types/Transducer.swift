@@ -15,6 +15,9 @@ public struct Transducer {
     /// Temperature
     case temperature(_ value: Measurement<UnitTemperature>, id: String)
 
+    /// Dew point
+    case dewPoint(_ value: Measurement<UnitTemperature>, id: String)
+
     /// Angular displacement. "-" = anticlockwise
     case angle(_ value: Measurement<UnitAngle>, id: String)
 
@@ -39,6 +42,12 @@ public struct Transducer {
     /// Flow rate
     case flowRate(_ value: Measurement<UnitFlow>, id: String)
 
+    /// Fluid level, as a volume
+    case fluidLevel(_ value: Measurement<UnitVolume>, id: String)
+
+    /// Fluid level, as a percentage of full range (0–100)
+    case fluidLevelPercent(_ value: Double, id: String)
+
     /// Tachometer
     case tachometer(_ value: Measurement<UnitAngularVelocity>, id: String)
 
@@ -48,14 +57,20 @@ public struct Transducer {
     /// Volume
     case volume(_ value: Measurement<UnitVolume>, id: String)
 
+    /// Volume, as a percentage of full range (0–100)
+    case volumePercent(_ value: Double, id: String)
+
     /// Voltage
     case electricPotential(_ value: Measurement<UnitElectricPotentialDifference>, id: String)
 
     /// Current
     case electricCurrent(_ value: Measurement<UnitElectricCurrent>, id: String)
 
-    /// Switch or valve
+    /// Switch or valve, as a binary state. `false` = OFF/OPEN, `true` = ON/CLOSED.
     case boolean(_ value: Bool, id: String)
+
+    /// Switch or valve, as a percentage of full range (0–100)
+    case switchValvePercent(_ value: Double, id: String)
 
     /// Generic
     case generic(_ value: Double, id: String)

@@ -6,7 +6,7 @@ import Quick
 
 final class WATSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.99 WAT") {
+    describe("8.3.123 WAT") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -15)

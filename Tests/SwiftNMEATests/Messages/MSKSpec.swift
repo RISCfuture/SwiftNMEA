@@ -6,7 +6,7 @@ import Quick
 
 final class MSKSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.56 MSK") {
+    describe("8.3.65 MSK") {
       it("parses the example from the spec") {
         let parser = SwiftNMEA()
         let sentence = applyChecksum(to: "$CRMSK,293.0,M,100,A,,10,C")

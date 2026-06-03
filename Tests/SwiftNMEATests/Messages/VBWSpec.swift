@@ -6,7 +6,7 @@ import Quick
 
 final class VBWSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.89 VBW") {
+    describe("8.3.113 VBW") {
       it("parses the example from the spec") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

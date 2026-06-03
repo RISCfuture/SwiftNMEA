@@ -53,6 +53,7 @@ extension NMEAError: LocalizedError {
       case .badSixBitEncoding: return String(localized: "Field was not properly six-bit coded.")
       case .wrongChecksum: return String(localized: "Checksum did not match sentence payload.")
       case .unknownSentenceType: return String(localized: "Sentence type was not recognized.")
+      case .sentenceTooLong: return String(localized: "Sentence exceeded the maximum length.")
       case .badCharacterValue: return String(localized: "Field must be a single character.")
       case .unknownValue: return String(localized: "Field has an unknown value.")
       case .wrongSentenceNumber:

@@ -6,7 +6,7 @@ import Quick
 
 final class RMBSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.68 RMB") {
+    describe("8.3.80 RMB") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

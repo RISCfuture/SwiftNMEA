@@ -10,12 +10,14 @@ class DDCParser: MessageFormat {
     let brightness = try sentence.fields.int(at: 1, optional: true)
     let palette = try sentence.fields.enumeration(at: 2, ofType: DimmingPreset.self, optional: true)
     let status = try sentence.fields.enumeration(at: 3, ofType: SentenceType.self)!
+    let commandMode = try sentence.fields.enumeration(at: 4, ofType: DimmingCommandMode.self)!
 
     return .displayDimmingControl(
       preset: preset,
       brightness: brightness,
       colorPalette: palette,
-      status: status
+      status: status,
+      commandMode: commandMode
     )
   }
 }

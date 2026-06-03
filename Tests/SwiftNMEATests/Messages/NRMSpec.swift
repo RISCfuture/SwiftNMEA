@@ -6,7 +6,7 @@ import Quick
 
 final class NRMSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.62 NRM") {
+    describe("8.3.72 NRM") {
       it("parses the first example sentence") {
         let parser = SwiftNMEA()
         let data = Data("$INNRM,2,1,00001E1F,00000023,R*29\r\n".utf8)

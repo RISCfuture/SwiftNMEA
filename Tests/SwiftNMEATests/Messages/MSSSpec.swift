@@ -6,7 +6,7 @@ import Quick
 
 final class MSSSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.57 MSS") {
+    describe("8.3.66 MSS") {
       it("parses the example from the spec") {
         let parser = SwiftNMEA()
         let sentence = "$CRMSS,50,17,293.0,100,1*55\r\n"

@@ -6,7 +6,7 @@ import Quick
 
 final class GSASpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.39 GSA") {
+    describe("8.3.46 GSA") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

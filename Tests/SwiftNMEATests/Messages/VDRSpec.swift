@@ -6,7 +6,7 @@ import Quick
 
 final class VDRSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.92 VDR") {
+    describe("8.3.116 VDR") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

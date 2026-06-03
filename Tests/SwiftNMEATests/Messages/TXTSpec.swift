@@ -6,7 +6,7 @@ import Quick
 
 final class TXTSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.87 TXT") {
+    describe("8.3.110 TXT") {
       describe(".parse") {
         context("example from the spec") {
           it("parses the example") {

@@ -4,9 +4,9 @@ import Quick
 
 @testable import SwiftNMEA
 
-final class XDRSpec: AsyncSpec {
+final class WPLSpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.102 WPL") {
+    describe("8.3.126 WPL") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

@@ -6,7 +6,7 @@ import Quick
 
 final class GFASpec: AsyncSpec {
   override static func spec() {
-    describe("8.3.34 GFA") {
+    describe("8.3.41 GFA") {
       it("parses a sentence") {
         let parser = SwiftNMEA()
         let time = Date(timeIntervalSinceNow: -23)

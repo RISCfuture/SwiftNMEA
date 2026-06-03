@@ -26,6 +26,14 @@ class XDRParser: MessageFormat {
             units: temperatureUnits
           )!
           return .temperature(value, id: id)
+        case .dewPoint:
+          let value = try sentence.fields.measurement(
+            at: valueIndex,
+            valueType: .float,
+            unitAt: unitsIndex,
+            units: temperatureUnits
+          )!
+          return .dewPoint(value, id: id)
         case .angle:
           let value = try sentence.fields.measurement(
             at: valueIndex,
@@ -101,14 +109,36 @@ class XDRParser: MessageFormat {
         case .relativeHumidity:
           let value = try sentence.fields.float(at: valueIndex)!
           return .relativeHumidity(value, id: id)
+        case .fluidLevel:
+          switch try sentence.fields.string(at: unitsIndex)! {
+            case "M":
+              let value = try sentence.fields.measurement(
+                at: valueIndex,
+                valueType: .float,
+                units: UnitVolume.cubicMeters
+              )!
+              return .fluidLevel(value, id: id)
+            case "P":
+              let value = try sentence.fields.float(at: valueIndex)!
+              return .fluidLevelPercent(value, id: id)
+            default:
+              throw sentence.fields.fieldError(type: .badUnitValue, index: unitsIndex)
+          }
         case .volume:
-          let value = try sentence.fields.measurement(
-            at: valueIndex,
-            valueType: .float,
-            unitAt: unitsIndex,
-            units: volumeUnits
-          )!
-          return .volume(value, id: id)
+          switch try sentence.fields.string(at: unitsIndex)! {
+            case "M":
+              let value = try sentence.fields.measurement(
+                at: valueIndex,
+                valueType: .float,
+                units: UnitVolume.cubicMeters
+              )!
+              return .volume(value, id: id)
+            case "P":
+              let value = try sentence.fields.float(at: valueIndex)!
+              return .volumePercent(value, id: id)
+            default:
+              throw sentence.fields.fieldError(type: .badUnitValue, index: unitsIndex)
+          }
         case .electricPotential:
           let value = try sentence.fields.measurement(
             at: valueIndex,
@@ -125,9 +155,21 @@ class XDRParser: MessageFormat {
             units: currentUnits
           )!
           return .electricCurrent(value, id: id)
-        case .boolean:
-          let value = try sentence.fields.bool(at: valueIndex, trueValue: "1", falseValue: "0")!
-          return .boolean(value, id: id)
+        case .switchValve:
+          switch try sentence.fields.string(at: unitsIndex)! {
+            case "B":
+              let value = try sentence.fields.bool(
+                at: valueIndex,
+                trueValue: "1",
+                falseValue: "0"
+              )!
+              return .boolean(value, id: id)
+            case "P":
+              let value = try sentence.fields.float(at: valueIndex)!
+              return .switchValvePercent(value, id: id)
+            default:
+              throw sentence.fields.fieldError(type: .badUnitValue, index: unitsIndex)
+          }
         case .generic:
           let value = try sentence.fields.float(at: valueIndex)!
           return .generic(value, id: id)
@@ -140,6 +182,7 @@ class XDRParser: MessageFormat {
 
 enum TransducerType: Character {
   case temperature = "C"
+  case dewPoint = "W"
   case angle = "A"
   case absoluteHumidity = "B"
   case displacement = "D"
@@ -148,11 +191,12 @@ enum TransducerType: Character {
   case force = "N"
   case pressure = "P"
   case flowRate = "R"
+  case fluidLevel = "E"
   case tachometer = "T"
   case relativeHumidity = "H"
   case volume = "V"
   case electricPotential = "U"
   case electricCurrent = "I"
-  case boolean = "S"
+  case switchValve = "S"
   case generic = "G"
 }

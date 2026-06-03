@@ -32,32 +32,24 @@ class GNSParser: MessageFormat {
     let dReferenceID = try sentence.fields.int(at: 11, optional: true)
     let status = try sentence.fields.enumeration(at: 12, ofType: GNSS.IntegrityStatus.self)!
 
-    let mode = try modes.map { modes in
-      let GPSChar = modes.char(at: 0)
-      let GLONASSChar = modes.char(at: 1)
-      let galileoChar = modes.char(at: 2)
-      let GPSMode = try GPSChar.map { char in
-        guard let mode = Navigation.Mode(rawValue: char) else {
-          throw sentence.fields.fieldError(type: .unknownValue, index: 5)
+    let mode = try modes.map { modes -> [GNSS.System: Navigation.Mode] in
+      // ed.6.0 defines six mode-indicator characters: GPS, GLONASS, Galileo,
+      // BDS, QZSS, NavIC. Shorter strings report only the leading systems.
+      func parseMode(at index: Int) throws -> Navigation.Mode? {
+        try modes.char(at: index).map { char in
+          guard let mode = Navigation.Mode(rawValue: char) else {
+            throw sentence.fields.fieldError(type: .unknownValue, index: 5)
+          }
+          return mode
         }
-        return mode
-      }
-      let GLONASSMode = try GLONASSChar.map { char in
-        guard let mode = Navigation.Mode(rawValue: char) else {
-          throw sentence.fields.fieldError(type: .unknownValue, index: 5)
-        }
-        return mode
-      }
-      let galileoMode = try galileoChar.map { char in
-        guard let mode = Navigation.Mode(rawValue: char) else {
-          throw sentence.fields.fieldError(type: .unknownValue, index: 5)
-        }
-        return mode
       }
       return [
-        GNSS.System.GPS: GPSMode,
-        GNSS.System.GLONASS: GLONASSMode,
-        GNSS.System.galileo: galileoMode
+        GNSS.System.GPS: try parseMode(at: 0),
+        GNSS.System.GLONASS: try parseMode(at: 1),
+        GNSS.System.galileo: try parseMode(at: 2),
+        GNSS.System.beidou: try parseMode(at: 3),
+        GNSS.System.QZSS: try parseMode(at: 4),
+        GNSS.System.navIC: try parseMode(at: 5)
       ].compactMapValues(\.self)
     }
 

@@ -7,6 +7,13 @@ import NMEACommon
 public struct GeoAreaEnhancement: RawRepresentable, Sendable, Codable, Equatable {
   public typealias RawValue = String
 
+  /// Emitted in place of a speed or course sub-field when no estimate is
+  /// available. ITU-R M.821-1 §2.1.2.6 specifies "two symbols No. 126" for this
+  /// case, but its exact NMEA-character encoding is not given by the freely
+  /// available specifications. A non-numeric placeholder is therefore written,
+  /// and on decode any non-numeric sub-field is mapped back to `nil`.
+  private static let noDataSentinel = "----"
+
   /// The arc-minutes of the latitude, to the hundredths place.
   public let latitudeRefinement: Measurement<UnitAngle>
 
@@ -19,11 +26,13 @@ public struct GeoAreaEnhancement: RawRepresentable, Sendable, Codable, Equatable
   /// The arc-minutes of the horizontal extension, to the hundredths place.
   public let deltaLonRefinement: Measurement<UnitAngle>
 
-  /// The current vessel course, in degrees, to the tenths place.
-  public let course: Measurement<UnitAngle>
+  /// The current vessel speed, in knots, to the tenths place, or `nil` if no
+  /// speed estimate is available (ITU-R M.821-1 §2.1.2.6).
+  public let speed: Measurement<UnitSpeed>?
 
-  /// The current vessel speed, in knots, to the tenths place.
-  public let speed: Measurement<UnitSpeed>
+  /// The current vessel course, in degrees, to the tenths place, or `nil` if no
+  /// course estimate is available (ITU-R M.821-1 §2.1.2.6).
+  public let course: Measurement<UnitAngle>?
 
   public var rawValue: String {
     let latMin = latitudeRefinement.converted(to: .arcMinutes).value
@@ -34,19 +43,18 @@ public struct GeoAreaEnhancement: RawRepresentable, Sendable, Codable, Equatable
     let lonStr = String(format: "%04.0f", lonMin * 100)
     let latDeltaStr = String(format: "%04.0f", deltaLatMin * 100)
     let lonDeltaStr = String(format: "%04.0f", deltaLonMin * 100)
-    let courseStr = String(format: "%04.0f", course.converted(to: .degrees).value * 10)
-    let speedStr = String(format: "%04.0f", speed.converted(to: .knots).value * 10)
+    let speedStr =
+      speed.map { String(format: "%04.0f", $0.converted(to: .knots).value * 10) }
+      ?? Self.noDataSentinel
+    let courseStr =
+      course.map { String(format: "%04.0f", $0.converted(to: .degrees).value * 10) }
+      ?? Self.noDataSentinel
 
-    return "\(latStr)\(lonStr)\(latDeltaStr)\(lonDeltaStr)\(courseStr)\(speedStr)"
+    return "\(latStr)\(lonStr)\(latDeltaStr)\(lonDeltaStr)\(speedStr)\(courseStr)"
   }
 
-  // swiftlint:disable:next todo
-  // TODO: how to handle command character 126 in course or speed?
   public init?(rawValue: String) {
-    guard (String(repeating: "0", count: 24)...String(repeating: "9", count: 24)).contains(rawValue)
-    else {
-      return nil
-    }
+    guard rawValue.count == 24 else { return nil }
 
     let latStr = rawValue.slice(from: 0, to: 3)
     let lonStr = rawValue.slice(from: 4, to: 7)
@@ -57,7 +65,7 @@ public struct GeoAreaEnhancement: RawRepresentable, Sendable, Codable, Equatable
 
     guard let latValue = Int(latStr), let lonValue = Int(lonStr),
       let latDeltaValue = Int(latDeltaStr), let lonDeltaValue = Int(lonDeltaStr),
-      let courseValue = Int(courseStr), let speedValue = Int(speedStr)
+      latValue >= 0, lonValue >= 0, latDeltaValue >= 0, lonDeltaValue >= 0
     else {
       return nil
     }
@@ -66,8 +74,19 @@ public struct GeoAreaEnhancement: RawRepresentable, Sendable, Codable, Equatable
     longitudeRefinement = .init(value: Double(lonValue) / 100, unit: .arcMinutes)
     deltaLatRefinement = .init(value: Double(latDeltaValue) / 100, unit: .arcMinutes)
     deltaLonRefinement = .init(value: Double(lonDeltaValue) / 100, unit: .arcMinutes)
-    course = .init(value: Double(courseValue) / 10, unit: .degrees)
-    speed = .init(value: Double(speedValue) / 10, unit: .knots)
+
+    // Speed and course are independently optional: a sub-field of "two symbols
+    // No. 126" (ITU-R M.821-1 §2.1.2.6) means no estimate is available.
+    speed = Self.measurement(from: speedStr, unit: .knots)
+    course = Self.measurement(from: courseStr, unit: .degrees)
+  }
+
+  private static func measurement<UnitType>(
+    from field: some StringProtocol,
+    unit: UnitType
+  ) -> Measurement<UnitType>? where UnitType: Unit {
+    guard let tenths = Int(field), tenths >= 0 else { return nil }
+    return .init(value: Double(tenths) / 10, unit: unit)
   }
 
   /**

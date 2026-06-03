@@ -57,6 +57,7 @@ let package = Package(
       name: "SwiftNMEATests",
       dependencies: [
         "SwiftNMEA",
+        "SwiftDSE",
         "Quick",
         "Nimble",
         .product(name: "Algorithms", package: "swift-algorithms")

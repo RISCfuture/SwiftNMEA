@@ -20,7 +20,22 @@ struct BitReader {
       value = (value << 1) | T(bit)
     }
     offset += bits
+
+    // AIS binary fields use two's-complement signed integers; sign-extend when
+    // the field is narrower than the destination type so negative values decode
+    // correctly instead of as large positives.
+    if T.isSigned, bits < T.bitWidth, ((value >> (bits - 1)) & 1) == 1 {
+      value |= ~T(0) << bits
+    }
+
     return value
+  }
+
+  /// Reads a single bit as a boolean flag. Avoids the signed-integer inference
+  /// trap of `read(bits: 1) == 1`.
+  mutating func readFlag() -> Bool {
+    let bit: UInt8 = read(bits: 1)
+    return bit == 1
   }
 }
 

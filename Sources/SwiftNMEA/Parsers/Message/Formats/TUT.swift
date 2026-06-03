@@ -10,8 +10,8 @@ class TUTParser: MessageFormat {
 
   func parse(sentence: ParametricSentence) throws -> Message.Payload? {
     let source = try sentence.fields.enumeration(at: 0, ofType: Talker.self)!
-    let totalSentences = try sentence.fields.int(at: 1)!
-    let sentenceNumber = try sentence.fields.int(at: 2)!
+    let totalSentences = try sentence.fields.hex(at: 1, width: 2)!
+    let sentenceNumber = try sentence.fields.hex(at: 2, width: 2)!
     let identifier = try sentence.fields.int(at: 3, optional: true)
     let translationCode = try sentence.fields.string(at: 4)!
     let body = try sentence.fields.string(at: 5)!
@@ -25,8 +25,8 @@ class TUTParser: MessageFormat {
         )
       }
       let element = BufferElement(
-        lastSentence: sentenceNumber,
-        totalSentences: totalSentences,
+        lastSentence: Int(sentenceNumber),
+        totalSentences: Int(totalSentences),
         translationCode: translationCode,
         body: body
       )
@@ -123,12 +123,12 @@ class TUTParser: MessageFormat {
             encoding: .utf16
           )  // technically it's UCS-2, but this is close neough
         case "A": return .init(data: data, encoding: .ascii)
-        case "1"..."16":
+        default:
+          // ISO/IEC 8859 part number (1 to 16); proprietary "P<aaa>" codes are undecodable here
           guard let part = Int(translationCode),
             let encoding = String.Encoding.iso8859(part: part)
           else { return nil }
           return .init(data: data, encoding: encoding)
-        default: return nil
       }
     }
 

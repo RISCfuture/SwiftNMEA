@@ -63,6 +63,30 @@ final class GBSSpec: AsyncSpec {
         expect(biasEstimate).to(equal(.init(value: 1.5, unit: .meters)))
         expect(biasEstimateStddev).to(equal(.init(value: 0.75, unit: .meters)))
       }
+
+      it("throws an error for an out-of-range hex system ID") {
+        let parser = SwiftNMEA()
+        let time = Date(timeIntervalSinceNow: -10)
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .GPS,
+          format: .GNSSFaultDetection,
+          fields: [
+            hmsFractionFormatter.string(from: time), 1.2, 3.4, 5.6,
+            35, 0.5, 1.5, 0.75,
+            "FFFFFFFFFFFFFFFF", 5
+          ]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        guard let error = messages[1] as? MessageError else {
+          fail("expected MessageError, got \(messages[1])")
+          return
+        }
+        expect(error.type).to(equal(.badNumericValue))
+        expect(error.fieldNumber).to(equal(8))
+      }
     }
   }
 }

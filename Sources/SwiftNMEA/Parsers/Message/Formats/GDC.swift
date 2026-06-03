@@ -36,7 +36,9 @@ class GDCParser: MessageFormat {
     // Signal ID is a hex ('h') field reaching A–F; the System is identified by
     // the talker (GP/GL/GA/GB/GQ/GI), not the satellite ID range. Talker GN is
     // not permitted by the specification.
-    let signalID = Int(try sentence.fields.hex(at: 9, width: nil)!)
+    guard let signalID = Int(exactly: try sentence.fields.hex(at: 9, width: nil)!) else {
+      throw sentence.fields.fieldError(type: .badNumericValue, index: 9)
+    }
 
     guard let systemID = GNSS.systemID(forTalker: sentence.talker) else {
       throw sentence.fields.lineError(type: .unknownTalker)

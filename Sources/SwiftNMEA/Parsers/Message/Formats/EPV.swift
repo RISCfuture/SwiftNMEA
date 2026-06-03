@@ -1,6 +1,8 @@
 import Foundation
 
 class EPVParser: MessageFormat {
+  private let decoder = EscapedStringCoder()
+
   func canParse(sentence: ParametricSentence) throws -> Bool {
     sentence.delimiter == .parametric && sentence.format == .equipmentProperty
   }
@@ -16,7 +18,10 @@ class EPVParser: MessageFormat {
     }
     let property = EquipmentProperty.Identifier(rawValue: UInt(raw))
 
-    let value = try sentence.fields.string(at: 4)!
+    let rawValue = try sentence.fields.string(at: 4)!
+    guard let value = decoder.decode(string: rawValue) else {
+      throw sentence.fields.fieldError(type: .badValue, index: 4)
+    }
 
     return .equipmentProperty(
       type: status,

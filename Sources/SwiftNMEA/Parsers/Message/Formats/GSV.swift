@@ -13,7 +13,11 @@ class GSVParser: MessageFormat {
     let totalSatellites = try sentence.fields.int(at: 2, optional: true)
     // Signal ID is a hex ('h') field reaching A–F; the System is identified by
     // the talker (GP/GL/GA/GB/GQ/GI), not the satellite ID range
-    let signalID = Int(try sentence.fields.hex(at: sentence.fields.endIndex - 1, width: nil)!)
+    guard
+      let signalID = Int(exactly: try sentence.fields.hex(at: sentence.fields.endIndex - 1, width: nil)!)
+    else {
+      throw sentence.fields.fieldError(type: .badNumericValue, index: sentence.fields.endIndex - 1)
+    }
     let systemID = GNSS.systemID(forTalker: sentence.talker)
     let satelliteData = try (3..<(sentence.fields.endIndex - 1)).chunks(ofCount: 4).compactMap {
       chunk in
@@ -34,9 +38,24 @@ class GSVParser: MessageFormat {
         at: chunk.index(chunk.startIndex, offsetBy: 3),
         optional: true
       )
-      let id =
-        try systemID.map { try GNSS.SatelliteID(systemID: $0, svID: svID, signalID: signalID) }
-        ?? GNSS.SatelliteID(svID: svID, signalID: signalID)
+      let id: GNSS.SatelliteID
+      do {
+        id =
+          try systemID.map { try GNSS.SatelliteID(systemID: $0, svID: svID, signalID: signalID) }
+          ?? GNSS.SatelliteID(svID: svID, signalID: signalID)
+      } catch let error as GNSS.SatelliteID.Errors {
+        switch error {
+          case .badSignalID:
+            throw sentence.fields.fieldError(
+              type: .unknownValue,
+              index: sentence.fields.endIndex - 1
+            )
+          case .badSvID:
+            throw sentence.fields.fieldError(type: .unknownValue, index: chunk.startIndex)
+          case .badSystemID:
+            throw sentence.fields.lineError(type: .unknownTalker)
+        }
+      }
       return GNSS.SatelliteInView(
         id: id,
         position: .init(elevation: elevation, azimuth: azimuth),

@@ -129,7 +129,10 @@ public struct Radar {
       course = Self.decodeDecimal(courseValue, unit: UnitAngle.degrees, nilSentinel: 4095)
       heading = Self.decodeDecimal(headingValue, unit: UnitAngle.degrees, nilSentinel: 4094, 4095)
       isRadarTarget = headingValue == 4095
-      status = .init(rawValue: reader.read(bits: 3))
+      // Status is a 3-bit field; the two reserved codes (0b011, 0b101) have no
+      // defined meaning and decode to nil (unknown), distinct from .none (0b000).
+      let statusValue: UInt8 = reader.read(bits: 3)
+      status = Status(rawValue: statusValue)
       isTestTarget = reader.readFlag()
       let distanceValue: UInt16 = reader.read(bits: 14)
       distance = Self.decodeDecimal(

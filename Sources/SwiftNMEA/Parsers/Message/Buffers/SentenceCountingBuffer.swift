@@ -14,14 +14,24 @@ extension SentenceCountingElement {
   }
 
   mutating func append(_ other: Self) throws {
-    guard !allSentences.contains(other.lastSentence),
-      lastSentence != other.lastSentence,
-      other.lastSentence >= 1,
+    // `lastSentence` for the stored element is recorded lazily on first append.
+    var received = allSentences
+    received.insert(lastSentence)
+    let highestSoFar = received.max() ?? 0
+
+    // Require a consistent sentence count and strictly increasing sentence
+    // numbers so payload parts always concatenate in ascending order. An
+    // out-of-order or duplicate sentence (which would otherwise be appended in
+    // the wrong place, silently corrupting the message) or a mismatched total
+    // is rejected. Gaps are tolerated: the message simply never completes and is
+    // surfaced through `flush`.
+    guard other.totalSentences == totalSentences,
+      other.lastSentence > highestSoFar,
       other.lastSentence <= totalSentences
     else {
       throw BufferErrors.wrongSentenceNumber
     }
-    // should be done at init but we'll do it here to preserve auto-generated inits
+
     allSentences.insert(lastSentence)
     allSentences.insert(other.lastSentence)
 

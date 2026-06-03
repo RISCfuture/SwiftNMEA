@@ -137,6 +137,32 @@ final class DTMSpec: AsyncSpec {
         expect(error.type).to(equal(.missingRequiredValue))
         expect(error.fieldNumber).to(equal(4))
       }
+
+      it("throws for an invalid latitude-offset hemisphere character") {
+        let parser = SwiftNMEA()
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .GNSS,
+          format: .datumReference,
+          fields: [
+            "999", "F",
+            "13.2", "X",
+            "22.8", "W",
+            "-12.5",
+            "W84", nil
+          ]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        expect(messages).to(haveCount(2))
+        guard let error = messages[1] as? MessageError else {
+          fail("expected MessageError, got \(messages[1])")
+          return
+        }
+        expect(error.type).to(equal(.badCharacterValue))
+        expect(error.fieldNumber).to(equal(3))
+      }
     }
   }
 }

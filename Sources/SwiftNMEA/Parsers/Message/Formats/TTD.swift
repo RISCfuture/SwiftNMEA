@@ -14,6 +14,9 @@ class TTDParser: MessageFormat {
     let sequentialID = try sentence.fields.int(at: 2, optional: true)
     let data = try sentence.fields.string(at: 3)!
     let fillBits = try sentence.fields.int(at: 4)!
+    guard (0...5).contains(fillBits) else {
+      throw sentence.fields.fieldError(type: .badValue, index: 4)
+    }
 
     let recipient = Recipient(sentence: sentence, sequentialID: sequentialID)
 

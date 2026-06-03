@@ -1,12 +1,4 @@
-import Foundation
-
 class SM2Parser: MessageFormat {
-  private var calendar: Calendar {
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.timeZone = .gmt
-    return calendar
-  }
-
   func canParse(sentence: ParametricSentence) throws -> Bool {
     sentence.delimiter == .parametric && sentence.format == .safetyNETCoastalWarningArea
   }
@@ -14,22 +6,11 @@ class SM2Parser: MessageFormat {
   func parse(sentence: ParametricSentence) throws -> Message.Payload? {
     let status = try sentence.fields.enumeration(at: 0, ofType: SafetyNET.MSIStatus.self)!
 
-    let uniqueMessageNumberValue = try sentence.fields.int(at: 1)!
-    guard uniqueMessageNumberValue >= 0, uniqueMessageNumberValue <= 999_999 else {
-      throw sentence.fields.fieldError(type: .badValue, index: 1)
-    }
-    let lesSequenceNumberValue = try sentence.fields.int(at: 2, optional: true)
-    if let lesSequenceNumberValue, lesSequenceNumberValue < 0 {
-      throw sentence.fields.fieldError(type: .badValue, index: 2)
-    }
-    let lesIDValue = try sentence.fields.int(at: 3, optional: true)
-    if let lesIDValue, lesIDValue < 0 {
-      throw sentence.fields.fieldError(type: .badValue, index: 3)
-    }
-    let identification = SafetyNET.MessageIdentification(
-      uniqueMessageNumber: UInt(uniqueMessageNumberValue),
-      lesSequenceNumber: lesSequenceNumberValue.map(UInt.init),
-      lesID: lesIDValue.map(UInt.init)
+    let identification = try SafetyNET.MessageIdentification(
+      fields: sentence.fields,
+      uniqueIndex: 1,
+      lesSequenceIndex: 2,
+      lesIDIndex: 3
     )
 
     let oceanRegion = try sentence.fields.enumeration(at: 4, ofType: SafetyNET.OceanRegion.self)!
@@ -44,23 +25,7 @@ class SM2Parser: MessageFormat {
       ofType: SafetyNET.PresentationCode.self
     )!
 
-    let year = try sentence.fields.int(at: 8)!
-    let month = try sentence.fields.int(at: 9)!
-    let day = try sentence.fields.int(at: 10)!
-    let hour = try sentence.fields.int(at: 11)!
-    let minute = try sentence.fields.int(at: 12)!
-    let components = DateComponents(
-      timeZone: .gmt,
-      year: year,
-      month: month,
-      day: day,
-      hour: hour,
-      minute: minute,
-      second: 0
-    )
-    guard let time = calendar.date(from: components) else {
-      throw sentence.fields.lineError(type: .badDate)
-    }
+    let time = try sentence.fields.datetime(ymdhmIndex: (8, 9, 10, 11, 12))!
 
     let navareaValue = try sentence.fields.int(at: 13, optional: true)
     var navarea: UInt?

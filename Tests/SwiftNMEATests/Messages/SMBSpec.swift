@@ -78,6 +78,25 @@ final class SMBSpec: AsyncSpec {
           expect(error.type).to(equal(.wrongSentenceNumber))
           expect(error.fieldNumber).to(equal(1))
         }
+
+        it("throws an error for a null sentence number in a multi-sentence message") {
+          let parser = SwiftNMEA()
+          let sentence = createSentence(
+            delimiter: .parametric,
+            talker: .commSatellite,
+            format: .safetyNETMessageBody,
+            fields: ["002", nil, 0, 123_456, "FIRST"]
+          )
+          let data = sentence.data(using: .ascii)!
+          let messages = try await parser.parse(data: data)
+
+          guard let error = messages[1] as? MessageError else {
+            fail("expected MessageError, got \(messages[1])")
+            return
+          }
+          expect(error.type).to(equal(.missingRequiredValue))
+          expect(error.fieldNumber).to(equal(1))
+        }
       }
 
       describe(".flush") {

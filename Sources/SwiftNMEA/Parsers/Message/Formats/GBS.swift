@@ -35,8 +35,12 @@ class GBSParser: MessageFormat {
       units: UnitLength.meters
     )!
     // System ID and Signal ID are hex ('h') fields; Signal ID reaches A–F
-    let systemID = Int(try sentence.fields.hex(at: 8, width: nil)!)
-    let signalID = Int(try sentence.fields.hex(at: 9, width: nil)!)
+    guard let systemID = Int(exactly: try sentence.fields.hex(at: 8, width: nil)!) else {
+      throw sentence.fields.fieldError(type: .badNumericValue, index: 8)
+    }
+    guard let signalID = Int(exactly: try sentence.fields.hex(at: 9, width: nil)!) else {
+      throw sentence.fields.fieldError(type: .badNumericValue, index: 9)
+    }
 
     do {
       let satelliteID = try GNSS.SatelliteID(

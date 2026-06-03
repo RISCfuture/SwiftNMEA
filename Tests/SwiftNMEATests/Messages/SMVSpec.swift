@@ -142,6 +142,29 @@ final class SMVSpec: AsyncSpec {
           expect(status).to(equal(.distressActive))
         }
 
+        it("throws an error for a null sentence number in a multi-sentence message") {
+          let parser = SwiftNMEA()
+          let sentence = createSentence(
+            delimiter: .parametric,
+            talker: .commSatellite,
+            format: .safetyNETVesselDistress,
+            fields: [
+              2, nil, 4, 123_123, 123_456_789, "TEST56",
+              "1234.56", "N", "12345.67", "W",
+              2018, 1, 22, 12, 34, "D"
+            ]
+          )
+          let data = sentence.data(using: .ascii)!
+          let messages = try await parser.parse(data: data)
+
+          guard let error = messages[1] as? MessageError else {
+            fail("expected MessageError, got \(messages[1])")
+            return
+          }
+          expect(error.type).to(equal(.missingRequiredValue))
+          expect(error.fieldNumber).to(equal(1))
+        }
+
         it("throws an error for an unknown distress status value") {
           let parser = SwiftNMEA()
           let sentence = createSentence(

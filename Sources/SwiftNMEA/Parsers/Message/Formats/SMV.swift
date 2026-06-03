@@ -4,12 +4,6 @@ import NMEACommon
 class SMVParser: MessageFormat {
   private static let coder = EscapedStringCoder()
 
-  private let calendar: Calendar = {
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.timeZone = .gmt
-    return calendar
-  }()
-
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
   func canParse(sentence: ParametricSentence) throws -> Bool {
@@ -44,10 +38,16 @@ class SMVParser: MessageFormat {
       throw sentence.fields.fieldError(type: .badValue, index: 4)
     }
 
-    // The sentence number may be null only when the total number of sentences
-    // is "1"; for a single-sentence message we treat the implicit sentence
-    // number as 1.
-    let lastSentence = sentenceNumber ?? 1
+    // The sentence number may be null only for a single-sentence message.
+    let lastSentence: Int
+    if let sentenceNumber {
+      lastSentence = sentenceNumber
+    } else {
+      guard totalSentences == 1 else {
+        throw sentence.fields.fieldError(type: .missingRequiredValue, index: 1)
+      }
+      lastSentence = 1
+    }
 
     let recipient = Recipient(
       talker: sentence.talker,
@@ -101,25 +101,7 @@ class SMVParser: MessageFormat {
   }
 
   private func positionTime(from sentence: ParametricSentence) throws -> Date? {
-    guard let year = try sentence.fields.int(at: 10, optional: true),
-      let month = try sentence.fields.int(at: 11, optional: true),
-      let day = try sentence.fields.int(at: 12, optional: true),
-      let hour = try sentence.fields.int(at: 13, optional: true),
-      let minute = try sentence.fields.int(at: 14, optional: true)
-    else { return nil }
-
-    let components = DateComponents(
-      timeZone: .gmt,
-      year: year,
-      month: month,
-      day: day,
-      hour: hour,
-      minute: minute
-    )
-    guard let date = calendar.date(from: components), components.isValidDate(in: calendar) else {
-      throw sentence.fields.lineError(type: .badDate)
-    }
-    return date
+    return try sentence.fields.datetime(ymdhmIndex: (10, 11, 12, 13, 14), optional: true)
   }
 
   private func makePayload(recipient: Recipient, element: BufferElement) throws -> Message.Payload {

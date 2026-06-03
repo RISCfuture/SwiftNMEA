@@ -133,6 +133,26 @@ final class SM2Spec: AsyncSpec {
         }
         expect(error.type).to(equal(.badValue))
       }
+
+      it("throws an error for an out-of-range reception date") {
+        let parser = SwiftNMEA()
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .commSatellite,
+          format: .safetyNETCoastalWarningArea,
+          fields: [
+            "A", 42, 10345, 104, 1, 1, 13, 0,
+            2024, 13, 27, 13, 56,
+            5, "C", "A"
+          ]
+        )
+        let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+        guard let error = messages[1] as? MessageError else {
+          fail("expected MessageError, got \(messages[1])")
+          return
+        }
+        expect(error.type).to(equal(.badDate))
+      }
     }
   }
 }

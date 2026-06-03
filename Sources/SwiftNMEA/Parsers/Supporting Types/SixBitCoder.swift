@@ -56,6 +56,9 @@ final class SixBitCoder: Sendable {
   }
 
   func decode(_ value: String, fillBits: Int) -> Data? {
+    // Reject an out-of-range fill-bit count (valid range is 0...5) instead of
+    // computing a negative bit length and silently returning truncated data.
+    guard (0...5).contains(fillBits) else { return nil }
     let totalBits = value.count * 6 - fillBits
     var bitBuffer: UInt = 0
     var bitCount = 0

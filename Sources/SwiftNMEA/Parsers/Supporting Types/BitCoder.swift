@@ -19,21 +19,25 @@ struct BitReader {
 
   mutating func read<T: FixedWidthInteger>(bits: Int) -> T {
     precondition(bits > 0 && bits <= T.bitWidth, "Can't read > \(T.bitWidth) bits at a time")
+    precondition(bits <= remainingBits, "Can't read past the end of the data")
 
-    var value: T = 0
+    // Accumulate into the unsigned magnitude type so a full-width signed read
+    // does not overflow during the shift, then reinterpret the bits.
+    var magnitude: T.Magnitude = 0
     for i in 0..<bits {
       let bitPosition = offset + i
-      let byteOffset = bitPosition / 8
+      let byteOffset = data.startIndex + bitPosition / 8
       let bitInByte = 7 - (bitPosition % 8)
       let bit = (data[byteOffset] >> bitInByte) & 1
-      value = (value << 1) | T(bit)
+      magnitude = (magnitude << 1) | T.Magnitude(bit)
     }
     offset += bits
 
+    var value = T(truncatingIfNeeded: magnitude)
     // AIS binary fields use two's-complement signed integers; sign-extend when
     // the field is narrower than the destination type so negative values decode
     // correctly instead of as large positives.
-    if T.isSigned, bits < T.bitWidth, ((value >> (bits - 1)) & 1) == 1 {
+    if T.isSigned, bits < T.bitWidth, ((magnitude >> (bits - 1)) & 1) == 1 {
       value |= ~T(0) << bits
     }
 

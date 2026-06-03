@@ -127,5 +127,37 @@ public enum SafetyNET {
       self.lesSequenceNumber = lesSequenceNumber
       self.lesID = lesID
     }
+
+    /// Parses the shared SafetyNET identification fields (unique message number,
+    /// LES sequence number, LES ID) from a sentence, applying the common range
+    /// and sign validation used by the SM1-SM4 sentences.
+    init(
+      fields: Fields,
+      uniqueIndex: Int,
+      lesSequenceIndex: Int,
+      lesIDIndex: Int
+    ) throws {
+      let uniqueValue = try fields.int(at: uniqueIndex)!
+      guard (0...999_999).contains(uniqueValue) else {
+        throw fields.fieldError(type: .badNumericValue, index: uniqueIndex)
+      }
+      let lesSequence = try fields.int(at: lesSequenceIndex, optional: true).map { value -> UInt in
+        guard let unsigned = UInt(exactly: value) else {
+          throw fields.fieldError(type: .badNumericValue, index: lesSequenceIndex)
+        }
+        return unsigned
+      }
+      let lesID = try fields.int(at: lesIDIndex, optional: true).map { value -> UInt in
+        guard let unsigned = UInt(exactly: value) else {
+          throw fields.fieldError(type: .badNumericValue, index: lesIDIndex)
+        }
+        return unsigned
+      }
+      self.init(
+        uniqueMessageNumber: UInt(uniqueValue),
+        lesSequenceNumber: lesSequence,
+        lesID: lesID
+      )
+    }
   }
 }

@@ -64,7 +64,7 @@ class DTMParser: MessageFormat {
       switch latOffsetHemisphere {
         case "N": latOffsetMag
         case "S": latOffsetMag * -1
-        default: throw sentence.fields.fieldError(type: .badCharacterValue, index: 2)
+        default: throw sentence.fields.fieldError(type: .badCharacterValue, index: 3)
       }
     }
 

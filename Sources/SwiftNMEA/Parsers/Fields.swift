@@ -531,6 +531,49 @@ public struct Fields: Sendable, Codable, Equatable {
     return date
   }
 
+  /// Builds a UTC date from five consecutive integer fields
+  /// (year, month, day, hour, minute), rejecting out-of-range component values.
+  func datetime(
+    ymdhmIndex: (Int, Int, Int, Int, Int),
+    optional: Bool = false,
+    timeZone: TimeZone = .gmt
+  ) throws -> Date? {
+    guard let year = try int(at: ymdhmIndex.0, optional: optional) else {
+      if optional { return nil }
+      throw fieldError(type: .missingRequiredValue, index: ymdhmIndex.0)
+    }
+    guard let month = try int(at: ymdhmIndex.1, optional: optional) else {
+      if optional { return nil }
+      throw fieldError(type: .missingRequiredValue, index: ymdhmIndex.1)
+    }
+    guard let day = try int(at: ymdhmIndex.2, optional: optional) else {
+      if optional { return nil }
+      throw fieldError(type: .missingRequiredValue, index: ymdhmIndex.2)
+    }
+    guard let hour = try int(at: ymdhmIndex.3, optional: optional) else {
+      if optional { return nil }
+      throw fieldError(type: .missingRequiredValue, index: ymdhmIndex.3)
+    }
+    guard let minute = try int(at: ymdhmIndex.4, optional: optional) else {
+      if optional { return nil }
+      throw fieldError(type: .missingRequiredValue, index: ymdhmIndex.4)
+    }
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = timeZone
+    let components = DateComponents(
+      timeZone: timeZone,
+      year: year,
+      month: month,
+      day: day,
+      hour: hour,
+      minute: minute
+    )
+    guard components.isValidDate(in: calendar), let date = calendar.date(from: components) else {
+      throw lineError(type: .badDate)
+    }
+    return date
+  }
+
   private func toFloat(_ int: Int?) -> Double? {
     int.map { Double($0) }
   }

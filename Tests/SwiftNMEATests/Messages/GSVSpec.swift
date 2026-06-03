@@ -131,6 +131,29 @@ final class GSVSpec: AsyncSpec {
         let expectedID: GNSS.SatelliteID = .beidou(5, signal: .B2Q)
         expect(satellites[0].id).to(equal(expectedID))
       }
+
+      it("throws an error for an out-of-range signal ID") {
+        let parser = SwiftNMEA()
+        // GPS signal IDs only range 0–8; hex "F" (15) is out of range.
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .GPS,
+          format: .GNSSSatellitesInView,
+          fields: [
+            1, 1, 1,
+            "01", 11, 21, 31,
+            "F"  // out-of-range GPS Signal ID (hex)
+          ]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        guard let error = messages[1] as? MessageError else {
+          fail("expected MessageError, got \(messages[1])")
+          return
+        }
+        expect(error.type).to(equal(.unknownValue))
+      }
     }
   }
 }

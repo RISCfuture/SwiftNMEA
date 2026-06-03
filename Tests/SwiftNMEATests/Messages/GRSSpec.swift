@@ -46,6 +46,27 @@ final class GRSSpec: AsyncSpec {
         expect(actualTime).to(beCloseTo(time, within: 0.01))
         expect(recomputed).to(beFalse())
       }
+
+      it("returns an error for a too-short sentence instead of crashing") {
+        let parser = SwiftNMEA()
+        let time = Date(timeIntervalSinceNow: -2)
+        // Only the time/mode header plus the trailing System ID / Signal ID:
+        // there are no residual fields, so required values are missing.
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .GPS,
+          format: .GNSSRangeResiduals,
+          fields: [hmsFractionFormatter.string(from: time), 0, 7]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        guard let error = messages[1] as? MessageError else {
+          fail("expected MessageError, got \(messages[1])")
+          return
+        }
+        expect(error.type).to(equal(.missingRequiredValue))
+      }
     }
   }
 }

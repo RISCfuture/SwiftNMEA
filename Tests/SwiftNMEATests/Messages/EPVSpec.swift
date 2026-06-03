@@ -63,6 +63,31 @@ final class EPVSpec: AsyncSpec {
         )
       }
 
+      it("decodes escaped reserved characters in the value") {
+        let parser = SwiftNMEA()
+        let sentence = createSentence(
+          delimiter: .parametric,
+          talker: .automaticID,
+          format: .equipmentProperty,
+          fields: ["R", "AI", "503123450", 101, "a^2Cb"]
+        )
+        let data = sentence.data(using: .ascii)!
+        let messages = try await parser.parse(data: data)
+
+        expect(messages).to(haveCount(2))
+        guard let payload = (messages[1] as? Message)?.payload else {
+          fail("expected Message, got \(messages[1])")
+          return
+        }
+        guard case let .equipmentProperty(type, _, _, value) = payload else {
+          fail("expected .equipmentProperty, got \(payload)")
+          return
+        }
+
+        expect(type).to(equal(.reply))
+        expect(value).to(equal("a,b"))
+      }
+
       it("throws when the property identifier is negative") {
         let parser = SwiftNMEA()
         let sentence = createSentence(

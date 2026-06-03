@@ -17,8 +17,14 @@ class GENParser: MessageFormat {
       // map each packed field’s relative offset → decoded bytes, then re-key by
       // its absolute 16-bit entity index (null fields produce no entry)
       let relativeEntities = try binaryParser.decodeEntities(chunks)
-      let entities = relativeEntities.reduce(into: [UInt16: Data]()) { entities, entity in
-        entities[UInt16(index) + UInt16(entity.key)] = entity.value
+      let entities = try relativeEntities.reduce(into: [UInt16: Data]()) { entities, entity in
+        // entity.key is a non-negative relative offset; guard the absolute
+        // 16-bit entity index instead of trapping on UInt16 overflow.
+        let absoluteKey = index + UInt(entity.key)
+        guard absoluteKey <= UInt(UInt16.max) else {
+          throw sentence.fields.fieldError(type: .badNumericValue, index: 0)
+        }
+        entities[UInt16(absoluteKey)] = entity.value
       }
 
       let recipient = DataBuffer.Recipient(sentence: sentence, timestamp: time)

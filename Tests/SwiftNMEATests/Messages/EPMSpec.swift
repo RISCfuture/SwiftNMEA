@@ -119,6 +119,42 @@ final class EPMSpec: AsyncSpec {
           expect(error.type).to(equal(.badNumericValue))
           expect(error.fieldNumber).to(equal(6))
         }
+
+        it("rejects an out-of-order sentence instead of concatenating it") {
+          let parser = SwiftNMEA()
+          let sentences = [
+            createSentence(
+              delimiter: .parametric,
+              talker: .ECDIS,
+              format: .equipmentPropertyLong,
+              fields: [3, 1, 98, "C", "AI", "503123450", 1234, "first-"]
+            ),
+            createSentence(
+              delimiter: .parametric,
+              talker: .ECDIS,
+              format: .equipmentPropertyLong,
+              fields: [3, 3, 98, "C", "AI", "503123450", 1234, "third"]
+            ),
+            createSentence(
+              delimiter: .parametric,
+              talker: .ECDIS,
+              format: .equipmentPropertyLong,
+              fields: [3, 2, 98, "C", "AI", "503123450", 1234, "second-"]
+            )
+          ]
+          let data = sentences.joined().data(using: .ascii)!
+          let messages = try await parser.parse(data: data)
+
+          // Sentence 3 appends after sentence 1; sentence 2 then arrives out of
+          // order. It must be rejected rather than concatenated in the wrong
+          // position (which would silently corrupt the reassembled value).
+          guard let error = messages.last as? MessageError else {
+            fail("expected MessageError, got \(messages.last as Any)")
+            return
+          }
+          expect(error.type).to(equal(.wrongSentenceNumber))
+          expect(error.fieldNumber).to(equal(1))
+        }
       }
 
       describe(".flush") {

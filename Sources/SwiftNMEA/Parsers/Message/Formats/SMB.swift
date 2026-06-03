@@ -23,10 +23,16 @@ class SMBParser: MessageFormat {
       throw sentence.fields.fieldError(type: .badValue, index: 2)
     }
 
-    // The sentence number may be null only when the total number of sentences
-    // is "001"; for a single-sentence message we treat the implicit sentence
-    // number as 1.
-    let lastSentence = sentenceNumber ?? 1
+    // The sentence number may be null only for a single-sentence message.
+    let lastSentence: Int
+    if let sentenceNumber {
+      lastSentence = sentenceNumber
+    } else {
+      guard totalSentences == 1 else {
+        throw sentence.fields.fieldError(type: .missingRequiredValue, index: 1)
+      }
+      lastSentence = 1
+    }
 
     let recipient = Recipient(
       talker: sentence.talker,

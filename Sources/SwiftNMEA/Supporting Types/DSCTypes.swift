@@ -513,6 +513,7 @@ public struct DSC {
     /// (multiples of 10 Hz, seven-digit-frequency) form.
     private static func encodeFrequency(_ frequency: Measurement<UnitFrequency>) -> String {
       let hz = frequency.converted(to: .hertz).value
+      guard hz.isFinite else { return String(format: "%06d", 0) }
       let tens = (hz / 10).rounded()
       let clampedTens = min(max(tens, 0), maxFrequency10Hz / 10)
       let tensInt = Int(clampedTens)

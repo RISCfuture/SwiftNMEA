@@ -159,6 +159,33 @@ final class TTDSpec: AsyncSpec {
           expect(error.fieldNumber).to(equal(1))
         }
 
+        it("throws an error for an out-of-range fill-bits field") {
+          let parser = SwiftNMEA()
+          let sixBit = SixBitCoder()
+
+          let target = Data([
+            0x07, 0xB4, 0xD2, 0x09, 0xB5, 0x4D, 0xFF, 0xF8, 0xFE, 0xB2, 0x20, 0x00
+          ])
+          let (chunks, _) = sixBit.encode(target, chunkSize: 60)
+
+          let sentence = createSentence(
+            delimiter: .encapsulated,
+            talker: .commVHF,
+            format: .trackedTargets,
+            fields: ["01", "01", nil, chunks[0], 99]
+          )
+          let data = sentence.data(using: .ascii)!
+          let messages = try await parser.parse(data: data)
+
+          expect(messages).to(haveCount(2))
+          guard let error = messages[1] as? MessageError else {
+            fail("expected MessageError, got \(messages[1])")
+            return
+          }
+          expect(error.type).to(equal(.badValue))
+          expect(error.fieldNumber).to(equal(4))
+        }
+
         it("parses a protocol-one CPA/TCPA structure") {
           let parser = SwiftNMEA()
           let sixBit = SixBitCoder()

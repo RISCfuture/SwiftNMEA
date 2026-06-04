@@ -21,10 +21,6 @@ extension StringProtocol {
     String(slice(from: start, to: end))
   }
 
-  package func sslice(from start: Int) -> String {
-    String(slice(from: start))
-  }
-
   package func sslice(to end: Int) -> String {
     String(slice(to: end))
   }

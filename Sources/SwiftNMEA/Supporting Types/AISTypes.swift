@@ -457,6 +457,7 @@ extension AIS.Availability: Sendable where RawValue: Sendable {}
 extension AIS.Availability: Codable where RawValue: Codable {}
 
 extension AIS.Availability: Equatable where RawValue: Equatable {
+  // periphery:ignore - used by SSD.swift/VSD.swift; Periphery misattributes the call to the optional overload below
   init(_ value: RawValue, placeholder: RawValue) {
     self.init(value) { $0 == placeholder }
   }

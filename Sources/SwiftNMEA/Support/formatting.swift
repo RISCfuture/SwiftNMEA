@@ -7,13 +7,6 @@ let hmsFractionFormatter = {
   return f
 }()
 
-let hhmmFormatter = {
-  let f = DateFormatter()
-  f.timeZone = .gmt
-  f.dateFormat = "HHmm"
-  return f
-}()
-
 let dateFormatter = {
   let f = DateFormatter()
   f.timeZone = .gmt

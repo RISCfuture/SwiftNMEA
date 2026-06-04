@@ -18,17 +18,21 @@ class GRSParser: MessageFormat {
     }
     // System ID and Signal ID are hex ('h') fields; Signal ID reaches A–F
     guard
-      let signalID = Int(exactly: try sentence.fields.hex(at: sentence.fields.endIndex - 1, width: nil)!)
+      let signalID = Int(
+        exactly: try sentence.fields.hex(at: sentence.fields.endIndex - 1, width: nil)!
+      )
     else {
       throw sentence.fields.fieldError(type: .badNumericValue, index: sentence.fields.endIndex - 1)
     }
     guard
-      let systemID = Int(exactly: try sentence.fields.hex(at: sentence.fields.endIndex - 2, width: nil)!)
+      let systemID = Int(
+        exactly: try sentence.fields.hex(at: sentence.fields.endIndex - 2, width: nil)!
+      )
     else {
       throw sentence.fields.fieldError(type: .badNumericValue, index: sentence.fields.endIndex - 2)
     }
-    let residuals: [GNSS.SatelliteID: Measurement<UnitLength>] = try
-      (2..<residualsEnd).reduce(into: [:]) { dict, index in
+    let residuals: [GNSS.SatelliteID: Measurement<UnitLength>] = try (2..<residualsEnd).reduce(
+      into: [:]) { dict, index in
         do {
           let id = try GNSS.SatelliteID(systemID: systemID, svID: index - 2, signalID: signalID)
           // unused satellite slots are null fields; omit them from the dictionary

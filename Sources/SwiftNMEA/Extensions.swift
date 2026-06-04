@@ -26,13 +26,6 @@ extension Data {
       index = nextIndex
     }
   }
-
-  mutating func replace(with other: Data, from index: Data.Index) {
-    if index + other.count > count {
-      self.append(contentsOf: [UInt8](repeating: 0, count: (index + other.count) - count))
-    }
-    self.replaceSubrange(index..<(index + other.count), with: other)
-  }
 }
 
 extension BitArray {

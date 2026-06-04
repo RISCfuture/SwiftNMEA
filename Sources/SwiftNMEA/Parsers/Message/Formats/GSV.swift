@@ -14,7 +14,9 @@ class GSVParser: MessageFormat {
     // Signal ID is a hex ('h') field reaching A–F; the System is identified by
     // the talker (GP/GL/GA/GB/GQ/GI), not the satellite ID range
     guard
-      let signalID = Int(exactly: try sentence.fields.hex(at: sentence.fields.endIndex - 1, width: nil)!)
+      let signalID = Int(
+        exactly: try sentence.fields.hex(at: sentence.fields.endIndex - 1, width: nil)!
+      )
     else {
       throw sentence.fields.fieldError(type: .badNumericValue, index: sentence.fields.endIndex - 1)
     }

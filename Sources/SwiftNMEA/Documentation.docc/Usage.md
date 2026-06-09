@@ -6,7 +6,7 @@ from a data stream.
 ## Parsing messages
 
 SwiftNMEA is written to work with discontinuous streams of data. To use
-SwiftNMEA, create a ``SwiftNMEA/SwiftNMEA`` instance and call 
+SwiftNMEA, create a ``SwiftNMEA/SwiftNMEA`` instance and call
 ``SwiftNMEA/SwiftNMEA/parse(data:ignoreChecksums:)`` any time new data is
 received on your bus:
 
@@ -64,7 +64,7 @@ let parser = SwiftNMEA(typeFilter: [Message.self], talkerFilter: [.GPS], formatF
 ## Multi-sentence messages
 
 Most ``ParametricSentence``s produce ``Message``s on a 1:1 basis: For example,
-the `GNS` sentence automatically produces a 
+the `GNS` sentence automatically produces a
 ``Message/Payload-swift.enum/GNSSFix(_:time:mode:numSatellites:HDOP:geoidalSeparation:DGPSAge:DGPSReferenceStationID:status:)``
 message when it is received, and ``SwiftNMEA/SwiftNMEA/parse(data:ignoreChecksums:)``
 will return two ``Element``s: The ``ParametricSentence`` and the ``Message``.
@@ -74,7 +74,7 @@ is the `NRX` sentence, which contains a received NAVTEX message. This NAVTEX
 message may be longer than a single sentence, and thus is split into multiple
 sentences like so:
 
-```
+```text
 $CRNRX,007,001,00,IE69,1,135600,27,06,2001,241,3,A,==========================*09
 $CRNRX,007,002,00,,,,,,,,,,========^0D^0AISSUED ON SATURDAY 06 JANUARY 2001.*29
 $CRNRX,007,003,00,,,,,,,,,,^0D^0AINSHORE WATERS FORECAST TO 12 MILES^0D^0AOFF*0D
@@ -105,4 +105,3 @@ A few formats do not have a way of specifying the final sentence (e.g., `GEN`).
 These sentences will never result in ``Message``s by calling
 ``SwiftNMEA/SwiftNMEA/parse(data:ignoreChecksums:)``, only
 ``SwiftNMEA/SwiftNMEA/flush(talker:format:includeIncomplete:)``.
-

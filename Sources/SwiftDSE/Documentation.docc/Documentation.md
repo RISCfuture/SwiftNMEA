@@ -1,6 +1,6 @@
 # ``SwiftDSE``
 
-A collection of types and functions for working with the Digital 
+A collection of types and functions for working with the Digital
 Selective-Calling Expansion.
 
 ## Overview

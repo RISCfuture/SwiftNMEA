@@ -77,7 +77,6 @@ SwiftNMEA has been written to conform to the following specs as published:
   identification system using time division multiple access in the VHF maritime
   mobile frequency band"
 
-
 ## Topics
 
 ### Parsing messages

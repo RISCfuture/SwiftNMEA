@@ -1,7 +1,7 @@
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 actor QueryParser {
-  nonisolated(unsafe) private static let rx: Regex<(Substring, Substring, UInt8)> = {
+  private let rx: Regex<(Substring, Substring, UInt8)> = {
     let fieldsRef = Reference<Substring>()
     let checksumRef = Reference<UInt8>()
 
@@ -26,7 +26,7 @@ actor QueryParser {
   }()
 
   func parse(sentence: String) throws -> QueryResult? {
-    guard let match = try Self.rx.wholeMatch(in: sentence) else { return nil }
+    guard let match = try rx.wholeMatch(in: sentence) else { return nil }
 
     return .init(fields: match.output.1, checksum: match.output.2)
   }

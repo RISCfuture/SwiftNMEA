@@ -1,7 +1,7 @@
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 actor ProprietaryParser {
-  nonisolated(unsafe) private static let rx: Regex<(Substring, Substring, Substring, UInt8)> = {
+  private let rx: Regex<(Substring, Substring, Substring, UInt8)> = {
     let manufacturerRef = Reference<Substring>()
     let dataRef = Reference<Substring>()
     let checksumRef = Reference<UInt8>()
@@ -26,7 +26,7 @@ actor ProprietaryParser {
   }()
 
   func parse(sentence: String) throws -> ProprietaryResult? {
-    guard let match = try Self.rx.wholeMatch(in: sentence) else { return nil }
+    guard let match = try rx.wholeMatch(in: sentence) else { return nil }
 
     return .init(
       manufacturer: String(match.output.1),

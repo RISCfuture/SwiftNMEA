@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 enum LatitudeHemisphere: String {
   case north = "N"

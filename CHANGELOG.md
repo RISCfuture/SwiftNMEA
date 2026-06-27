@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-06-26
+
+### Changed
+
+- Adopted Swift's Approachable Concurrency upcoming features (`NonisolatedNonsendingByDefault` and `InferIsolatedConformances`). As a result, the public `async` APIs — `SwiftNMEA.parse(data:ignoreChecksums:)` and the `async` failable initializers on `ParametricSentence`, `ProprietarySentence`, and `Query` — now run on the caller's executor instead of hopping to the global concurrent executor. Their signatures are unchanged, so existing code compiles as-is; callers that relied on parsing running off their own actor (for example, off the main actor) should now dispatch it explicitly.
+- Internal concurrency cleanup with no source-breaking effect: the parametric, query, and proprietary sentence-parsing regexes are now actor-isolated stored properties (built once per parser) rather than `nonisolated(unsafe) static` globals, and `@preconcurrency` was dropped from the internal `RegexBuilder` imports now that the toolchain no longer requires it.
+
 ## [2.0.0] - 2026-06-03
 
 ### Added

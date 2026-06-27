@@ -1,6 +1,6 @@
 import Foundation
 import NMEAUnits
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 final class TimeParser {
   var calendar: Calendar {

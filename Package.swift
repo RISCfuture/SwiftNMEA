@@ -3,6 +3,11 @@
 import CompilerPluginSupport
 import PackageDescription
 
+let approachableConcurrency: [SwiftSetting] = [
+  .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+  .enableUpcomingFeature("InferIsolatedConformances")
+]
+
 let package = Package(
   name: "SwiftNMEA",
   defaultLocalization: "en",
@@ -37,11 +42,12 @@ let package = Package(
         .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
         .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
         .product(name: "MacroToolkit", package: "swift-macro-toolkit")
-      ]
+      ],
+      swiftSettings: approachableConcurrency
     ),
-    .target(name: "NMEACommon"),
-    .target(name: "NMEAUnits"),
-    .target(name: "SwiftDSE", dependencies: ["NMEACommon"]),
+    .target(name: "NMEACommon", swiftSettings: approachableConcurrency),
+    .target(name: "NMEAUnits", swiftSettings: approachableConcurrency),
+    .target(name: "SwiftDSE", dependencies: ["NMEACommon"], swiftSettings: approachableConcurrency),
     .target(
       name: "SwiftNMEA",
       dependencies: [
@@ -51,7 +57,8 @@ let package = Package(
         "NMEAUnits",
         "SwiftDSE",
         "SwiftNMEA_Macros"
-      ]
+      ],
+      swiftSettings: approachableConcurrency
     ),
     .testTarget(
       name: "SwiftNMEATests",
@@ -61,7 +68,8 @@ let package = Package(
         "Quick",
         "Nimble",
         .product(name: "Algorithms", package: "swift-algorithms")
-      ]
+      ],
+      swiftSettings: approachableConcurrency
     )
   ],
   swiftLanguageModes: [.v5, .v6]

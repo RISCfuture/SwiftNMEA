@@ -1,13 +1,13 @@
 import Algorithms
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class SixBitSpec: AsyncSpec {
-  override static func spec() {
-    let encodedString = "1P000Oh1IT1svTP2r:43grwb05q4"
+@Suite("encapsulation")
+struct SixBitTests {
+  private static let encodedString = "1P000Oh1IT1svTP2r:43grwb05q4"
+  private static let data: Data = {
     let binaryData = """
       000001
       100000
@@ -43,29 +43,30 @@ final class SixBitSpec: AsyncSpec {
       .replacing(.newlineSequence, with: "")
       .chunks(ofCount: 8)
       .map { UInt8($0, radix: 2)! }
-    let data = Data(bytes)
+    return Data(bytes)
+  }()
 
-    describe("encapsulation") {
-      it("decodes the example string from the manual") {
-        let coder = SixBitCoder()
-        let decoded = coder.decode(encodedString, fillBits: 0)!
-        expect(decoded).to(equal(data))
-      }
+  @Test("decodes the example string from the manual")
+  func decodesTheExampleString() throws {
+    let coder = SixBitCoder()
+    let decoded = coder.decode(Self.encodedString, fillBits: 0)!
+    #expect(decoded == Self.data)
+  }
 
-      it("encodes the example string from the manual") {
-        let coder = SixBitCoder()
-        let (chunks, fillBits) = coder.encode(data, chunkSize: 48)
-        expect(chunks).to(haveCount(1))
-        expect(chunks[0]).to(equal(encodedString))
-        expect(fillBits).to(equal(0))
-      }
+  @Test("encodes the example string from the manual")
+  func encodesTheExampleString() throws {
+    let coder = SixBitCoder()
+    let (chunks, fillBits) = coder.encode(Self.data, chunkSize: 48)
+    #expect(chunks.count == 1)
+    #expect(chunks[0] == Self.encodedString)
+    #expect(fillBits == 0)
+  }
 
-      it("rejects characters outside the six-bit alphabet") {
-        let coder = SixBitCoder()
-        // 'X' (0x58) and 'z' (0x7A) fall in the gaps between the armoring ranges
-        expect(coder.decode("X", fillBits: 0)).to(beNil())
-        expect(coder.decode("1P00z", fillBits: 0)).to(beNil())
-      }
-    }
+  @Test("rejects characters outside the six-bit alphabet")
+  func rejectsCharactersOutsideTheSixBitAlphabet() throws {
+    let coder = SixBitCoder()
+    // 'X' (0x58) and 'z' (0x7A) fall in the gaps between the armoring ranges
+    #expect(coder.decode("X", fillBits: 0) == nil)
+    #expect(coder.decode("1P00z", fillBits: 0) == nil)
   }
 }

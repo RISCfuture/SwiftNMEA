@@ -1,37 +1,31 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class HMSSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.54 HMS") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .integratedInstrumentation,
-          format: .headingMonitorSet,
-          fields: ["HDG1", "HDG2", 5.0]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.54 HMS")
+struct HMSTests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .integratedInstrumentation,
+      format: .headingMonitorSet,
+      fields: ["HDG1", "HDG2", 5.0]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard case let .headingMonitorSet(sensor1, sensor2, maxDiff) = payload else {
-          fail("expected .headingMonitorSet, got \(payload)")
-          return
-        }
-
-        expect(sensor1).to(equal("HDG1"))
-        expect(sensor2).to(equal("HDG2"))
-        expect(maxDiff).to(equal(.init(value: 5.0, unit: .degrees)))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard case let .headingMonitorSet(sensor1, sensor2, maxDiff) = payload else {
+      Issue.record("expected .headingMonitorSet, got \(payload)")
+      return
     }
+
+    #expect(sensor1 == "HDG1")
+    #expect(sensor2 == "HDG2")
+    #expect(maxDiff == .init(value: 5.0, unit: .degrees))
   }
 }

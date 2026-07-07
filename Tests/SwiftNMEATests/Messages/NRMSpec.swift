@@ -1,90 +1,82 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class NRMSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.72 NRM") {
-      it("parses the first example sentence") {
-        let parser = SwiftNMEA()
-        let data = Data("$INNRM,2,1,00001E1F,00000023,R*29\r\n".utf8)
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.72 NRM")
+struct NRMTests {
+  @Test("parses the first example sentence")
+  func parsesTheFirstExampleSentence() async throws {
+    let parser = SwiftNMEA()
+    let data = Data("$INNRM,2,1,00001E1F,00000023,R*29\r\n".utf8)
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .NAVTEXReceiverMask(
-            function,
-            frequency,
-            coverageAreaMask,
-            messageTypeMask,
-            status
-          ) =
-            payload
-        else {
-          fail("expected .windDirectionSpeed, got \(payload)")
-          return
-        }
-
-        expect(function).to(equal(.printer))
-        expect(frequency).to(equal(.freq490))
-        for area in "ABCDEJKLM" {
-          expect(coverageAreaMask![area]).to(beTrue())
-        }
-        for area in "FGHINOPQRSTUVWXYZ" {
-          expect(coverageAreaMask![area]).to(beFalse())
-        }
-        for type in "ABF" {
-          expect(messageTypeMask![type]).to(beTrue())
-        }
-        for type in "CDEGHIJKLMNOPQRSTUVWXYZ" {
-          expect(messageTypeMask![type]).to(beFalse())
-        }
-        expect(status).to(equal(.reply))
-      }
-
-      it("parses the second example sentence") {
-        let parser = SwiftNMEA()
-        let data = Data("$INNRM,0,2,00001E1F,0FFFFFFF,R*5F\r\n".utf8)
-        let messages = try await parser.parse(data: data)
-
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .NAVTEXReceiverMask(
-            function,
-            frequency,
-            coverageAreaMask,
-            messageTypeMask,
-            status
-          ) =
-            payload
-        else {
-          fail("expected .NAVTEXReceiverMask, got \(payload)")
-          return
-        }
-
-        expect(function).to(equal(.request))
-        expect(frequency).to(equal(.freq518))
-        for area in "ABCDEJKLM" {
-          expect(coverageAreaMask![area]).to(beTrue())
-        }
-        for area in "FGHINOPQRSTUVWXYZ" {
-          expect(coverageAreaMask![area]).to(beFalse())
-        }
-        for type in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" {
-          expect(messageTypeMask![type]).to(beTrue())
-        }
-        expect(status).to(equal(.reply))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .NAVTEXReceiverMask(
+        function,
+        frequency,
+        coverageAreaMask,
+        messageTypeMask,
+        status
+      ) =
+        payload
+    else {
+      Issue.record("expected .windDirectionSpeed, got \(payload)")
+      return
     }
+
+    #expect(function == .printer)
+    #expect(frequency == .freq490)
+    for area in "ABCDEJKLM" {
+      #expect(coverageAreaMask![area] == true)
+    }
+    for area in "FGHINOPQRSTUVWXYZ" {
+      #expect(coverageAreaMask![area] == false)
+    }
+    for type in "ABF" {
+      #expect(messageTypeMask![type] == true)
+    }
+    for type in "CDEGHIJKLMNOPQRSTUVWXYZ" {
+      #expect(messageTypeMask![type] == false)
+    }
+    #expect(status == .reply)
+  }
+
+  @Test("parses the second example sentence")
+  func parsesTheSecondExampleSentence() async throws {
+    let parser = SwiftNMEA()
+    let data = Data("$INNRM,0,2,00001E1F,0FFFFFFF,R*5F\r\n".utf8)
+    let messages = try await parser.parse(data: data)
+
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .NAVTEXReceiverMask(
+        function,
+        frequency,
+        coverageAreaMask,
+        messageTypeMask,
+        status
+      ) =
+        payload
+    else {
+      Issue.record("expected .NAVTEXReceiverMask, got \(payload)")
+      return
+    }
+
+    #expect(function == .request)
+    #expect(frequency == .freq518)
+    for area in "ABCDEJKLM" {
+      #expect(coverageAreaMask![area] == true)
+    }
+    for area in "FGHINOPQRSTUVWXYZ" {
+      #expect(coverageAreaMask![area] == false)
+    }
+    for type in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" {
+      #expect(messageTypeMask![type] == true)
+    }
+    #expect(status == .reply)
   }
 }

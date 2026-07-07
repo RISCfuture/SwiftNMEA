@@ -1,36 +1,30 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class ROTSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.83 ROT") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .integratedNavigation,
-          format: .rateOfTurn,
-          fields: [-1.2, "A"]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.83 ROT")
+struct ROTTests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .integratedNavigation,
+      format: .rateOfTurn,
+      fields: [-1.2, "A"]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard case let .rateOfTurn(rate, isValid) = payload else {
-          fail("expected .rateOfTurn, got \(payload)")
-          return
-        }
-
-        expect(rate).to(equal(.init(value: -1.2, unit: .degreesPerMinute)))
-        expect(isValid).to(beTrue())
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard case let .rateOfTurn(rate, isValid) = payload else {
+      Issue.record("expected .rateOfTurn, got \(payload)")
+      return
     }
+
+    #expect(rate == .init(value: -1.2, unit: .degreesPerMinute))
+    #expect(isValid)
   }
 }

@@ -1,58 +1,52 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class TLLSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.103 TLL") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let time = Date(timeIntervalSinceNow: -10)
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .radar,
-          format: .targetPosition,
-          fields: [
-            12,
-            "3730.00", "N", "12115.00", "W",
-            "TGT1",
-            hmsFractionFormatter.string(from: time),
-            "Q", nil
-          ]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.103 TLL")
+struct TLLTests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let time = Date(timeIntervalSinceNow: -10)
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .radar,
+      format: .targetPosition,
+      fields: [
+        12,
+        "3730.00", "N", "12115.00", "W",
+        "TGT1",
+        hmsFractionFormatter.string(from: time),
+        "Q", nil
+      ]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .targetPosition(
-            number,
-            position,
-            name,
-            actualTime,
-            status,
-            isReference
-          ) =
-            payload
-        else {
-          fail("expected .targetPosition, got \(payload)")
-          return
-        }
-
-        expect(number).to(equal(12))
-        expect(position.latitude).to(equal(.init(value: 37.5, unit: .degrees)))
-        expect(position.longitude).to(equal(.init(value: -121.25, unit: .degrees)))
-        expect(name).to(equal("TGT1"))
-        expect(actualTime).to(beCloseTo(time, within: 0.01))
-        expect(status).to(equal(.query))
-        expect(isReference).to(beFalse())
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .targetPosition(
+        number,
+        position,
+        name,
+        actualTime,
+        status,
+        isReference
+      ) =
+        payload
+    else {
+      Issue.record("expected .targetPosition, got \(payload)")
+      return
     }
+
+    #expect(number == 12)
+    #expect(position.latitude == .init(value: 37.5, unit: .degrees))
+    #expect(position.longitude == .init(value: -121.25, unit: .degrees))
+    #expect(name == "TGT1")
+    #expect(abs(actualTime.timeIntervalSince(time)) < 0.01)
+    #expect(status == .query)
+    #expect(!isReference)
   }
 }

@@ -1,30 +1,24 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class STNSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.100 STN") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .depthSounder,
-          format: .talkerID,
-          fields: [12]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.100 STN")
+struct STNTests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .depthSounder,
+      format: .talkerID,
+      fields: [12]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        expect(payload).to(equal(.talkerID(12)))
-      }
-    }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    #expect(payload == .talkerID(12))
   }
 }

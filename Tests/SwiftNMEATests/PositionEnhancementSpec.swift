@@ -1,37 +1,39 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 import SwiftDSE
 
-final class PositionEnhancementSpec: AsyncSpec {
-  override static func spec() {
-    describe("PositionEnhancement") {
-      it("round-trips through its raw value") {
-        let enhancement = PositionEnhancement(rawValue: "12345678")
-        expect(enhancement).toNot(beNil())
-        expect(enhancement?.rawValue).to(equal("12345678"))
-      }
+@Suite("PositionEnhancement")
+struct PositionEnhancementTests {
+  // MARK: - PositionEnhancement
 
-      it("rejects raw values that are not eight digits") {
-        expect(PositionEnhancement(rawValue: "12345")).to(beNil())
-        expect(PositionEnhancement(rawValue: "1234567890")).to(beNil())
-      }
-    }
+  @Test("round-trips through its raw value")
+  func roundTripsThroughItsRawValue() throws {
+    let enhancement = PositionEnhancement(rawValue: "12345678")
+    #expect(enhancement != nil)
+    #expect(enhancement?.rawValue == "12345678")
+  }
 
-    describe("PositionSourceDatum") {
-      it("round-trips through its raw value, including the datum digits") {
-        let sourceDatum = PositionSourceDatum(rawValue: "015500")
-        expect(sourceDatum).toNot(beNil())
-        expect(sourceDatum?.source).to(equal(.differentialGPS))
-        expect(sourceDatum?.fixResolution).to(equal(5.5))
-        expect(sourceDatum?.datum).to(equal(.WGS84))
-        expect(sourceDatum?.rawValue).to(equal("015500"))
-      }
+  @Test("rejects raw values that are not eight digits")
+  func rejectsRawValuesThatAreNotEightDigits() throws {
+    #expect(PositionEnhancement(rawValue: "12345") == nil)
+    #expect(PositionEnhancement(rawValue: "1234567890") == nil)
+  }
 
-      it("rejects raw values that are not six digits") {
-        expect(PositionSourceDatum(rawValue: "0155")).to(beNil())
-      }
-    }
+  // MARK: - PositionSourceDatum
+
+  @Test("round-trips through its raw value, including the datum digits")
+  func roundTripsThroughItsRawValueIncludingTheDatumDigits() throws {
+    let sourceDatum = PositionSourceDatum(rawValue: "015500")
+    #expect(sourceDatum != nil)
+    #expect(sourceDatum?.source == .differentialGPS)
+    #expect(sourceDatum?.fixResolution == 5.5)
+    #expect(sourceDatum?.datum == .WGS84)
+    #expect(sourceDatum?.rawValue == "015500")
+  }
+
+  @Test("rejects raw values that are not six digits")
+  func rejectsRawValuesThatAreNotSixDigits() throws {
+    #expect(PositionSourceDatum(rawValue: "0155") == nil)
   }
 }

@@ -1,49 +1,43 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class XTESpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.128 XTE") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .radar,
-          format: .crossTrackError,
-          fields: [
-            "A", "V",
-            12.3, "L", "N",
-            "A"
-          ]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.128 XTE")
+struct XTETests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .radar,
+      format: .crossTrackError,
+      fields: [
+        "A", "V",
+        12.3, "L", "N",
+        "A"
+      ]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .crossTrackError(
-            error,
-            mode,
-            LORANC_blinkSNRFlag,
-            LORANC_cycleLockWarningFlag
-          ) = payload
-        else {
-          fail("expected .crossTrackError, got \(payload)")
-          return
-        }
-
-        expect(error).to(equal(.init(value: -12.3, unit: .nauticalMiles)))
-        expect(mode).to(equal(.autonomous))
-        expect(LORANC_blinkSNRFlag).to(beFalse())
-        expect(LORANC_cycleLockWarningFlag).to(beTrue())
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .crossTrackError(
+        error,
+        mode,
+        LORANC_blinkSNRFlag,
+        LORANC_cycleLockWarningFlag
+      ) = payload
+    else {
+      Issue.record("expected .crossTrackError, got \(payload)")
+      return
     }
+
+    #expect(error == .init(value: -12.3, unit: .nauticalMiles))
+    #expect(mode == .autonomous)
+    #expect(!LORANC_blinkSNRFlag)
+    #expect(LORANC_cycleLockWarningFlag)
   }
 }

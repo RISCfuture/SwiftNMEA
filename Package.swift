@@ -27,8 +27,6 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/Quick/Quick.git", from: "7.0.0"),
-    .package(url: "https://github.com/Quick/Nimble.git", from: "14.0.0"),
     .package(url: "https://github.com/apple/swift-algorithms.git", from: "1.2.0"),
     .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "603.0.0"),
     .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
@@ -65,8 +63,6 @@ let package = Package(
       dependencies: [
         "SwiftNMEA",
         "SwiftDSE",
-        "Quick",
-        "Nimble",
         .product(name: "Algorithms", package: "swift-algorithms")
       ],
       swiftSettings: approachableConcurrency

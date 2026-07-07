@@ -1,66 +1,60 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class RMBSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.80 RMB") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .GPS,
-          format: .destinationMinimumData,
-          fields: [
-            "A",
-            0.5, "L",
-            "KSQL", "KOAK",
-            "3630.00", "N", "12215.00", "W",
-            15.5, 272.2, 13.5, "V",
-            "D"
-          ]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.80 RMB")
+struct RMBTests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .GPS,
+      format: .destinationMinimumData,
+      fields: [
+        "A",
+        0.5, "L",
+        "KSQL", "KOAK",
+        "3630.00", "N", "12215.00", "W",
+        15.5, 272.2, 13.5, "V",
+        "D"
+      ]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .destinationMinimumData(
-            isValid,
-            crossTrackError,
-            originID,
-            destinationID,
-            destination,
-            rangeToDestination,
-            bearingToDestination,
-            closingVelocity,
-            isArrived,
-            mode
-          ) = payload
-        else {
-          fail("expected .destinationMinimumData, got \(payload)")
-          return
-        }
-
-        expect(isValid).to(beTrue())
-        expect(crossTrackError).to(equal(.init(value: -0.5, unit: .nauticalMiles)))
-        expect(originID).to(equal("KSQL"))
-        expect(destinationID).to(equal("KOAK"))
-        expect(destination.latitude).to(equal(.init(value: 36.5, unit: .degrees)))
-        expect(destination.longitude).to(equal(.init(value: -122.25, unit: .degrees)))
-        expect(rangeToDestination).to(equal(.init(value: 15.5, unit: .nauticalMiles)))
-        expect(bearingToDestination.angle).to(equal(.init(value: 272.2, unit: .degrees)))
-        expect(bearingToDestination.reference).to(equal(.true))
-        expect(closingVelocity).to(equal(.init(value: 13.5, unit: .knots)))
-        expect(isArrived).to(beFalse())
-        expect(mode).to(equal(.differential))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .destinationMinimumData(
+        isValid,
+        crossTrackError,
+        originID,
+        destinationID,
+        destination,
+        rangeToDestination,
+        bearingToDestination,
+        closingVelocity,
+        isArrived,
+        mode
+      ) = payload
+    else {
+      Issue.record("expected .destinationMinimumData, got \(payload)")
+      return
     }
+
+    #expect(isValid)
+    #expect(crossTrackError == .init(value: -0.5, unit: .nauticalMiles))
+    #expect(originID == "KSQL")
+    #expect(destinationID == "KOAK")
+    #expect(destination.latitude == .init(value: 36.5, unit: .degrees))
+    #expect(destination.longitude == .init(value: -122.25, unit: .degrees))
+    #expect(rangeToDestination == .init(value: 15.5, unit: .nauticalMiles))
+    #expect(bearingToDestination.angle == .init(value: 272.2, unit: .degrees))
+    #expect(bearingToDestination.reference == .true)
+    #expect(closingVelocity == .init(value: 13.5, unit: .knots))
+    #expect(!isArrived)
+    #expect(mode == .differential)
   }
 }

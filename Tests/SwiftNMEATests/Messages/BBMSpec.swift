@@ -1,200 +1,179 @@
-import Nimble
-import Quick
+import Foundation
+import Testing
 
 @testable import SwiftNMEA
 
-final class BBMSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.18 BBM") {
-      describe(".parse") {
-        it("parses a sentence") {
-          let parser = SwiftNMEA()
-          let sixBit = SixBitCoder()
+@Suite("8.3.18 BBM")
+struct BBMTests {
+  // MARK: - .parse
 
-          let data1 = "This is some very interesting binary data".data(using: .ascii)!
-          let data2 =
-            "Each message must be no more than 60 characters (117 bytes) -- this one is longer"
-            .data(using: .ascii)!
-          let (chunks1, fillBits1) = sixBit.encode(data1, chunkSize: 57)
-          let (chunks2, fillBits2) = sixBit.encode(data2, chunkSize: 57)
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let sixBit = SixBitCoder()
 
-          let sentences1 = encapsulatedSentences(
-            format: .AISBroadcastBinaryMessage,
-            from: chunks1,
-            fillBits: fillBits1,
-            sequenceID: 0,
-            otherFields: [0, "01"]
-          )
-          let sentences2 = encapsulatedSentences(
-            format: .AISBroadcastBinaryMessage,
-            from: chunks2,
-            fillBits: fillBits2,
-            sequenceID: 1,
-            otherFields: [0, "02"]
-          )
-          let data = (sentences1 + sentences2).joined().data(using: .ascii)!
-          let messages = try await parser.parse(data: data)
+    let data1 = "This is some very interesting binary data".data(using: .ascii)!
+    let data2 =
+      "Each message must be no more than 60 characters (117 bytes) -- this one is longer"
+      .data(using: .ascii)!
+    let (chunks1, fillBits1) = sixBit.encode(data1, chunkSize: 57)
+    let (chunks2, fillBits2) = sixBit.encode(data2, chunkSize: 57)
 
-          expect(messages).to(haveCount(5))
-          guard let payload1 = (messages[1] as? Message)?.payload else {
-            fail("expected Message, got \(messages[1])")
-            return
-          }
-          guard let payload2 = (messages[4] as? Message)?.payload else {
-            fail("expected Message, got \(messages[4])")
-            return
-          }
-          expect(payload1).to(
-            equal(
-              .AISBroadcastBinaryMessage(
-                sequentialIdentifier: 0,
-                channel: .noPreference,
-                messageID: .positionReportSOTDMA,
-                data: data1
-              )
-            )
-          )
-          expect(payload2).to(
-            equal(
-              .AISBroadcastBinaryMessage(
-                sequentialIdentifier: 1,
-                channel: .noPreference,
-                messageID: .positionReportSOTDMA_2,
-                data: data2
-              )
-            )
-          )
-        }
+    let sentences1 = encapsulatedSentences(
+      format: .AISBroadcastBinaryMessage,
+      from: chunks1,
+      fillBits: fillBits1,
+      sequenceID: 0,
+      otherFields: [0, "01"]
+    )
+    let sentences2 = encapsulatedSentences(
+      format: .AISBroadcastBinaryMessage,
+      from: chunks2,
+      fillBits: fillBits2,
+      sequenceID: 1,
+      otherFields: [0, "02"]
+    )
+    let data = (sentences1 + sentences2).joined().data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        it("throws an error for missing fields") {
-          let parser = SwiftNMEA()
-          let sixBit = SixBitCoder()
+    #expect(messages.count == 5)
+    let payload1 = try #require((messages[1] as? Message)?.payload)
+    let payload2 = try #require((messages[4] as? Message)?.payload)
+    #expect(
+      payload1
+        == .AISBroadcastBinaryMessage(
+          sequentialIdentifier: 0,
+          channel: .noPreference,
+          messageID: .positionReportSOTDMA,
+          data: data1
+        )
+    )
+    #expect(
+      payload2
+        == .AISBroadcastBinaryMessage(
+          sequentialIdentifier: 1,
+          channel: .noPreference,
+          messageID: .positionReportSOTDMA_2,
+          data: data2
+        )
+    )
+  }
 
-          let data = "Each message must be no more than 58 characters (117 bytes)".data(
-            using: .ascii
-          )!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 57)
+  @Test("throws an error for missing fields")
+  func throwsAnErrorForMissingFields() async throws {
+    let parser = SwiftNMEA()
+    let sixBit = SixBitCoder()
 
-          let sentences = [
-            createSentence(
-              delimiter: .encapsulated,
-              talker: .commVHF,
-              format: .AISBroadcastBinaryMessage,
-              fields: [2, 1, 1, nil, 1, chunks[0], fillBits]
-            ),
-            createSentence(
-              delimiter: .encapsulated,
-              talker: .commVHF,
-              format: .AISBroadcastBinaryMessage,
-              fields: [2, 2, 1, nil, 1, chunks[0], fillBits]
-            )
-          ]
-          let sentenceData = sentences.joined().data(using: .ascii)!
-          let messages = try await parser.parse(data: sentenceData)
+    let data = "Each message must be no more than 58 characters (117 bytes)".data(
+      using: .ascii
+    )!
+    let (chunks, fillBits) = sixBit.encode(data, chunkSize: 57)
 
-          expect(messages).to(haveCount(4))
+    let sentences = [
+      createSentence(
+        delimiter: .encapsulated,
+        talker: .commVHF,
+        format: .AISBroadcastBinaryMessage,
+        fields: [2, 1, 1, nil, 1, chunks[0], fillBits]
+      ),
+      createSentence(
+        delimiter: .encapsulated,
+        talker: .commVHF,
+        format: .AISBroadcastBinaryMessage,
+        fields: [2, 2, 1, nil, 1, chunks[0], fillBits]
+      )
+    ]
+    let sentenceData = sentences.joined().data(using: .ascii)!
+    let messages = try await parser.parse(data: sentenceData)
 
-          guard let error = messages[1] as? MessageError else {
-            fail("expected MessageError, got \(messages[1])")
-            return
-          }
-          expect(error.type).to(equal(.missingRequiredValue))
-          expect(error.fieldNumber).to(equal(3))
+    #expect(messages.count == 4)
 
-          guard let error = messages[3] as? MessageError else {
-            fail("expected MessageError, got \(messages[3])")
-            return
-          }
-          expect(error.type).to(equal(.missingRequiredValue))
-          expect(error.fieldNumber).to(equal(3))
-        }
+    let error1 = try #require(messages[1] as? MessageError)
+    #expect(error1.type == .missingRequiredValue)
+    #expect(error1.fieldNumber == 3)
 
-        it("throws an error for an incorrect sentence number") {
-          let parser = SwiftNMEA()
-          let sixBit = SixBitCoder()
+    let error2 = try #require(messages[3] as? MessageError)
+    #expect(error2.type == .missingRequiredValue)
+    #expect(error2.fieldNumber == 3)
+  }
 
-          let data = "Each message must be no more than 58 characters (117 bytes)".data(
-            using: .ascii
-          )!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 57)
+  @Test("throws an error for an incorrect sentence number")
+  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+    let parser = SwiftNMEA()
+    let sixBit = SixBitCoder()
 
-          let sentences = [
-            createSentence(
-              delimiter: .encapsulated,
-              talker: .commVHF,
-              format: .AISBroadcastBinaryMessage,
-              fields: [2, 1, 1, 1, 1, chunks[0], fillBits]
-            ),
-            createSentence(
-              delimiter: .encapsulated,
-              talker: .commVHF,
-              format: .AISBroadcastBinaryMessage,
-              fields: [2, 3, 1, 1, 1, chunks[1], fillBits]
-            )
-          ]
-          let sentenceData = sentences.joined().data(using: .ascii)!
-          let messages = try await parser.parse(data: sentenceData)
+    let data = "Each message must be no more than 58 characters (117 bytes)".data(
+      using: .ascii
+    )!
+    let (chunks, fillBits) = sixBit.encode(data, chunkSize: 57)
 
-          expect(messages).to(haveCount(3))
-          guard let error = messages[2] as? MessageError else {
-            fail("expected MessageError, got \(messages[2])")
-            return
-          }
-          expect(error.type).to(equal(.wrongSentenceNumber))
-          expect(error.fieldNumber).to(equal(1))
-        }
-      }
+    let sentences = [
+      createSentence(
+        delimiter: .encapsulated,
+        talker: .commVHF,
+        format: .AISBroadcastBinaryMessage,
+        fields: [2, 1, 1, 1, 1, chunks[0], fillBits]
+      ),
+      createSentence(
+        delimiter: .encapsulated,
+        talker: .commVHF,
+        format: .AISBroadcastBinaryMessage,
+        fields: [2, 3, 1, 1, 1, chunks[1], fillBits]
+      )
+    ]
+    let sentenceData = sentences.joined().data(using: .ascii)!
+    let messages = try await parser.parse(data: sentenceData)
 
-      describe(".flush") {
-        it("flushes incomplete sentences") {
-          let parser = SwiftNMEA()
-          let sixBit = SixBitCoder()
+    #expect(messages.count == 3)
+    let error = try #require(messages[2] as? MessageError)
+    #expect(error.type == .wrongSentenceNumber)
+    #expect(error.fieldNumber == 1)
+  }
 
-          let data = "1234567890123456789012345678901234567890123456789012345678901234567890".data(
-            using: .ascii
-          )!
-          let (chunks, fillBits) = sixBit.encode(data, chunkSize: 57)
+  // MARK: - .flush
 
-          let sentences = encapsulatedSentences(
-            format: .AISBroadcastBinaryMessage,
-            from: chunks,
-            fillBits: fillBits,
-            sequenceID: 0,
-            otherFields: [0, "01"]
-          )
-          let sentenceData = sentences[0].data(using: .ascii)!
+  @Test("flushes incomplete sentences")
+  func flushesIncompleteSentences() async throws {
+    let parser = SwiftNMEA()
+    let sixBit = SixBitCoder()
 
-          let parsed = try await parser.parse(data: sentenceData)
-          expect(parsed).to(haveCount(1))
+    let data = "1234567890123456789012345678901234567890123456789012345678901234567890".data(
+      using: .ascii
+    )!
+    let (chunks, fillBits) = sixBit.encode(data, chunkSize: 57)
 
-          let messages = try await parser.flush(includeIncomplete: true)
-          expect(messages).to(haveCount(1))
+    let sentences = encapsulatedSentences(
+      format: .AISBroadcastBinaryMessage,
+      from: chunks,
+      fillBits: fillBits,
+      sequenceID: 0,
+      otherFields: [0, "01"]
+    )
+    let sentenceData = sentences[0].data(using: .ascii)!
 
-          guard let message = messages[0] as? Message else {
-            fail("expected Message, got \(messages[0])")
-            return
-          }
-          guard
-            case let .AISBroadcastBinaryMessage(
-              sequentialIdentifier,
-              channel,
-              messageID,
-              actualData
-            ) = message
-              .payload
-          else {
-            fail("expected .AISBroadcastBinaryMessage, got \(message)")
-            return
-          }
+    let parsed = try await parser.parse(data: sentenceData)
+    #expect(parsed.count == 1)
 
-          expect(sequentialIdentifier).to(equal(0))
-          expect(channel).to(equal(.noPreference))
-          expect(messageID).to(equal(.positionReportSOTDMA))
-          expect(actualData).to(
-            equal("123456789012345678901234567890123456789012".data(using: .ascii)!)
-          )
-        }
-      }
+    let messages = try await parser.flush(includeIncomplete: true)
+    #expect(messages.count == 1)
+
+    let message = try #require(messages[0] as? Message)
+    guard
+      case let .AISBroadcastBinaryMessage(
+        sequentialIdentifier,
+        channel,
+        messageID,
+        actualData
+      ) = message
+        .payload
+    else {
+      Issue.record("expected .AISBroadcastBinaryMessage, got \(message)")
+      return
     }
+
+    #expect(sequentialIdentifier == 0)
+    #expect(channel == .noPreference)
+    #expect(messageID == .positionReportSOTDMA)
+    #expect(actualData == "123456789012345678901234567890123456789012".data(using: .ascii)!)
   }
 }

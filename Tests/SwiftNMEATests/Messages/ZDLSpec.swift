@@ -1,37 +1,31 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class ZDLSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.131 ZDL") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .radar,
-          format: .timeDistanceToVariablePoint,
-          fields: ["010203.04", 12.3, "C"]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.131 ZDL")
+struct ZDLTests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .radar,
+      format: .timeDistanceToVariablePoint,
+      fields: ["010203.04", 12.3, "C"]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard case let .timeDistanceToVariablePoint(time, distance, type) = payload else {
-          fail("expected .timeDistanceToVariablePoint, got \(payload)")
-          return
-        }
-
-        expect(time).to(equal(.seconds(3723) + .milliseconds(40)))
-        expect(distance).to(equal(.init(value: 12.3, unit: .nauticalMiles)))
-        expect(type).to(equal(.collision))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard case let .timeDistanceToVariablePoint(time, distance, type) = payload else {
+      Issue.record("expected .timeDistanceToVariablePoint, got \(payload)")
+      return
     }
+
+    #expect(time == .seconds(3723) + .milliseconds(40))
+    #expect(distance == .init(value: 12.3, unit: .nauticalMiles))
+    #expect(type == .collision)
   }
 }

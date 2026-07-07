@@ -1,103 +1,96 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class RRTSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.85 RRT") {
-      it("parses a status report for a monitored route") {
-        let parser = SwiftNMEA()
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .integratedNavigation,
-          format: .routeTransferReport,
-          fields: ["M", "KSQLKDWA", "1.2", "OAK30", "A", "P"]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.85 RRT")
+struct RRTTests {
+  @Test("parses a status report for a monitored route")
+  func parsesAStatusReportForAMonitoredRoute() async throws {
+    let parser = SwiftNMEA()
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .integratedNavigation,
+      format: .routeTransferReport,
+      fields: ["M", "KSQLKDWA", "1.2", "OAK30", "A", "P"]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .routeTransferReport(
-            transferType,
-            name,
-            version,
-            currentWaypoint,
-            fileStatus,
-            applicationStatus
-          ) = payload
-        else {
-          fail("expected .routeTransferReport, got \(payload)")
-          return
-        }
-        expect(transferType).to(equal(.monitored))
-        expect(name).to(equal("KSQLKDWA"))
-        expect(version).to(equal("1.2"))
-        expect(currentWaypoint).to(equal("OAK30"))
-        expect(fileStatus).to(equal(.success))
-        expect(applicationStatus).to(equal(.pending))
-      }
-
-      it("parses an empty query response with null fields") {
-        let parser = SwiftNMEA()
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .integratedNavigation,
-          format: .routeTransferReport,
-          fields: ["M", nil, nil, nil, nil, nil]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
-
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .routeTransferReport(
-            transferType,
-            name,
-            version,
-            currentWaypoint,
-            fileStatus,
-            applicationStatus
-          ) = payload
-        else {
-          fail("expected .routeTransferReport, got \(payload)")
-          return
-        }
-        expect(transferType).to(equal(.monitored))
-        expect(name).to(beNil())
-        expect(version).to(beNil())
-        expect(currentWaypoint).to(beNil())
-        expect(fileStatus).to(beNil())
-        expect(applicationStatus).to(beNil())
-      }
-
-      it("throws an error for an invalid transfer type") {
-        let parser = SwiftNMEA()
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .integratedNavigation,
-          format: .routeTransferReport,
-          fields: ["X", "KSQLKDWA", "1.2", "OAK30", "A", "P"]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
-
-        guard let error = messages[1] as? MessageError else {
-          fail("expected MessageError, got \(messages[1])")
-          return
-        }
-        expect(error.type).to(equal(.unknownValue))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .routeTransferReport(
+        transferType,
+        name,
+        version,
+        currentWaypoint,
+        fileStatus,
+        applicationStatus
+      ) = payload
+    else {
+      Issue.record("expected .routeTransferReport, got \(payload)")
+      return
     }
+    #expect(transferType == .monitored)
+    #expect(name == "KSQLKDWA")
+    #expect(version == "1.2")
+    #expect(currentWaypoint == "OAK30")
+    #expect(fileStatus == .success)
+    #expect(applicationStatus == .pending)
+  }
+
+  @Test("parses an empty query response with null fields")
+  func parsesAnEmptyQueryResponseWithNullFields() async throws {
+    let parser = SwiftNMEA()
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .integratedNavigation,
+      format: .routeTransferReport,
+      fields: ["M", nil, nil, nil, nil, nil]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
+
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .routeTransferReport(
+        transferType,
+        name,
+        version,
+        currentWaypoint,
+        fileStatus,
+        applicationStatus
+      ) = payload
+    else {
+      Issue.record("expected .routeTransferReport, got \(payload)")
+      return
+    }
+    #expect(transferType == .monitored)
+    #expect(name == nil)
+    #expect(version == nil)
+    #expect(currentWaypoint == nil)
+    #expect(fileStatus == nil)
+    #expect(applicationStatus == nil)
+  }
+
+  @Test("throws an error for an invalid transfer type")
+  func throwsAnErrorForAnInvalidTransferType() async throws {
+    let parser = SwiftNMEA()
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .integratedNavigation,
+      format: .routeTransferReport,
+      fields: ["X", "KSQLKDWA", "1.2", "OAK30", "A", "P"]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
+
+    guard let error = messages[1] as? MessageError else {
+      Issue.record("expected MessageError, got \(messages[1])")
+      return
+    }
+    #expect(error.type == .unknownValue)
   }
 }

@@ -1,39 +1,33 @@
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class AAMSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.2 AAM") {
-      it("parses the sentence from the spec") {
-        let parser = SwiftNMEA()
-        let sentence = "$LCAAM,V,A,.15,N,CHAT-N6*56\r\n"
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.2 AAM")
+struct AAMTests {
+  @Test("parses the sentence from the spec")
+  func parsesTheSentenceFromTheSpec() async throws {
+    let parser = SwiftNMEA()
+    let sentence = "$LCAAM,V,A,.15,N,CHAT-N6*56\r\n"
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .waypointArrivalAlarm(
-            arrivalCircleEntered,
-            perpendicularPassed,
-            arrivalCircleRadius,
-            waypoint
-          ) = payload
-        else {
-          fail("expected .waypointArrivalAlarm, got \(payload)")
-          return
-        }
-
-        expect(arrivalCircleEntered).to(beFalse())
-        expect(perpendicularPassed).to(beTrue())
-        expect(arrivalCircleRadius).to(equal(.init(value: 0.15, unit: .nauticalMiles)))
-        expect(waypoint).to(equal("CHAT-N6"))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .waypointArrivalAlarm(
+        arrivalCircleEntered,
+        perpendicularPassed,
+        arrivalCircleRadius,
+        waypoint
+      ) = payload
+    else {
+      Issue.record("expected .waypointArrivalAlarm, got \(payload)")
+      return
     }
+
+    #expect(!arrivalCircleEntered)
+    #expect(perpendicularPassed)
+    #expect(arrivalCircleRadius == .init(value: 0.15, unit: .nauticalMiles))
+    #expect(waypoint == "CHAT-N6")
   }
 }

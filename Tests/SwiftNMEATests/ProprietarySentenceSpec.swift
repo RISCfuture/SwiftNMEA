@@ -1,32 +1,28 @@
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class ProprietarySentenceSpec: AsyncSpec {
-  override static func spec() {
-    describe("ProprietarySentence") {
-      describe("rawValue") {
-        it("encodes the sentence from the spec") {
-          let sentence = ProprietarySentence(
-            manufacturer: "SRD",
-            data: "A003[470738][1224523]???RST47, 3809, A004"
-          )
-          expect(sentence.rawValue).to(
-            equal("$PSRDA003[470738][1224523]???RST47, 3809, A004*47\r\n")
-          )
-        }
-      }
+@Suite("ProprietarySentence")
+struct ProprietarySentenceTests {
+  // MARK: - rawValue
 
-      describe("parsing") {
-        it("parses the sentence from the spec") {
-          let sentence = try await ProprietarySentence(
-            sentence: "$PSRDA003[470738][1224523]???RST47, 3809, A004*47"
-          )!
-          expect(sentence.manufacturer).to(equal("SRD"))
-          expect(sentence.data).to(equal("A003[470738][1224523]???RST47, 3809, A004"))
-        }
-      }
-    }
+  @Test("encodes the sentence from the spec")
+  func encodesTheSentenceFromTheSpec() throws {
+    let sentence = ProprietarySentence(
+      manufacturer: "SRD",
+      data: "A003[470738][1224523]???RST47, 3809, A004"
+    )
+    #expect(sentence.rawValue == "$PSRDA003[470738][1224523]???RST47, 3809, A004*47\r\n")
+  }
+
+  // MARK: - parsing
+
+  @Test("parses the sentence from the spec")
+  func parsesTheSentenceFromTheSpec() async throws {
+    let sentence = try await ProprietarySentence(
+      sentence: "$PSRDA003[470738][1224523]???RST47, 3809, A004*47"
+    )!
+    #expect(sentence.manufacturer == "SRD")
+    #expect(sentence.data == "A003[470738][1224523]???RST47, 3809, A004")
   }
 }

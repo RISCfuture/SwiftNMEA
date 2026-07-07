@@ -1,41 +1,35 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class EVESpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.35 EVE") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let time = Date(timeIntervalSinceNow: -33)
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .waterLevelDetection,
-          format: .event,
-          fields: [
-            hmsFractionFormatter.string(from: time),
-            "COC", "Change of command"
-          ]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.35 EVE")
+struct EVETests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let time = Date(timeIntervalSinceNow: -33)
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .waterLevelDetection,
+      format: .event,
+      fields: [
+        hmsFractionFormatter.string(from: time),
+        "COC", "Change of command"
+      ]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard case let .event(actualTime, tag, description) = payload else {
-          fail("expected .event, got \(payload)")
-          return
-        }
-
-        expect(actualTime).to(beCloseTo(time, within: 0.01))
-        expect(tag).to(equal("COC"))
-        expect(description).to(equal("Change of command"))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard case let .event(actualTime, tag, description) = payload else {
+      Issue.record("expected .event, got \(payload)")
+      return
     }
+
+    #expect(abs(actualTime!.timeIntervalSince(time)) < 0.01)
+    #expect(tag == "COC")
+    #expect(description == "Change of command")
   }
 }

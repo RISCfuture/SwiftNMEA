@@ -1,81 +1,73 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class GSASpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.46 GSA") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .GPS,
-          format: .GNSS_DOP,
-          fields: [
-            "A", 3,
-            "05", "03", "01", "02", "04",
-            0.5, 0.6, 0.7,
-            1
-          ]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.46 GSA")
+struct GSATests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .GPS,
+      format: .GNSS_DOP,
+      fields: [
+        "A", 3,
+        "05", "03", "01", "02", "04",
+        0.5, 0.6, 0.7,
+        1
+      ]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .GNSS_DOP(PDOP, HDOP, VDOP, auto3D, solution, ids) = payload
-        else {
-          fail("expected .GNSS_DOP, got \(payload)")
-          return
-        }
-
-        expect(PDOP).to(equal(0.5))
-        expect(HDOP).to(equal(0.6))
-        expect(VDOP).to(equal(0.7))
-        expect(auto3D).to(beTrue())
-        expect(solution).to(equal(.fix3D))
-        expect(ids).to(
-          equal([
-            .GPS(5, signal: nil),
-            .GPS(3, signal: nil),
-            .GPS(1, signal: nil),
-            .GPS(2, signal: nil),
-            .GPS(4, signal: nil)
-          ])
-        )
-      }
-
-      it("parses a sentence from a STA8089FG") {
-        let parser = SwiftNMEA()
-        let sentence = "$GPGSA,A,1,,,,,,,,,,,,,99.0,99.0,99.0*00\r\n"
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
-
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .GNSS_DOP(PDOP, HDOP, VDOP, auto3D, solution, ids) = payload
-        else {
-          fail("expected .GNSS_DOP, got \(payload)")
-          return
-        }
-
-        expect(PDOP).to(equal(99.0))
-        expect(HDOP).to(equal(99.0))
-        expect(VDOP).to(equal(99.0))
-        expect(auto3D).to(beTrue())
-        expect(solution).to(equal(GNSS.SolutionType.none))
-        expect(ids).to(beEmpty())
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .GNSS_DOP(PDOP, HDOP, VDOP, auto3D, solution, ids) = payload
+    else {
+      Issue.record("expected .GNSS_DOP, got \(payload)")
+      return
     }
+
+    #expect(PDOP == 0.5)
+    #expect(HDOP == 0.6)
+    #expect(VDOP == 0.7)
+    #expect(auto3D)
+    #expect(solution == .fix3D)
+    #expect(
+      ids == [
+        .GPS(5, signal: nil),
+        .GPS(3, signal: nil),
+        .GPS(1, signal: nil),
+        .GPS(2, signal: nil),
+        .GPS(4, signal: nil)
+      ]
+    )
+  }
+
+  @Test("parses a sentence from a STA8089FG")
+  func parsesASentenceFromASTA8089FG() async throws {
+    let parser = SwiftNMEA()
+    let sentence = "$GPGSA,A,1,,,,,,,,,,,,,99.0,99.0,99.0*00\r\n"
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
+
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .GNSS_DOP(PDOP, HDOP, VDOP, auto3D, solution, ids) = payload
+    else {
+      Issue.record("expected .GNSS_DOP, got \(payload)")
+      return
+    }
+
+    #expect(PDOP == 99.0)
+    #expect(HDOP == 99.0)
+    #expect(VDOP == 99.0)
+    #expect(auto3D)
+    #expect(solution == GNSS.SolutionType.none)
+    #expect(ids.isEmpty)
   }
 }

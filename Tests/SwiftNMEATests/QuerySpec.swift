@@ -1,58 +1,49 @@
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class QuerySpec: AsyncSpec {
-  override static func spec() {
-    describe("Query") {
-      describe("rawValue") {
-        it("encodes a sentence") {
-          let query = Query(
-            requester: .GPS,
-            recipient: .commDataReceiver,
-            format: .MSKReceiverSignalStatus
-          )
-          expect(query.rawValue).to(equal("$GPCRQ,MSS*36\r\n"))
-        }
-      }
+@Suite("Query")
+struct QueryTests {
+  // MARK: - rawValue
 
-      describe("parsing") {
-        it("parses a sentence from a STA8089FG") {
-          let parser = SwiftNMEA()
-          // shortened to stay within the 82-character sentence limit
-          let sentence =
-            "$PSTMPVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356.31,M*33\r\n"
-          let data = sentence.data(using: .ascii)!
-          let messages = try await parser.parse(data: data, ignoreChecksums: true)
+  @Test("encodes a sentence")
+  func encodesASentence() throws {
+    let query = Query(
+      requester: .GPS,
+      recipient: .commDataReceiver,
+      format: .MSKReceiverSignalStatus
+    )
+    #expect(query.rawValue == "$GPCRQ,MSS*36\r\n")
+  }
 
-          expect(messages).to(haveCount(1))
-          guard let message = messages[0] as? ProprietarySentence else {
-            fail("expected ProprietaryMessage, got \(messages[0])")
-            return
-          }
+  // MARK: - parsing
 
-          expect(message.manufacturer).to(equal("STM"))
-          expect(message.data).to(
-            equal("PVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356.31,M")
-          )
-        }
+  @Test("parses a sentence from a STA8089FG")
+  func parsesASentenceFromASTA8089FG() async throws {
+    let parser = SwiftNMEA()
+    // shortened to stay within the 82-character sentence limit
+    let sentence =
+      "$PSTMPVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356.31,M*33\r\n"
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data, ignoreChecksums: true)
 
-        it("rejects an over-length proprietary sentence") {
-          let parser = SwiftNMEA()
-          let sentence =
-            "$PSTMPVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356752.31,M,0.0,M,nan,nan,nan*33\r\n"
-          let data = sentence.data(using: .ascii)!
-          let messages = try await parser.parse(data: data)
+    #expect(messages.count == 1)
+    let message = try #require(messages[0] as? ProprietarySentence)
 
-          expect(messages).to(haveCount(1))
-          guard let error = messages[0] as? MessageError else {
-            fail("expected MessageError, got \(messages[0])")
-            return
-          }
-          expect(error.type).to(equal(.sentenceTooLong))
-        }
-      }
-    }
+    #expect(message.manufacturer == "STM")
+    #expect(message.data == "PVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356.31,M")
+  }
+
+  @Test("rejects an over-length proprietary sentence")
+  func rejectsAnOverLengthProprietarySentence() async throws {
+    let parser = SwiftNMEA()
+    let sentence =
+      "$PSTMPVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356752.31,M,0.0,M,nan,nan,nan*33\r\n"
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
+
+    #expect(messages.count == 1)
+    let error = try #require(messages[0] as? MessageError)
+    #expect(error.type == .sentenceTooLong)
   }
 }

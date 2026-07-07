@@ -1,100 +1,86 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class TXTSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.110 TXT") {
-      describe(".parse") {
-        context("example from the spec") {
-          it("parses the example") {
-            let parser = SwiftNMEA()
-            let sentence = "$GPTXT,01,01,25,DR MODE-ANTENNA FAULT^21*38\r\n"
-            let data = sentence.data(using: .ascii)!
-            let messages = try await parser.parse(data: data)
+@Suite("8.3.110 TXT")
+struct TXTTests {
+  // MARK: - .parse, example from the spec
 
-            expect(messages).to(haveCount(2))
-            guard let payload = (messages[1] as? Message)?.payload else {
-              fail("expected Message, got \(messages[1])")
-              return
-            }
+  @Test("parses the example")
+  func parsesTheExample() async throws {
+    let parser = SwiftNMEA()
+    let sentence = "$GPTXT,01,01,25,DR MODE-ANTENNA FAULT^21*38\r\n"
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-            expect(payload).to(equal(.text("DR MODE-ANTENNA FAULT!", identifier: 25)))
-          }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
 
-          it("throws an error for an incorrect sentence number") {
-            let parser = SwiftNMEA()
-            let sentences = [
-              applyChecksum(to: "$GPTXT,02,01,25,DR MODE-ANTENNA FAULT^21"),
-              applyChecksum(to: "$GPTXT,02,03,25,DR MODE-ANTENNA FAULT^21")
-            ]
-            let data = sentences.joined().data(using: .ascii)!
-            let messages = try await parser.parse(data: data)
+    #expect(payload == .text("DR MODE-ANTENNA FAULT!", identifier: 25))
+  }
 
-            expect(messages).to(haveCount(3))
-            guard let error = messages[2] as? MessageError else {
-              fail("expected MessageError, got \(messages[2])")
-              return
-            }
-            expect(error.type).to(equal(.wrongSentenceNumber))
-            expect(error.fieldNumber).to(equal(1))
-          }
-        }
+  @Test("throws an error for an incorrect sentence number")
+  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+    let parser = SwiftNMEA()
+    let sentences = [
+      applyChecksum(to: "$GPTXT,02,01,25,DR MODE-ANTENNA FAULT^21"),
+      applyChecksum(to: "$GPTXT,02,03,25,DR MODE-ANTENNA FAULT^21")
+    ]
+    let data = sentences.joined().data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        context("STA8089FG") {
-          it("parses a sentence") {
-            let parser = SwiftNMEA()
-            let sentence = "$GPTXT,(C)2000-2018 ST Microelectronics*29\r\n"
-            let data = sentence.data(using: .ascii)!
-            let messages = try await parser.parse(data: data)
+    #expect(messages.count == 3)
+    let error = try #require(messages[2] as? MessageError)
+    #expect(error.type == .wrongSentenceNumber)
+    #expect(error.fieldNumber == 1)
+  }
 
-            expect(messages).to(haveCount(2))
-            guard let payload = (messages[1] as? Message)?.payload else {
-              fail("expected Message, got \(messages[1])")
-              return
-            }
+  // MARK: - .parse, STA8089FG
 
-            expect(payload).to(equal(.text("(C)2000-2018 ST Microelectronics", identifier: nil)))
-          }
-        }
-      }
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let sentence = "$GPTXT,(C)2000-2018 ST Microelectronics*29\r\n"
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-      describe(".flush") {
-        it("flushes incomplete messages") {
-          let parser = SwiftNMEA()
-          let sentences = [
-            createSentence(
-              delimiter: .parametric,
-              talker: .GPS,
-              format: .text,
-              fields: [3, 1, 24, "FIRST PART OF MESSAGE "]
-            ),
-            createSentence(
-              delimiter: .parametric,
-              talker: .GPS,
-              format: .text,
-              fields: [3, 2, nil, "SECOND PART OF MESSAGE"]
-            )
-          ]
-          let data = sentences.joined().data(using: .ascii)!
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
 
-          let parsed = try await parser.parse(data: data)
-          expect(parsed).to(haveCount(2))
+    #expect(payload == .text("(C)2000-2018 ST Microelectronics", identifier: nil))
+  }
 
-          let messages = try await parser.flush(includeIncomplete: true)
-          expect(messages).to(haveCount(1))
+  // MARK: - .flush
 
-          guard let message = messages[0] as? Message else {
-            fail("expected Message, got \(messages[0])")
-            return
-          }
-          expect(message.payload).to(
-            equal(.text("FIRST PART OF MESSAGE SECOND PART OF MESSAGE", identifier: 24))
-          )
-        }
-      }
-    }
+  @Test("flushes incomplete messages")
+  func flushesIncompleteMessages() async throws {
+    let parser = SwiftNMEA()
+    let sentences = [
+      createSentence(
+        delimiter: .parametric,
+        talker: .GPS,
+        format: .text,
+        fields: [3, 1, 24, "FIRST PART OF MESSAGE "]
+      ),
+      createSentence(
+        delimiter: .parametric,
+        talker: .GPS,
+        format: .text,
+        fields: [3, 2, nil, "SECOND PART OF MESSAGE"]
+      )
+    ]
+    let data = sentences.joined().data(using: .ascii)!
+
+    let parsed = try await parser.parse(data: data)
+    #expect(parsed.count == 2)
+
+    let messages = try await parser.flush(includeIncomplete: true)
+    #expect(messages.count == 1)
+
+    let message = try #require(messages[0] as? Message)
+    #expect(
+      message.payload == .text("FIRST PART OF MESSAGE SECOND PART OF MESSAGE", identifier: 24)
+    )
   }
 }

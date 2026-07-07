@@ -1,47 +1,41 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class ACSSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.8 ACS") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let time = Date(timeIntervalSinceNow: -120)
-        let components = calendar.dateComponents([.year, .month, .day], from: time)
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .commVHF,
-          format: .AISChannelInformationSource,
-          fields: [
-            1,
-            123_456_789,
-            hmsFractionFormatter.string(from: time),
-            components.day,
-            components.month,
-            components.year
-          ]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.8 ACS")
+struct ACSTests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let time = Date(timeIntervalSinceNow: -120)
+    let components = calendar.dateComponents([.year, .month, .day], from: time)
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .commVHF,
+      format: .AISChannelInformationSource,
+      fields: [
+        1,
+        123_456_789,
+        hmsFractionFormatter.string(from: time),
+        components.day,
+        components.month,
+        components.year
+      ]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .AISChannelInformationSource(sequenceNumber, MMSI, actualTime) = payload
-        else {
-          fail("expected .AIChannelInformationSource, got \(payload)")
-          return
-        }
-        expect(sequenceNumber).to(equal(1))
-        expect(MMSI).to(equal(123_456_789))
-        expect(actualTime).to(beCloseTo(time, within: 0.01))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .AISChannelInformationSource(sequenceNumber, MMSI, actualTime) = payload
+    else {
+      Issue.record("expected .AIChannelInformationSource, got \(payload)")
+      return
     }
+    #expect(sequenceNumber == 1)
+    #expect(MMSI == 123_456_789)
+    #expect(abs(actualTime.timeIntervalSince(time)) < 0.01)
   }
 }

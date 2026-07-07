@@ -1,60 +1,54 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class FIRSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.36 FIR") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let time = Date(timeIntervalSinceNow: -10)
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .fireDetection,
-          format: .fireDetection,
-          fields: [
-            "E", hmsFractionFormatter.string(from: time),
-            "FS", "AB", 12, 2,
-            "A", "V", "GALLEY"
-          ]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.36 FIR")
+struct FIRTests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let time = Date(timeIntervalSinceNow: -10)
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .fireDetection,
+      format: .fireDetection,
+      fields: [
+        "E", hmsFractionFormatter.string(from: time),
+        "FS", "AB", 12, 2,
+        "A", "V", "GALLEY"
+      ]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .fireDetection(
-            type,
-            actualTime,
-            detector,
-            zone,
-            loop,
-            number,
-            condition,
-            isAcknowledged,
-            description
-          ) = payload
-        else {
-          fail("expected .fireDetection, got \(payload)")
-          return
-        }
-
-        expect(type).to(equal(.event))
-        expect(actualTime).to(beCloseTo(time, within: 0.01))
-        expect(detector).to(equal(.smoke))
-        expect(zone).to(equal("AB"))
-        expect(loop).to(equal(12))
-        expect(number).to(equal(2))
-        expect(condition).to(equal(.activation))
-        expect(isAcknowledged).to(beFalse())
-        expect(description).to(equal("GALLEY"))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .fireDetection(
+        type,
+        actualTime,
+        detector,
+        zone,
+        loop,
+        number,
+        condition,
+        isAcknowledged,
+        description
+      ) = payload
+    else {
+      Issue.record("expected .fireDetection, got \(payload)")
+      return
     }
+
+    #expect(type == .event)
+    #expect(abs(actualTime!.timeIntervalSince(time)) < 0.01)
+    #expect(detector == .smoke)
+    #expect(zone == "AB")
+    #expect(loop == 12)
+    #expect(number == 2)
+    #expect(condition == .activation)
+    #expect(isAcknowledged == false)
+    #expect(description == "GALLEY")
   }
 }

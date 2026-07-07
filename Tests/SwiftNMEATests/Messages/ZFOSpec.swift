@@ -1,38 +1,32 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class ZFOSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.132 ZFO") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let time = Date(timeIntervalSinceNow: -1)
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .radar,
-          format: .timeFromOrigin,
-          fields: [hmsFractionFormatter.string(from: time), "010203.04", "KOAK"]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.132 ZFO")
+struct ZFOTests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let time = Date(timeIntervalSinceNow: -1)
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .radar,
+      format: .timeFromOrigin,
+      fields: [hmsFractionFormatter.string(from: time), "010203.04", "KOAK"]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard case let .timeFromOrigin(observation, elapsedTime, originID) = payload else {
-          fail("expected .timeFromOrigin, got \(payload)")
-          return
-        }
-
-        expect(observation).to(beCloseTo(time, within: 0.01))
-        expect(elapsedTime).to(equal(.seconds(3723) + .milliseconds(40)))
-        expect(originID).to(equal("KOAK"))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard case let .timeFromOrigin(observation, elapsedTime, originID) = payload else {
+      Issue.record("expected .timeFromOrigin, got \(payload)")
+      return
     }
+
+    #expect(abs(observation.timeIntervalSince(time)) < 0.01)
+    #expect(elapsedTime == .seconds(3723) + .milliseconds(40))
+    #expect(originID == "KOAK")
   }
 }

@@ -1,60 +1,54 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftNMEA
 
-final class WATSpec: AsyncSpec {
-  override static func spec() {
-    describe("8.3.123 WAT") {
-      it("parses a sentence") {
-        let parser = SwiftNMEA()
-        let time = Date(timeIntervalSinceNow: -15)
-        let sentence = createSentence(
-          delimiter: .parametric,
-          talker: .waterLevelDetection,
-          format: .waterLevel,
-          fields: [
-            "E", hmsFractionFormatter.string(from: time),
-            "WL", "CA", "01", 3,
-            "H", "O", "Detector CA01"
-          ]
-        )
-        let data = sentence.data(using: .ascii)!
-        let messages = try await parser.parse(data: data)
+@Suite("8.3.123 WAT")
+struct WATTests {
+  @Test("parses a sentence")
+  func parsesASentence() async throws {
+    let parser = SwiftNMEA()
+    let time = Date(timeIntervalSinceNow: -15)
+    let sentence = createSentence(
+      delimiter: .parametric,
+      talker: .waterLevelDetection,
+      format: .waterLevel,
+      fields: [
+        "E", hmsFractionFormatter.string(from: time),
+        "WL", "CA", "01", 3,
+        "H", "O", "Detector CA01"
+      ]
+    )
+    let data = sentence.data(using: .ascii)!
+    let messages = try await parser.parse(data: data)
 
-        expect(messages).to(haveCount(2))
-        guard let payload = (messages[1] as? Message)?.payload else {
-          fail("expected Message, got \(messages[1])")
-          return
-        }
-        guard
-          case let .waterLevel(
-            messageType,
-            actualTime,
-            systemType,
-            location1,
-            location2,
-            number,
-            alarmCondition,
-            isOverriden,
-            description
-          ) = payload
-        else {
-          fail("expected .waterLevel, got \(payload)")
-          return
-        }
-
-        expect(messageType).to(equal(.event))
-        expect(actualTime).to(beCloseTo(time, within: 0.01))
-        expect(systemType).to(equal(.waterLevel))
-        expect(location1).to(equal("CA"))
-        expect(location2).to(equal("01"))
-        expect(number).to(equal(3))
-        expect(alarmCondition).to(equal(.alarmHigh))
-        expect(isOverriden).to(beTrue())
-        expect(description).to(equal("Detector CA01"))
-      }
+    #expect(messages.count == 2)
+    let payload = try #require((messages[1] as? Message)?.payload)
+    guard
+      case let .waterLevel(
+        messageType,
+        actualTime,
+        systemType,
+        location1,
+        location2,
+        number,
+        alarmCondition,
+        isOverriden,
+        description
+      ) = payload
+    else {
+      Issue.record("expected .waterLevel, got \(payload)")
+      return
     }
+
+    #expect(messageType == .event)
+    #expect(abs(actualTime!.timeIntervalSince(time)) < 0.01)
+    #expect(systemType == .waterLevel)
+    #expect(location1 == "CA")
+    #expect(location2 == "01")
+    #expect(number == 3)
+    #expect(alarmCondition == .alarmHigh)
+    #expect(isOverriden == true)
+    #expect(description == "Detector CA01")
   }
 }

@@ -2,6 +2,10 @@ import Algorithms
 import Collections
 import Foundation
 
+#if canImport(CoreFoundation)
+  import CoreFoundation
+#endif
+
 extension Data {
   var hex: String {
     var string = ""

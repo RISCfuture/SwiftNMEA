@@ -1,6 +1,6 @@
 # CI Matrix Policy
 #
-# tools-version 6.3 (requires Swift 6.3): macos-15 + 6.3, macos-26 + 6.3
+# tools-version 6.3 (requires Swift 6.3): macos-15 + 6.3, macos-26 + 6.3, ubuntu-latest + 6.3
 #
 # When Swift 6.4 ships: add 6.4 legs alongside 6.3
 # When bumping tools-version: drop Swift versions older than the new minimum
@@ -27,6 +27,8 @@ jobs:
           - os: macos-15
             swift: "6.3"
           - os: macos-26
+            swift: "6.3"
+          - os: ubuntu-latest
             swift: "6.3"
     runs-on: ${{ matrix.os }}
     steps:

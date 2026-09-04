@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("Query")
-struct QueryTests {
+@Suite
+struct `Query tests` {
   // MARK: - rawValue
 
-  @Test("encodes a sentence")
-  func encodesASentence() throws {
+  @Test
+  func `encodes a sentence`() throws {
     let query = Query(
       requester: .GPS,
       recipient: .commDataReceiver,
@@ -19,8 +19,8 @@ struct QueryTests {
 
   // MARK: - parsing
 
-  @Test("parses a sentence from a STA8089FG")
-  func parsesASentenceFromASTA8089FG() async throws {
+  @Test
+  func `parses a sentence from a STA8089FG`() async throws {
     let parser = SwiftNMEA()
     // shortened to stay within the 82-character sentence limit
     let sentence =
@@ -35,8 +35,8 @@ struct QueryTests {
     #expect(message.data == "PVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356.31,M")
   }
 
-  @Test("rejects an over-length proprietary sentence")
-  func rejectsAnOverLengthProprietarySentence() async throws {
+  @Test
+  func `rejects an over-length proprietary sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence =
       "$PSTMPVRAW,235943.070,9000.00000,N,00000.00000,E,0,00,0.0,-6356752.31,M,0.0,M,nan,nan,nan*33\r\n"

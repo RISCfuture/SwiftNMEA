@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.72 NRM")
-struct NRMTests {
-  @Test("parses the first example sentence")
-  func parsesTheFirstExampleSentence() async throws {
+@Suite
+struct `8.3.72 NRM` {
+  @Test
+  func `parses the first example sentence`() async throws {
     let parser = SwiftNMEA()
     let data = Data("$INNRM,2,1,00001E1F,00000023,R*29\r\n".utf8)
     let messages = try await parser.parse(data: data)
@@ -44,8 +44,8 @@ struct NRMTests {
     #expect(status == .reply)
   }
 
-  @Test("parses the second example sentence")
-  func parsesTheSecondExampleSentence() async throws {
+  @Test
+  func `parses the second example sentence`() async throws {
     let parser = SwiftNMEA()
     let data = Data("$INNRM,0,2,00001E1F,0FFFFFFF,R*5F\r\n".utf8)
     let messages = try await parser.parse(data: data)

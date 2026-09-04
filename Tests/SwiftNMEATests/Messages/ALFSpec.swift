@@ -3,14 +3,14 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.14 ALF")
-struct ALFTests {
+@Suite
+struct `8.3.14 ALF` {
   // MARK: - .parse
 
   // MARK: single-sentence message
 
-  @Test("parses the spec example")
-  func parsesTheSpecExample() async throws {
+  @Test
+  func `parses the spec example`() async throws {
     let parser = SwiftNMEA()
     // $IIALF,1,1,0,124304.50,A,W,A,,3052,1,1,0,LOST TARGET
     let sentence = createSentence(
@@ -57,8 +57,8 @@ struct ALFTests {
     #expect(description == nil)
   }
 
-  @Test("allows null category, priority, and state for a normal alert")
-  func allowsNullCategoryPriorityAndStateForANormalAlert() async throws {
+  @Test
+  func `allows null category, priority, and state for a normal alert`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -102,8 +102,8 @@ struct ALFTests {
 
   // MARK: two-sentence message
 
-  @Test("combines the title and description")
-  func combinesTheTitleAndDescription() async throws {
+  @Test
+  func `combines the title and description`() async throws {
     let parser = SwiftNMEA()
     // $IIALF,2,1,1,081950.10,B,A,S,XYZ,010512,1,2,0,HEADING LOST
     // $IIALF,2,2,1,,,,,XYZ,010512,1,2,0,NO SYSTEM HEADING AVAILABLE
@@ -157,8 +157,8 @@ struct ALFTests {
     #expect(description == "NO SYSTEM HEADING AVAILABLE")
   }
 
-  @Test("throws for a negative alert identifier")
-  func throwsForANegativeAlertIdentifier() async throws {
+  @Test
+  func `throws for a negative alert identifier`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -177,8 +177,8 @@ struct ALFTests {
     #expect(error.fieldNumber == 8)
   }
 
-  @Test("throws for an unknown alert state")
-  func throwsForAnUnknownAlertState() async throws {
+  @Test
+  func `throws for an unknown alert state`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -198,8 +198,8 @@ struct ALFTests {
 
   // MARK: - .flush
 
-  @Test("flushes an incomplete multi-sentence message")
-  func flushesAnIncompleteMultiSentenceMessage() async throws {
+  @Test
+  func `flushes an incomplete multi-sentence message`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

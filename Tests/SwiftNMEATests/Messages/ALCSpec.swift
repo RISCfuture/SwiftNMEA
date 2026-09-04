@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.13 ALC")
-struct ALCTests {
+@Suite
+struct `8.3.13 ALC` {
   // MARK: - .parse
 
-  @Test("parses a single-sentence cyclic alert list")
-  func parsesASingleSentenceCyclicAlertList() async throws {
+  @Test
+  func `parses a single-sentence cyclic alert list`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -43,8 +43,8 @@ struct ALCTests {
     )
   }
 
-  @Test("parses an empty cyclic alert list")
-  func parsesAnEmptyCyclicAlertList() async throws {
+  @Test
+  func `parses an empty cyclic alert list`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -60,8 +60,8 @@ struct ALCTests {
     #expect(payload == .cyclicAlertList([], sequentialID: 0))
   }
 
-  @Test("concatenates entries across multiple sentences")
-  func concatenatesEntriesAcrossMultipleSentences() async throws {
+  @Test
+  func `concatenates entries across multiple sentences`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -106,8 +106,8 @@ struct ALCTests {
     )
   }
 
-  @Test("throws an error for an out-of-range revision counter")
-  func throwsAnErrorForAnOutOfRangeRevisionCounter() async throws {
+  @Test
+  func `throws an error for an out-of-range revision counter`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

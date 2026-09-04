@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.110 TXT")
-struct TXTTests {
+@Suite
+struct `8.3.110 TXT` {
   // MARK: - .parse, example from the spec
 
-  @Test("parses the example")
-  func parsesTheExample() async throws {
+  @Test
+  func `parses the example`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$GPTXT,01,01,25,DR MODE-ANTENNA FAULT^21*38\r\n"
     let data = sentence.data(using: .ascii)!
@@ -20,8 +20,8 @@ struct TXTTests {
     #expect(payload == .text("DR MODE-ANTENNA FAULT!", identifier: 25))
   }
 
-  @Test("throws an error for an incorrect sentence number")
-  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+  @Test
+  func `throws an error for an incorrect sentence number`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "$GPTXT,02,01,25,DR MODE-ANTENNA FAULT^21"),
@@ -38,8 +38,8 @@ struct TXTTests {
 
   // MARK: - .parse, STA8089FG
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$GPTXT,(C)2000-2018 ST Microelectronics*29\r\n"
     let data = sentence.data(using: .ascii)!
@@ -53,8 +53,8 @@ struct TXTTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete messages")
-  func flushesIncompleteMessages() async throws {
+  @Test
+  func `flushes incomplete messages`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(

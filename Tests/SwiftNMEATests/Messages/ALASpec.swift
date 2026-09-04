@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.12 ALA")
-struct ALATests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.12 ALA` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -2000)
     let sentence = createSentence(
@@ -45,8 +45,8 @@ struct ALATests {
     #expect(description == "example alarm")
   }
 
-  @Test("parses a DC propulsion motor overspeed alarm (EP/PD code 3)")
-  func parsesADCPropulsionMotorOverspeedAlarm() async throws {
+  @Test
+  func `parses a DC propulsion motor overspeed alarm (EP/PD code 3)`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -120)
     let sentence = createSentence(
@@ -70,8 +70,8 @@ struct ALATests {
     #expect(alarm == .electricPlant(subsystem: .DCPropulsionMotor(type: .overspeed)))
   }
 
-  @Test("does not recognize the removed DC propulsion motor code 8")
-  func doesNotRecognizeTheRemovedDCPropulsionMotorCode8() async throws {
+  @Test
+  func `does not recognize the removed DC propulsion motor code 8`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -120)
     let sentence = createSentence(

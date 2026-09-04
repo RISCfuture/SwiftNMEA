@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.29 DSC")
-struct DSCTests {
-  @Test("parses the distress example from the spec")
-  func parsesTheDistressExampleFromTheSpec() async throws {
+@Suite
+struct `8.3.29 DSC` {
+  @Test
+  func `parses the distress example from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$CVDSC,12,3601234560,12,05,00,1474712519,0817,,,S,E,*51\r\n"
     let data = sentence.data(using: .ascii)!
@@ -58,8 +58,8 @@ struct DSCTests {
     #expect(components.minute == 17)
   }
 
-  @Test("parses the relay example from the spec")
-  func parsesTheRelayExampleFromTheSpec() async throws {
+  @Test
+  func `parses the relay example from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$CTDSC,16,0112345670,12,12,09,1474712219,1234,9991212120,00,S*19\r\n"
     let data = sentence.data(using: .ascii)!
@@ -101,8 +101,8 @@ struct DSCTests {
     #expect(!expansion)
   }
 
-  @Test("parses the safety call example from the spec")
-  func parsesTheSafetyCallExampleFromTheSpec() async throws {
+  @Test
+  func `parses the safety call example from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$CTDSC,16,0112345670,08,09,26,041250,,,,S*11\r\n"
     let data = sentence.data(using: .ascii)!
@@ -144,8 +144,8 @@ struct DSCTests {
     #expect(!expansion)
   }
 
-  @Test("parses a geographic sentence")
-  func parsesAGeographicSentence() async throws {
+  @Test
+  func `parses a geographic sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -209,8 +209,8 @@ struct DSCTests {
     #expect(!expansion)
   }
 
-  @Test("decodes the ITU-R M.493-16 Table A1-3 first telecommands")
-  func decodesTheITURM49316TableA13FirstTelecommands() throws {
+  @Test
+  func `decodes the ITU-R M.493-16 Table A1-3 first telecommands`() throws {
     #expect(DSC.Telecommand1(rawValue: "00") == .telephonyAllModes)
     #expect(DSC.Telecommand1(rawValue: "01") == .telephonyDuplex)
     #expect(DSC.Telecommand1(rawValue: "09") == .telephonyJ3E)
@@ -224,8 +224,8 @@ struct DSCTests {
     .init(value: value, unit: .hertz)
   }
 
-  @Test("round-trips a multiple-of-100-Hz MF/HF frequency (six-digit form)")
-  func roundTripsAMultipleOf100HzMFHFFrequencySixDigitForm() throws {
+  @Test
+  func `round-trips a multiple-of-100-Hz MF/HF frequency (six-digit form)`() throws {
     // 2 187 500 Hz (MF DSC distress frequency) = 21875 × 100 Hz.
     let value = DSC.FrequencyChannel.frequency(hertz(2_187_500))
     #expect(value.rawValue == "021875")
@@ -233,8 +233,8 @@ struct DSCTests {
     #expect(DSC.FrequencyChannel(rawValue: "021875") == value)
   }
 
-  @Test("round-trips a seven-digit (10 Hz resolution) frequency")
-  func roundTripsASevenDigit10HzResolutionFrequency() throws {
+  @Test
+  func `round-trips a seven-digit (10 Hz resolution) frequency`() throws {
     // From the Table A1-5 worked usage: 41252165 = 1252165 × 10 = 12 521 650 Hz.
     let value = DSC.FrequencyChannel.frequency(hertz(12_521_650))
     #expect(value.rawValue == "41252165")
@@ -242,24 +242,24 @@ struct DSCTests {
     #expect(DSC.FrequencyChannel(rawValue: "41252165") == value)
   }
 
-  @Test("round-trips an HF/MF channel number")
-  func roundTripsAnHFMFChannelNumber() throws {
+  @Test
+  func `round-trips an HF/MF channel number`() throws {
     let value = DSC.FrequencyChannel.channelHF_MF(1234)
     #expect(value.rawValue == "301234")
     #expect(DSC.FrequencyChannel(rawValue: value.rawValue) == value)
     #expect(DSC.FrequencyChannel(rawValue: "301234") == value)
   }
 
-  @Test("round-trips an auto-VHF channel number")
-  func roundTripsAnAutoVHFChannelNumber() throws {
+  @Test
+  func `round-trips an auto-VHF channel number`() throws {
     let value = DSC.FrequencyChannel.autoVHF(2087)
     #expect(value.rawValue == "802087")
     #expect(DSC.FrequencyChannel(rawValue: value.rawValue) == value)
     #expect(DSC.FrequencyChannel(rawValue: "802087") == value)
   }
 
-  @Test("round-trips a VHF working channel number")
-  func roundTripsAVHFWorkingChannelNumber() throws {
+  @Test
+  func `round-trips a VHF working channel number`() throws {
     // VHF channel 16 (distress/safety) coded as 90 + four-digit channel.
     let value = DSC.FrequencyChannel.channelVHF(16)
     #expect(value.rawValue == "900016")
@@ -267,16 +267,16 @@ struct DSCTests {
     #expect(DSC.FrequencyChannel(rawValue: "900016") == value)
   }
 
-  @Test("clamps an out-of-range frequency instead of crashing")
-  func clampsAnOutOfRangeFrequencyInsteadOfCrashing() throws {
+  @Test
+  func `clamps an out-of-range frequency instead of crashing`() throws {
     // ≥ 30 MHz is not representable; encoding clamps to the maximum 10 Hz form.
     let value = DSC.FrequencyChannel.frequency(hertz(30_000_000))
     #expect(value.rawValue == "42999999")
     #expect(DSC.FrequencyChannel(rawValue: value.rawValue) == .frequency(hertz(29_999_990)))
   }
 
-  @Test("returns nil for malformed or out-of-range symbol strings")
-  func returnsNilForMalformedOrOutOfRangeSymbolStrings() throws {
+  @Test
+  func `returns nil for malformed or out-of-range symbol strings`() throws {
     #expect(DSC.FrequencyChannel(rawValue: "") == nil)
     #expect(DSC.FrequencyChannel(rawValue: "12AB45") == nil)
     // too short for the six-digit form

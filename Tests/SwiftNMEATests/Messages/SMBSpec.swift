@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.96 SMB")
-struct SMBTests {
+@Suite
+struct `8.3.96 SMB` {
   // MARK: - .parse
 
-  @Test("parses a multi-sentence message and decodes code delimiters")
-  func parsesAMultiSentenceMessageAndDecodesCodeDelimiters() async throws {
+  @Test
+  func `parses a multi-sentence message and decodes code delimiters`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "$CSSMB,002,001,0,123456,FROM:MRCC^0D^0A"),
@@ -30,8 +30,8 @@ struct SMBTests {
     )
   }
 
-  @Test("parses a single sentence with null sentence number and identifier")
-  func parsesASingleSentenceWithNullSentenceNumberAndIdentifier() async throws {
+  @Test
+  func `parses a single sentence with null sentence number and identifier`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -54,8 +54,8 @@ struct SMBTests {
     )
   }
 
-  @Test("throws an error for an out-of-range sentence number")
-  func throwsAnErrorForAnOutOfRangeSentenceNumber() async throws {
+  @Test
+  func `throws an error for an out-of-range sentence number`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "$CSSMB,002,001,0,123456,FIRST"),
@@ -70,8 +70,8 @@ struct SMBTests {
     #expect(error.fieldNumber == 1)
   }
 
-  @Test("throws an error for a null sentence number in a multi-sentence message")
-  func throwsAnErrorForANullSentenceNumberInAMultiSentenceMessage() async throws {
+  @Test
+  func `throws an error for a null sentence number in a multi-sentence message`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -89,8 +89,8 @@ struct SMBTests {
 
   // MARK: - .flush
 
-  @Test("flushes an incomplete message")
-  func flushesAnIncompleteMessage() async throws {
+  @Test
+  func `flushes an incomplete message`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

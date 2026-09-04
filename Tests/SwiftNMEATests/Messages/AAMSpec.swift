@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.2 AAM")
-struct AAMTests {
-  @Test("parses the sentence from the spec")
-  func parsesTheSentenceFromTheSpec() async throws {
+@Suite
+struct `8.3.2 AAM` {
+  @Test
+  func `parses the sentence from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$LCAAM,V,A,.15,N,CHAT-N6*56\r\n"
     let data = sentence.data(using: .ascii)!

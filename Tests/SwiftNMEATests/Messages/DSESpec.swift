@@ -6,12 +6,12 @@ import SwiftDSE
 @testable import NMEACommon
 @testable import SwiftNMEA
 
-@Suite("8.3.30 DSE")
-struct DSETests {
+@Suite
+struct `8.3.30 DSE` {
   // MARK: - .parse
 
-  @Test("parses a query and a reply")
-  func parsesAQueryAndAReply() async throws {
+  @Test
+  func `parses a query and a reply`() async throws {
     let parser = SwiftNMEA()
 
     // MARK: Setup
@@ -212,8 +212,8 @@ struct DSETests {
     #expect(content == .dataRequest)
   }
 
-  @Test("throws an error for a missing field")
-  func throwsAnErrorForAMissingField() async throws {
+  @Test
+  func `throws an error for a missing field`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -248,8 +248,8 @@ struct DSETests {
     #expect(error.fieldNumber == 3)
   }
 
-  @Test("throws an error for an incorrect sentence number")
-  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+  @Test
+  func `throws an error for an incorrect sentence number`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -283,8 +283,8 @@ struct DSETests {
     #expect(error.fieldNumber == 1)
   }
 
-  @Test("parses the example from the spec")
-  func parsesTheExampleFromTheSpec() async throws {
+  @Test
+  func `parses the example from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$CVDSE,1,1,A,3601234560,00,12345678*0C\r\n"
     let data = sentence.data(using: .ascii)!
@@ -315,8 +315,8 @@ struct DSETests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
 
     // MARK: Setup

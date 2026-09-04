@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.10 AIR")
-struct AIRTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.10 AIR` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -32,8 +32,8 @@ struct AIRTests {
     )
   }
 
-  @Test("throws when a sub-section is present without its message number")
-  func throwsWhenASubSectionIsPresentWithoutItsMessageNumber() async throws {
+  @Test
+  func `throws when a sub-section is present without its message number`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

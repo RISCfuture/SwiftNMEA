@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.64 MOB")
-struct MOBTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.64 MOB` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -74,8 +74,8 @@ struct MOBTests {
     #expect(positioned.second == 30)
   }
 
-  @Test("parses a sentence with unavailable values")
-  func parsesASentenceWithUnavailableValues()
+  @Test
+  func `parses a sentence with unavailable values`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -128,8 +128,8 @@ struct MOBTests {
     #expect(batteryStatus == nil)
   }
 
-  @Test("throws an error for an unknown position source")
-  func throwsAnErrorForAnUnknownPositionSource() async throws {
+  @Test
+  func `throws an error for an unknown position source`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

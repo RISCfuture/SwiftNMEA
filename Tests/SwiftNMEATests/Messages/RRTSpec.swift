@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.85 RRT")
-struct RRTTests {
-  @Test("parses a status report for a monitored route")
-  func parsesAStatusReportForAMonitoredRoute() async throws {
+@Suite
+struct `8.3.85 RRT` {
+  @Test
+  func `parses a status report for a monitored route`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -40,8 +40,8 @@ struct RRTTests {
     #expect(applicationStatus == .pending)
   }
 
-  @Test("parses an empty query response with null fields")
-  func parsesAnEmptyQueryResponseWithNullFields() async throws {
+  @Test
+  func `parses an empty query response with null fields`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -75,8 +75,8 @@ struct RRTTests {
     #expect(applicationStatus == nil)
   }
 
-  @Test("throws an error for an invalid transfer type")
-  func throwsAnErrorForAnInvalidTransferType() async throws {
+  @Test
+  func `throws an error for an invalid transfer type`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

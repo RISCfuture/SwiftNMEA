@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.88 RTE")
-struct RTETests {
+@Suite
+struct `8.3.88 RTE` {
   // MARK: - .parse
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
 
     // MARK: Setup
 
@@ -81,8 +81,8 @@ struct RTETests {
     #expect(waypoints == ["DMDWW", "VPMID", "OAKSLM", "KOAK"])
   }
 
-  @Test("throws an error for an invalid senence number")
-  func throwsAnErrorForAnInvalidSenenceNumber() async throws {
+  @Test
+  func `throws an error for an invalid sentence number`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -118,8 +118,8 @@ struct RTETests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

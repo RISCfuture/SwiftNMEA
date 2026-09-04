@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.33 EPV")
-struct EPVTests {
-  @Test("parses a command sentence")
-  func parsesACommandSentence() async throws {
+@Suite
+struct `8.3.33 EPV` {
+  @Test
+  func `parses a command sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -30,8 +30,8 @@ struct EPVTests {
     )
   }
 
-  @Test("parses a report sentence")
-  func parsesAReportSentence() async throws {
+  @Test
+  func `parses a report sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -55,8 +55,8 @@ struct EPVTests {
     )
   }
 
-  @Test("decodes escaped reserved characters in the value")
-  func decodesEscapedReservedCharactersInTheValue() async throws {
+  @Test
+  func `decodes escaped reserved characters in the value`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -78,8 +78,8 @@ struct EPVTests {
     #expect(value == "a,b")
   }
 
-  @Test("throws when the property identifier is negative")
-  func throwsWhenThePropertyIdentifierIsNegative() async throws {
+  @Test
+  func `throws when the property identifier is negative`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

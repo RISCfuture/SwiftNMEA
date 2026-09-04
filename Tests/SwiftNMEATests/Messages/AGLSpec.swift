@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.9 AGL")
-struct AGLTests {
-  @Test("parses a single-sentence alert group list")
-  func parsesASingleSentenceAlertGroupList() async throws {
+@Suite
+struct `8.3.9 AGL` {
+  @Test
+  func `parses a single-sentence alert group list`() async throws {
     let parser = SwiftNMEA()
     // total=1, sentence=1, messageID=0, then a header entry (instance 0)
     // and one member entry
@@ -42,8 +42,8 @@ struct AGLTests {
     #expect(entries[1].alert.instance == 5)
   }
 
-  @Test("parses null SFI and null instance fields")
-  func parsesNullSFIAndNullInstanceFields() async throws {
+  @Test
+  func `parses null SFI and null instance fields`() async throws {
     let parser = SwiftNMEA()
     // SFI null (alert from AGL source) and instance null (single instance)
     let sentence = createSentence(
@@ -70,8 +70,8 @@ struct AGLTests {
     #expect(entries[1].alert.instance == nil)
   }
 
-  @Test("assembles a multi-sentence message")
-  func assemblesAMultiSentenceMessage() async throws {
+  @Test
+  func `assembles a multi-sentence message`() async throws {
     let parser = SwiftNMEA()
     let first = createSentence(
       delimiter: .parametric,
@@ -105,8 +105,8 @@ struct AGLTests {
     #expect(entries[2].alert.identifier == 3003)
   }
 
-  @Test("throws an error for a non-numeric alert identifier")
-  func throwsAnErrorForANonNumericAlertIdentifier() async throws {
+  @Test
+  func `throws an error for a non-numeric alert identifier`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

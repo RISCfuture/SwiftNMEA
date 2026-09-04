@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.37 FSI")
-struct FSITests {
-  @Test("parses example (a) from the spec")
-  func parsesExampleAFromTheSpec() async throws {
+@Suite
+struct `8.3.37 FSI` {
+  @Test
+  func `parses example (a) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,020230,026140,m,0,C")
     let data = sentence.data(using: .ascii)!
@@ -29,8 +29,8 @@ struct FSITests {
     #expect(type == .command)
   }
 
-  @Test("parses example (b) from the spec")
-  func parsesExampleBFromTheSpec() async throws {
+  @Test
+  func `parses example (b) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,020230,026140,m,5,R")
     let data = sentence.data(using: .ascii)!
@@ -53,8 +53,8 @@ struct FSITests {
     #expect(type == .reply)
   }
 
-  @Test("parses example (c) from the spec")
-  func parsesExampleCFromTheSpec() async throws {
+  @Test
+  func `parses example (c) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,,021820,o,,C")
     let data = sentence.data(using: .ascii)!
@@ -77,8 +77,8 @@ struct FSITests {
     #expect(type == .command)
   }
 
-  @Test("parses the example (d) from the spec")
-  func parsesTheExampleDFromTheSpec() async throws {
+  @Test
+  func `parses the example (d) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CDFSI,900016,,d,9,R")
     let data = sentence.data(using: .ascii)!
@@ -101,8 +101,8 @@ struct FSITests {
     #expect(type == .reply)
   }
 
-  @Test("parses example (e) from the spec")
-  func parsesExampleEFromTheSpec() async throws {
+  @Test
+  func `parses example (e) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,300821,,m,9,C")
     let data = sentence.data(using: .ascii)!
@@ -125,8 +125,8 @@ struct FSITests {
     #expect(type == .command)
   }
 
-  @Test("parses example (f) from the spec")
-  func parsesExampleFFromTheSpec() async throws {
+  @Test
+  func `parses example (f) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,404001,,w,5,R")
     let data = sentence.data(using: .ascii)!
@@ -149,8 +149,8 @@ struct FSITests {
     #expect(type == .reply)
   }
 
-  @Test("parses example (g) from the spec")
-  func parsesExampleGFromTheSpec() async throws {
+  @Test
+  func `parses example (g) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,416193,,s,0,C")
     let data = sentence.data(using: .ascii)!
@@ -173,8 +173,8 @@ struct FSITests {
     #expect(type == .command)
   }
 
-  @Test("parses example (h) from the spec")
-  func parsesExampleHFromTheSpec() async throws {
+  @Test
+  func `parses example (h) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,041620,043020,|,9,R")
     let data = sentence.data(using: .ascii)!
@@ -197,8 +197,8 @@ struct FSITests {
     #expect(type == .reply)
   }
 
-  @Test("parses example (i) from the spec")
-  func parsesExampleIFromTheSpec() async throws {
+  @Test
+  func `parses example (i) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CXFSI,,021875,t,,C")
     let data = sentence.data(using: .ascii)!

@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.93 SM2")
-struct SM2Tests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.93 SM2` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -64,8 +64,8 @@ struct SM2Tests {
     #expect(subjectIndicator == .navigationalWarnings)
   }
 
-  @Test("parses a sentence with unavailable values")
-  func parsesASentenceWithUnavailableValues() async throws {
+  @Test
+  func `parses a sentence with unavailable values`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -108,8 +108,8 @@ struct SM2Tests {
     #expect(subjectIndicator == nil)
   }
 
-  @Test("throws an error for an out-of-range NAVAREA number")
-  func throwsAnErrorForAnOutOfRangeNAVAREANumber() async throws {
+  @Test
+  func `throws an error for an out-of-range NAVAREA number`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -129,8 +129,8 @@ struct SM2Tests {
     #expect(error.type == .badValue)
   }
 
-  @Test("throws an error for an out-of-range reception date")
-  func throwsAnErrorForAnOutOfRangeReceptionDate() async throws {
+  @Test
+  func `throws an error for an out-of-range reception date`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

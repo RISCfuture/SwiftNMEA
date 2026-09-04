@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.113 VBW")
-struct VBWTests {
-  @Test("parses the example from the spec")
-  func parsesTheExampleFromTheSpec() async throws {
+@Suite
+struct `8.3.113 VBW` {
+  @Test
+  func `parses the example from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

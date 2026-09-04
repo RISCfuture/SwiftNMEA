@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.55 HRM")
-struct HRMTests {
-  @Test("parses a sentence with all values")
-  func parsesASentenceWithAllValues() async throws {
+@Suite
+struct `8.3.55 HRM` {
+  @Test
+  func `parses a sentence with all values`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -61,8 +61,8 @@ struct HRMTests {
     #expect(peakHoldResetTime == expectedReset)
   }
 
-  @Test("parses a sentence with unavailable peak hold values")
-  func parsesASentenceWithUnavailablePeakHoldValues() async throws {
+  @Test
+  func `parses a sentence with unavailable peak hold values`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -99,8 +99,8 @@ struct HRMTests {
     #expect(alertThreshold == nil)
   }
 
-  @Test("throws when the sentence status flag is missing")
-  func throwsWhenTheSentenceStatusFlagIsMissing() async throws {
+  @Test
+  func `throws when the sentence status flag is missing`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

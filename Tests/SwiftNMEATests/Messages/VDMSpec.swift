@@ -5,8 +5,8 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.114 VDM")
-struct VDMTests {
+@Suite
+struct `8.3.114 VDM` {
   private static let VDLData: Data = {
     let VDLBinaryData = """
       000001
@@ -48,8 +48,8 @@ struct VDMTests {
 
   // MARK: - .parse
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -83,8 +83,8 @@ struct VDMTests {
     #expect(payload2 == .VDLMessage(data2, channel: .B))
   }
 
-  @Test("parses a 62-character (46-byte) sentence when some fields are nil")
-  func parsesA62CharacterSentenceWhenSomeFieldsAreNil() async throws {
+  @Test
+  func `parses a 62-character (46-byte) sentence when some fields are nil`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -109,8 +109,8 @@ struct VDMTests {
     #expect(channel == nil)
   }
 
-  @Test("throws an error for an incorrect sentence number")
-  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+  @Test
+  func `throws an error for an incorrect sentence number`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -144,8 +144,8 @@ struct VDMTests {
     #expect(error.fieldNumber == 1)
   }
 
-  @Test("parses the first example from the spec")
-  func parsesTheFirstExampleFromTheSpec()
+  @Test
+  func `parses the first example from the spec`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -158,8 +158,8 @@ struct VDMTests {
     #expect(payload == .VDLMessage(Self.VDLData, channel: .A))
   }
 
-  @Test("parses the second example from the spec")
-  func parsesTheSecondExampleFromTheSpec()
+  @Test
+  func `parses the second example from the spec`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -175,8 +175,8 @@ struct VDMTests {
     #expect(payload == .VDLMessage(Self.VDLData, channel: .A))
   }
 
-  @Test("parses the third example from the spec")
-  func parsesTheThirdExampleFromTheSpec()
+  @Test
+  func `parses the third example from the spec`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -194,8 +194,8 @@ struct VDMTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 

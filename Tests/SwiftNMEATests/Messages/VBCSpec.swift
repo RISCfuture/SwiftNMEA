@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.112 VBC")
-struct VBCTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.112 VBC` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -42,8 +42,8 @@ struct VBCTests {
     #expect(!groundValid)
   }
 
-  @Test("throws an error when the water-speed status is a null field")
-  func throwsAnErrorWhenTheWaterSpeedStatusIsANullField() async throws {
+  @Test
+  func `throws an error when the water-speed status is a null field`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -64,8 +64,8 @@ struct VBCTests {
     #expect(error.type == .missingRequiredValue)
   }
 
-  @Test("throws an error for a non-numeric speed")
-  func throwsAnErrorForANonNumericSpeed()
+  @Test
+  func `throws an error for a non-numeric speed`()
     async throws
   {
     let parser = SwiftNMEA()

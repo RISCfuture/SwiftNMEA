@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.32 EPM")
-struct EPMTests {
+@Suite
+struct `8.3.32 EPM` {
   // MARK: - .parse
 
-  @Test("parses a multi-sentence command and concatenates the value")
-  func parsesAMultiSentenceCommandAndConcatenatesTheValue() async throws {
+  @Test
+  func `parses a multi-sentence command and concatenates the value`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -49,8 +49,8 @@ struct EPMTests {
     )
   }
 
-  @Test("decodes escaped reserved characters in the value")
-  func decodesEscapedReservedCharactersInTheValue() async throws {
+  @Test
+  func `decodes escaped reserved characters in the value`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -72,8 +72,8 @@ struct EPMTests {
     #expect(value == "a,b")
   }
 
-  @Test("parses a null unique identifier")
-  func parsesANullUniqueIdentifier() async throws {
+  @Test
+  func `parses a null unique identifier`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -94,8 +94,8 @@ struct EPMTests {
     #expect(reference.uniqueID == nil)
   }
 
-  @Test("throws an error for a negative property identifier")
-  func throwsAnErrorForANegativePropertyIdentifier() async throws {
+  @Test
+  func `throws an error for a negative property identifier`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -114,8 +114,8 @@ struct EPMTests {
     #expect(error.fieldNumber == 6)
   }
 
-  @Test("rejects an out-of-order sentence instead of concatenating it")
-  func rejectsAnOutOfOrderSentenceInsteadOfConcatenatingIt() async throws {
+  @Test
+  func `rejects an out-of-order sentence instead of concatenating it`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -153,8 +153,8 @@ struct EPMTests {
 
   // MARK: - .flush
 
-  @Test("flushes an incomplete message")
-  func flushesAnIncompleteMessage() async throws {
+  @Test
+  func `flushes an incomplete message`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

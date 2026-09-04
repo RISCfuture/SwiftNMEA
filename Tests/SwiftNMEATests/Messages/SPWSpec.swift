@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.98 SPW")
-struct SPWTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.98 SPW` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -32,8 +32,8 @@ struct SPWTests {
     #expect(password == "SESAME")
   }
 
-  @Test("throws an error for a reserved password level")
-  func throwsAnErrorForAReservedPasswordLevel() async throws {
+  @Test
+  func `throws an error for a reserved password level`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

@@ -4,12 +4,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.62 LRF and friends")
-struct LRFTests {
+@Suite
+struct `8.3.62 LRF and friends` {
   // MARK: - .parse
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let fixTime = Date(timeIntervalSinceNow: -5)
     let ETA = Date(timeIntervalSinceNow: 60000)
@@ -124,8 +124,8 @@ struct LRFTests {
     #expect(soulsOnboard == 123)
   }
 
-  @Test("throws an error if a duplicate sentence is received")
-  func throwsAnErrorIfADuplicateSentenceIsReceived() async throws {
+  @Test
+  func `throws an error if a duplicate sentence is received`() async throws {
     let parser = SwiftNMEA()
     let fixTime = Date(timeIntervalSinceNow: -5)
     let LRF = createSentence(
@@ -184,8 +184,8 @@ struct LRFTests {
     #expect(error.type == .unexpectedFormat)
   }
 
-  @Test("throws an error if an unexpected sentence is received")
-  func throwsAnErrorIfAnUnexpectedSentenceIsReceived() async throws {
+  @Test
+  func `throws an error if an unexpected sentence is received`() async throws {
     let parser = SwiftNMEA()
     let ETA = Date(timeIntervalSinceNow: 60000)
     let LRF = createSentence(
@@ -231,8 +231,8 @@ struct LRFTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let fixTime = Date(timeIntervalSinceNow: -5)
     let LRF = createSentence(

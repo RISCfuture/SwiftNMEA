@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.78 RLM")
-struct RLMTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.78 RLM` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -10)
     let sentence = createSentence(
@@ -38,8 +38,8 @@ struct RLMTests {
     #expect(messageBody == Data(hex: "0123456789ABCDEF01234567")!)
   }
 
-  @Test("parses a sentence with no time of reception")
-  func parsesASentenceWithNoTimeOfReception() async throws {
+  @Test
+  func `parses a sentence with no time of reception`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -69,8 +69,8 @@ struct RLMTests {
     #expect(messageBody == Data(hex: "ABCD")!)
   }
 
-  @Test("throws an error for a beacon ID of the wrong length")
-  func throwsAnErrorForABeaconIDOfTheWrongLength() async throws {
+  @Test
+  func `throws an error for a beacon ID of the wrong length`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.92 SM1")
-struct SM1Tests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.92 SM1` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -55,8 +55,8 @@ struct SM1Tests {
     #expect(addressCode == 5)
   }
 
-  @Test("parses null sequence, LES ID, service, and address fields")
-  func parsesNullSequenceLESIDServiceAndAddressFields() async throws {
+  @Test
+  func `parses null sequence, LES ID, service, and address fields`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -94,8 +94,8 @@ struct SM1Tests {
     #expect(addressCode == nil)
   }
 
-  @Test("throws an error for a reserved ocean region code")
-  func throwsAnErrorForAReservedOceanRegionCode() async throws {
+  @Test
+  func `throws an error for a reserved ocean region code`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

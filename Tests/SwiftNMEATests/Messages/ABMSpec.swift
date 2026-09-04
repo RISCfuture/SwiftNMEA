@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.4 ABM")
-struct ABMTests {
+@Suite
+struct `8.3.4 ABM` {
   // MARK: - .parse
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -61,8 +61,8 @@ struct ABMTests {
     )
   }
 
-  @Test("throws an error for missing fields")
-  func parseThrowsAnErrorForMissingFields() async throws {
+  @Test
+  func `throws an error for missing fields`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -97,8 +97,8 @@ struct ABMTests {
     #expect(error.fieldNumber == 3)
   }
 
-  @Test("throws an error for a wrong sentence number")
-  func throwsAnErrorForAWrongSentenceNumber() async throws {
+  @Test
+  func `throws an error for a wrong sentence number`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -143,8 +143,8 @@ struct ABMTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -193,8 +193,8 @@ struct ABMTests {
     #expect(actualData == "1234567890123456789012345678901234".data(using: .ascii)!)
   }
 
-  @Test("throws an error for missing fields")
-  func flushThrowsAnErrorForMissingFields() async throws {
+  @Test
+  func `throws an error for missing fields when flushing`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 

@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.130 ZDA")
-struct ZDATests {
-  @Test("parses the first example from the spec (corrected)")
-  func parsesTheFirstExampleFromTheSpec() async throws {
+@Suite
+struct `8.3.130 ZDA` {
+  @Test
+  func `parses the first example from the spec (corrected)`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$GPZDA,234500.00,09,06,1995,-12,45")
     let data = sentence.data(using: .ascii)!
@@ -34,8 +34,8 @@ struct ZDATests {
     #expect(timeZone == CHAT)
   }
 
-  @Test("parses the second example from the spec (corrected)")
-  func parsesTheSecondExampleFromTheSpec() async throws {
+  @Test
+  func `parses the second example from the spec (corrected)`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$GPZDA,013000.00,11,06,1995,10,30")
     let data = sentence.data(using: .ascii)!

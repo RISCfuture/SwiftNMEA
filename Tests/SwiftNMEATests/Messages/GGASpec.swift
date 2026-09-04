@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.42 GGA")
-struct GGATests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.42 GGA` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -2)
     let sentence = createSentence(
@@ -56,8 +56,8 @@ struct GGATests {
     #expect(DGPSReferenceStationID == 123)
   }
 
-  @Test("parses a sentence from a STA8089FG")
-  func parsesASentenceFromASTA8089FG() async throws {
+  @Test
+  func `parses a sentence from a STA8089FG`() async throws {
     let parser = SwiftNMEA()
     let sentence =
       "$GPGGA,235944.000,0000.00000,N,00000.00000,E,0,00,99.0,100.00,M,0.0,M,,*61\r\n"

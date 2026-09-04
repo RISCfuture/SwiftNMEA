@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.46 GSA")
-struct GSATests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.46 GSA` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -47,8 +47,8 @@ struct GSATests {
     )
   }
 
-  @Test("parses a sentence from a STA8089FG")
-  func parsesASentenceFromASTA8089FG() async throws {
+  @Test
+  func `parses a sentence from a STA8089FG`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$GPGSA,A,1,,,,,,,,,,,,,99.0,99.0,99.0*00\r\n"
     let data = sentence.data(using: .ascii)!

@@ -35,12 +35,12 @@ private func protocolOneTarget(
   writer.write(0, bits: 2)  // reserved
 }
 
-@Suite("8.3.107 TTD")
-struct TTDTests {
+@Suite
+struct `8.3.107 TTD` {
   // MARK: - .parse
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -84,8 +84,8 @@ struct TTDTests {
     #expect(targets[0].correlationNumber == 128)
   }
 
-  @Test("parses a single-sentence message with a null sequential identifier")
-  func parsesASingleSentenceMessageWithANullSequentialIdentifier() async throws {
+  @Test
+  func `parses a single-sentence message with a null sequential identifier`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -116,8 +116,8 @@ struct TTDTests {
     #expect(targets[0].number == 123)
   }
 
-  @Test("throws an error for an incorrect sentence number")
-  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+  @Test
+  func `throws an error for an incorrect sentence number`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -152,8 +152,8 @@ struct TTDTests {
     #expect(error.fieldNumber == 1)
   }
 
-  @Test("throws an error for an out-of-range fill-bits field")
-  func throwsAnErrorForAnOutOfRangeFillBitsField() async throws {
+  @Test
+  func `throws an error for an out-of-range fill-bits field`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -177,8 +177,8 @@ struct TTDTests {
     #expect(error.fieldNumber == 4)
   }
 
-  @Test("parses a protocol-one CPA/TCPA structure")
-  func parsesAProtocolOneCPATCPAStructure()
+  @Test
+  func `parses a protocol-one CPA/TCPA structure`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -215,8 +215,8 @@ struct TTDTests {
     #expect(targets[0].bearing == nil)
   }
 
-  @Test("parses a protocol-one structure with N/A sentinels as nil")
-  func parsesAProtocolOneStructureWithNASentinelsAsNil() async throws {
+  @Test
+  func `parses a protocol-one structure with N/A sentinels as nil`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -245,8 +245,8 @@ struct TTDTests {
     #expect(targets[0].CPATime == nil)
   }
 
-  @Test("parses a sentence mixing protocol-zero and protocol-one structures")
-  func parsesASentenceMixingProtocolZeroAndProtocolOneStructures() async throws {
+  @Test
+  func `parses a sentence mixing protocol-zero and protocol-one structures`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -280,8 +280,8 @@ struct TTDTests {
     #expect(abs(targets[1].CPADistance!.converted(to: .nauticalMiles).value - 5) < 0.001)
   }
 
-  @Test("throws for an unknown protocol version")
-  func throwsForAnUnknownProtocolVersion()
+  @Test
+  func `throws for an unknown protocol version`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -309,8 +309,8 @@ struct TTDTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 

@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.43 GLL")
-struct GLLTests {
-  @Test("parses the example from the spec")
-  func parsesTheExampleFromTheSpec() async throws {
+@Suite
+struct `8.3.43 GLL` {
+  @Test
+  func `parses the example from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$LCGLL,4728.31,N,12254.25,W,091342,A,A*4C\r\n"
     let data = sentence.data(using: .ascii)!

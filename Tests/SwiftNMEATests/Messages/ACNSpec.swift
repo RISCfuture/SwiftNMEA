@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.7 ACN")
-struct ACNTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.7 ACN` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -2000)
     let sentence = createSentence(
@@ -32,8 +32,8 @@ struct ACNTests {
     #expect(command == .acknowledge)
   }
 
-  @Test("parses a sentence with null optional fields")
-  func parsesASentenceWithNullOptionalFields() async throws {
+  @Test
+  func `parses a sentence with null optional fields`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -55,8 +55,8 @@ struct ACNTests {
     #expect(command == .requestRepeat)
   }
 
-  @Test("throws an error when the sentence status flag is not \"C\"")
-  func throwsAnErrorWhenTheSentenceStatusFlagIsNotC() async throws {
+  @Test
+  func `throws an error when the sentence status flag is not "C"`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -73,8 +73,8 @@ struct ACNTests {
     #expect(error.type == .badValue)
   }
 
-  @Test("throws an error for acknowledge of alert instance 0")
-  func throwsAnErrorForAcknowledgeOfAlertInstance0() async throws {
+  @Test
+  func `throws an error for acknowledge of alert instance 0`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

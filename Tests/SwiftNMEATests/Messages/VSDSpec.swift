@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.121 VSD")
-struct VSDTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.121 VSD` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: 259_200)
     let timeComponents = Calendar.current.dateComponents(in: .gmt, from: time)
@@ -53,8 +53,8 @@ struct VSDTests {
     #expect(regionalFlags == 0)
   }
 
-  @Test("parses unavailable values")
-  func parsesUnavailableValues() async throws {
+  @Test
+  func `parses unavailable values`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -98,8 +98,8 @@ struct VSDTests {
     #expect(regionalFlags == 0)
   }
 
-  @Test("parses a navigational status added in M.1371-6")
-  func parsesANavigationalStatusAddedInM13716() async throws {
+  @Test
+  func `parses a navigational status added in M.1371-6`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: 259_200)
     let sentence = createSentence(

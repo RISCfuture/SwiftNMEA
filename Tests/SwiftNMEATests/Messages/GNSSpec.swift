@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.44 GNS")
-struct GNSTests {
-  @Test("parses the first example from the spec")
-  func parsesTheFirstExampleFromTheSpec()
+@Suite
+struct `8.3.44 GNS` {
+  @Test
+  func `parses the first example from the spec`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -59,8 +59,8 @@ struct GNSTests {
     #expect(abs(Double(components.nanosecond!) - 200_000_000) < 100_000)
   }
 
-  @Test("parses the second example from the spec")
-  func parsesTheSecondExampleFromTheSpec()
+  @Test
+  func `parses the second example from the spec`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -103,8 +103,8 @@ struct GNSTests {
     #expect(abs(Double(components.nanosecond!) - 200_000_000) < 100_000)
   }
 
-  @Test("parses a six-system mode indicator (ed.6.0)")
-  func parsesASixSystemModeIndicator() async throws {
+  @Test
+  func `parses a six-system mode indicator (ed.6.0)`() async throws {
     let parser = SwiftNMEA()
     // The six-system mode indicator field is short enough to keep the
     // sentence within the 82-character limit when other fields are trimmed.
@@ -132,8 +132,8 @@ struct GNSTests {
     #expect(mode == expectedMode)
   }
 
-  @Test("rejects an over-length sentence (ed.6.0)")
-  func rejectsAnOverLengthSentence() async throws {
+  @Test
+  func `rejects an over-length sentence (ed.6.0)`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(
       to: "$GNGNS,122310.2,3722.425671,N,12258.856215,W,ADEPSR,14,0.9,1005.543,6.5,5.2,23,S"

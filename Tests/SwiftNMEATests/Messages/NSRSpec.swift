@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.74 NSR")
-struct NSRTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.74 NSR` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -55,8 +55,8 @@ struct NSRTests {
     #expect(timePlausibility == .plausible)
   }
 
-  @Test("throws an error for an invalid integrity value")
-  func throwsAnErrorForAnInvalidIntegrityValue() async throws {
+  @Test
+  func `throws an error for an invalid integrity value`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

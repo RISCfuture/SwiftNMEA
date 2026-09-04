@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.117 VER")
-struct VERTests {
+@Suite
+struct `8.3.117 VER` {
   // MARK: - .parse
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
 
     // MARK: Setup
 
@@ -110,8 +110,8 @@ struct VERTests {
     #expect(hardwareRevision == "HARDV3")
   }
 
-  @Test("throws an error for an incorrect sentence number")
-  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+  @Test
+  func `throws an error for an incorrect sentence number`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -149,8 +149,8 @@ struct VERTests {
     #expect(error.fieldNumber == 1)
   }
 
-  @Test("throws an error for a missing field")
-  func parseThrowsAnErrorForAMissingField()
+  @Test
+  func `throws an error for a missing field`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -192,8 +192,8 @@ struct VERTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -242,8 +242,8 @@ struct VERTests {
     #expect(hardwareRevision == "HARDV1 ")
   }
 
-  @Test("throws an error for a missing field")
-  func flushThrowsAnErrorForAMissingField()
+  @Test
+  func `throws an error for a missing field when flushing`()
     async throws
   {
     let parser = SwiftNMEA()

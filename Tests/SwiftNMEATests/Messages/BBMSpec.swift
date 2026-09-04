@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.18 BBM")
-struct BBMTests {
+@Suite
+struct `8.3.18 BBM` {
   // MARK: - .parse
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -59,8 +59,8 @@ struct BBMTests {
     )
   }
 
-  @Test("throws an error for missing fields")
-  func throwsAnErrorForMissingFields() async throws {
+  @Test
+  func `throws an error for missing fields`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -97,8 +97,8 @@ struct BBMTests {
     #expect(error2.fieldNumber == 3)
   }
 
-  @Test("throws an error for an incorrect sentence number")
-  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+  @Test
+  func `throws an error for an incorrect sentence number`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -132,8 +132,8 @@ struct BBMTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 

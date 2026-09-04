@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /**
  The reported status of a single navigation light, as carried by an `NLS`

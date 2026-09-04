@@ -3,9 +3,13 @@
 import CompilerPluginSupport
 import PackageDescription
 
-let approachableConcurrency: [SwiftSetting] = [
+let upcomingFeatures: [SwiftSetting] = [
   .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-  .enableUpcomingFeature("InferIsolatedConformances")
+  .enableUpcomingFeature("InferIsolatedConformances"),
+  .enableUpcomingFeature("ImmutableWeakCaptures"),
+  .enableUpcomingFeature("MemberImportVisibility"),
+  .enableUpcomingFeature("ExistentialAny"),
+  .enableUpcomingFeature("InternalImportsByDefault")
 ]
 
 let package = Package(
@@ -37,26 +41,28 @@ let package = Package(
     .macro(
       name: "SwiftNMEA_Macros",
       dependencies: [
+        .product(name: "SwiftParser", package: "swift-syntax"),
         .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
         .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
         .product(name: "MacroToolkit", package: "swift-macro-toolkit")
       ],
-      swiftSettings: approachableConcurrency
+      swiftSettings: upcomingFeatures
     ),
-    .target(name: "NMEACommon", swiftSettings: approachableConcurrency),
-    .target(name: "NMEAUnits", swiftSettings: approachableConcurrency),
-    .target(name: "SwiftDSE", dependencies: ["NMEACommon"], swiftSettings: approachableConcurrency),
+    .target(name: "NMEACommon", swiftSettings: upcomingFeatures),
+    .target(name: "NMEAUnits", swiftSettings: upcomingFeatures),
+    .target(name: "SwiftDSE", dependencies: ["NMEACommon"], swiftSettings: upcomingFeatures),
     .target(
       name: "SwiftNMEA",
       dependencies: [
         .product(name: "Algorithms", package: "swift-algorithms"),
+        .product(name: "BitCollections", package: "swift-collections"),
         .product(name: "Collections", package: "swift-collections"),
         "NMEACommon",
         "NMEAUnits",
         "SwiftDSE",
         "SwiftNMEA_Macros"
       ],
-      swiftSettings: approachableConcurrency
+      swiftSettings: upcomingFeatures
     ),
     .testTarget(
       name: "SwiftNMEATests",
@@ -65,7 +71,7 @@ let package = Package(
         "SwiftDSE",
         .product(name: "Algorithms", package: "swift-algorithms")
       ],
-      swiftSettings: approachableConcurrency
+      swiftSettings: upcomingFeatures
     )
   ],
   swiftLanguageModes: [.v5, .v6]

@@ -1,5 +1,5 @@
-import Foundation
-import NMEACommon
+public import Foundation
+public import NMEACommon
 
 /// An accuracy enhancement to a geographical area.
 ///

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A longitudinal docking speed referenced to a consistent common reference
 /// point (CCRP), together with bow, CCRP, and stern transverse speeds.

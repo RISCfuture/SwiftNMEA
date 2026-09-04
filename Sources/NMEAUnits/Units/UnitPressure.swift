@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension UnitPressure {
   private static let atm = 101_325.0

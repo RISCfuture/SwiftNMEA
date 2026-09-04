@@ -1,4 +1,5 @@
 import Foundation
+import NMEACommon
 
 class GNSParser: MessageFormat {
   func canParse(sentence: ParametricSentence) throws -> Bool {

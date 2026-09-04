@@ -1,4 +1,5 @@
 import Algorithms
+import BitCollections
 import Collections
 import Foundation
 

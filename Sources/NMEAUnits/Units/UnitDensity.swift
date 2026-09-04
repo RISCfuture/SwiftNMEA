@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Density (ρ) is a substance's mass per unit of volume. Mathematically,
 /// density is defined as mass divided by volume.

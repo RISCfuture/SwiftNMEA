@@ -1,4 +1,5 @@
 import Foundation
+import NMEAUnits
 import Testing
 
 @testable import SwiftNMEA

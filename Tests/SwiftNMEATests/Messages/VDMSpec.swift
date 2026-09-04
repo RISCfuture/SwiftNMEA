@@ -1,4 +1,6 @@
+import Algorithms
 import Foundation
+import RegexBuilder
 import Testing
 
 @testable import SwiftNMEA

@@ -1,5 +1,5 @@
 actor MessageParser {
-  private let formatParsers: [MessageFormat] = [
+  private let formatParsers: [any MessageFormat] = [
     AAMParser(), ABKParser(), ABMParser(), ACAParser(), ACKParser(),
     ACNParser(), ACSParser(), AGLParser(), AIRParser(), AKDParser(),
     ALAParser(), ALCParser(), ALFParser(), ALRParser(), APBParser(),

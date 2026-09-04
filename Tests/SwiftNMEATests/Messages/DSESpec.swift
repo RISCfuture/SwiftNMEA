@@ -1,6 +1,8 @@
 import Foundation
 import Testing
 
+import SwiftDSE
+
 @testable import NMEACommon
 @testable import SwiftNMEA
 
@@ -64,8 +66,8 @@ struct DSETests {
     // MARK: - Message 1
 
     #expect(messages.count == 6)
-    let payload1 = try #require((messages[2] as? Message)?.payload)
-    let payload2 = try #require((messages[5] as? Message)?.payload)
+    let payload1 = try #require((messages[2] as? NMEAMessage)?.payload)
+    let payload2 = try #require((messages[5] as? NMEAMessage)?.payload)
     guard case let .DSE(type, MMSI, data) = payload2 else {
       Issue.record("expected .DSE, got \(payload2)")
       return
@@ -289,7 +291,7 @@ struct DSETests {
     let messages = try await parser.parse(data: data)
 
     #expect(messages.count == 2)
-    let message = try #require(messages[1] as? Message)
+    let message = try #require(messages[1] as? NMEAMessage)
     guard case let .DSE(type, MMSI, data) = message.payload else {
       Issue.record("expected .DSE, got \(message)")
       return
@@ -352,7 +354,7 @@ struct DSETests {
 
     #expect(messages.count == 1)
 
-    let message = try #require(messages[0] as? Message)
+    let message = try #require(messages[0] as? NMEAMessage)
     guard case let .DSE(type, MMSI, data) = message.payload else {
       Issue.record("expected .DSE, got \(message)")
       return

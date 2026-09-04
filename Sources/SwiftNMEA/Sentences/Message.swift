@@ -1,7 +1,7 @@
-import Foundation
-import NMEACommon
-import NMEAUnits
-import SwiftDSE
+public import Foundation
+public import NMEACommon
+public import NMEAUnits
+public import SwiftDSE
 
 /// A message is constructed from one or more ``Sentence``s whose fields have
 /// been parsed into a ``Payload-swift.enum``. The sentences must share the same

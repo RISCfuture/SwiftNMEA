@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A force is an influence that can cause an object to change its velocity unless
 /// counterbalanced by other forces. The concept of force makes the everyday notion

@@ -4,7 +4,7 @@
 //  real Foundation API is used.
 
 #if !canImport(Darwin)
-  import Foundation
+  public import Foundation
 
   extension String {
     init(

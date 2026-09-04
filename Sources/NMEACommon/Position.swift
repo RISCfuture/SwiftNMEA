@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 public struct Position: Codable, Sendable, Equatable, Hashable {
   public let latitude: Measurement<UnitAngle>

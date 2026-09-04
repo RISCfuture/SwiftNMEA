@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A class that buffers streaming data and parses detected NMEA ``Sentence``s
 /// and ``Message``s.

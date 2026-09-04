@@ -1,5 +1,5 @@
-import Foundation
-import NMEACommon
+public import Foundation
+public import NMEACommon
 
 /// 2.1.2.1 - Enhanced position resolution
 ///

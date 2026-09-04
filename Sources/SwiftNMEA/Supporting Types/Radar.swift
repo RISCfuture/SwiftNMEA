@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Types related to radar equipment.
 public struct Radar {

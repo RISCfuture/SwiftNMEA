@@ -1,5 +1,5 @@
-import Foundation
-import NMEAUnits
+public import Foundation
+public import NMEAUnits
 
 // swiftlint:disable:next missing_docs
 public struct Transducer {

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Angular velocity (ω) is a pseudovector representation of how the angular
 /// position or orientation of an object changes with time, i.e. how quickly an

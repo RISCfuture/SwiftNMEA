@@ -1,3 +1,5 @@
+import NMEACommon
+
 /// 7.3.5 Query sentences
 ///
 /// Query sentences are intended to request approved sentences to be transmitted

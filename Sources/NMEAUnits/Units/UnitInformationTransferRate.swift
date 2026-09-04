@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// In telecommunications and computing, bit rate (R) is the amount of data that
 /// is conveyed or processed per unit of time.

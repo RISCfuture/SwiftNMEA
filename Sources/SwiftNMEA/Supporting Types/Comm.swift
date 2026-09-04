@@ -1,4 +1,5 @@
-import Foundation
+public import Foundation
+import NMEACommon
 
 // swiftlint:disable:next missing_docs
 public struct Comm {

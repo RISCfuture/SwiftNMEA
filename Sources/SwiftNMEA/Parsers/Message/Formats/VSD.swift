@@ -1,5 +1,6 @@
 import Collections
 import Foundation
+import NMEACommon
 
 class VSDParser: MessageFormat {
   func canParse(sentence: ParametricSentence) throws -> Bool {

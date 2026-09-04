@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A geographic reference area, used by DSC, as defined in ITU-R M.493-16.
 public struct GeoArea: Sendable, Codable, Equatable {

@@ -1,7 +1,12 @@
 import Algorithms
 import Foundation
+import NMEACommon
 
 @testable import SwiftNMEA
+
+/// Names ``SwiftNMEA/Message`` unambiguously for specs that also import `SwiftDSE`,
+/// which vends a `Message` of its own.
+typealias NMEAMessage = Message
 
 func applyChecksum(to sentence: String) -> String {
   let delimiter = sentence.first!

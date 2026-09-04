@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 // swiftlint:disable:next missing_docs
 public struct AIS {

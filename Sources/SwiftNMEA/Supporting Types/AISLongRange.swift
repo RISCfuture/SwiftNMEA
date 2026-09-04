@@ -1,4 +1,4 @@
-import NMEACommon
+public import NMEACommon
 
 // swiftlint:disable:next missing_docs
 public struct AISLongRange {

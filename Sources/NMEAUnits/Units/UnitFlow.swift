@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Mass flow rate is the rate at which mass of a substance changes over time.
 @preconcurrency

@@ -1,5 +1,5 @@
-import Foundation
-import NMEACommon
+public import Foundation
+public import NMEACommon
 
 // swiftlint:disable:next missing_docs
 public struct DSC {

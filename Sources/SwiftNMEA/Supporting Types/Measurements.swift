@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A true or magnetic bearing or heading.
 public struct Bearing: Sendable, Codable, Equatable, Hashable {

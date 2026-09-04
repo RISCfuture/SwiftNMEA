@@ -1,3 +1,6 @@
+import Foundation
+import NMEACommon
+
 /// 2.1.2.2 - Source and datum of position
 ///
 /// - SeeAlso: ``Message/positionSourceDatum(_:)``

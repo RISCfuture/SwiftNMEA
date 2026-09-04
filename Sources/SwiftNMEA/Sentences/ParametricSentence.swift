@@ -1,4 +1,5 @@
 import Foundation
+import NMEACommon
 
 /// 7.3.3 Parametric sentences, 7.3.4 Encapsulated sentences
 ///

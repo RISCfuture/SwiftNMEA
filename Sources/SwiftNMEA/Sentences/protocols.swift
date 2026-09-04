@@ -1,3 +1,5 @@
+import Foundation
+
 /// Empty protocol that encompasses all parsed output types (``Sentence``s and
 ///  ``Message``s).
 public protocol Element: Sendable, Codable, Equatable {}

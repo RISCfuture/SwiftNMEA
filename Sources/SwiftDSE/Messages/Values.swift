@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 protocol MeasurementValue: Sendable, Codable, Equatable, RawRepresentable where RawValue == String {
   associatedtype Unit: Dimension

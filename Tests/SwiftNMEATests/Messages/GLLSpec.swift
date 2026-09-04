@@ -1,4 +1,5 @@
 import Foundation
+import NMEACommon
 import Testing
 
 @testable import SwiftNMEA

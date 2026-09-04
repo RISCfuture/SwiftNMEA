@@ -1,8 +1,9 @@
 import Foundation
 import MacroToolkit
-import SwiftSyntax
+import SwiftParser
+package import SwiftSyntax
 import SwiftSyntaxBuilder
-import SwiftSyntaxMacros
+package import SwiftSyntaxMacros
 
 package struct DefineAlarmsMacro: DeclarationMacro {
   package static func expansion(

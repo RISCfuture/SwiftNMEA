@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.35 EVE")
-struct EVETests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.35 EVE` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -33)
     let sentence = createSentence(

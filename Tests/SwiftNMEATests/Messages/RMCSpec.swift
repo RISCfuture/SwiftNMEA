@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.81 RMC")
-struct RMCTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.81 RMC` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -0.5)
     let sentence = createSentence(
@@ -57,8 +57,8 @@ struct RMCTests {
     #expect(status == .safe)
   }
 
-  @Test("parses a sentence with null fields when data is temporarily unavailable")
-  func parsesASentenceWithNullFieldsWhenDataIsTemporarilyUnavailable() async throws {
+  @Test
+  func `parses a sentence with null fields when data is temporarily unavailable`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

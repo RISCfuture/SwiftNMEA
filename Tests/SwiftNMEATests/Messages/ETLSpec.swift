@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.34 ETL")
-struct ETLTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.34 ETL` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -12)
     let sentence = createSentence(

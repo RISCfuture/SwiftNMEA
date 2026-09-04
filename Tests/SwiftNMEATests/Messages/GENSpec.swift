@@ -3,8 +3,8 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.40 GEN")
-struct GENTests {
+@Suite
+struct `8.3.40 GEN` {
   private static func appendChecksum(to sentence: String) -> String {
     precondition(sentence.hasPrefix("$") && sentence.hasSuffix("*"))
     let body = sentence.dropFirst().dropLast()
@@ -12,8 +12,8 @@ struct GENTests {
     return sentence + String(format: "%02X", checksum) + "\r\n"
   }
 
-  @Test("parses the example in the spec")
-  func parsesTheExampleInTheSpec() async throws {
+  @Test
+  func `parses the example in the spec`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       "$VRGEN,0000,011200.00,0123,4567,89AB,CDEF,0123,4567,89AB,CDEF*64\r\n",
@@ -47,8 +47,8 @@ struct GENTests {
     #expect(contiguous.hex == "0123456789ABCDEF0123456789ABCDEF01234567")
   }
 
-  @Test("represents an interior null field as a gap")
-  func representsAnInteriorNullFieldAsAGap() async throws {
+  @Test
+  func `represents an interior null field as a gap`() async throws {
     let parser = SwiftNMEA()
     // entity at index 1 is null (no update); 0, 2, and 3 are present
     let sentence = "$VRGEN,0000,011200.00,0123,,89AB,CDEF*"
@@ -73,8 +73,8 @@ struct GENTests {
     #expect(entities[3]?.hex == "CDEF")
   }
 
-  @Test("reports an error for a malformed (present but non-HEX) field")
-  func reportsAnErrorForAMalformedField() async throws {
+  @Test
+  func `reports an error for a malformed (present but non-HEX) field`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$VRGEN,0000,011200.00,0123,XYZW,89AB*"
     let withChecksum = Self.appendChecksum(to: sentence)

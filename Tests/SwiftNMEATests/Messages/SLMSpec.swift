@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.91 SLM")
-struct SLMTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.91 SLM` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -31,8 +31,8 @@ struct SLMTests {
     )
   }
 
-  @Test("parses a sentence with unavailable optional values")
-  func parsesASentenceWithUnavailableOptionalValues() async throws {
+  @Test
+  func `parses a sentence with unavailable optional values`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -57,8 +57,8 @@ struct SLMTests {
     )
   }
 
-  @Test("throws an error for an unknown system status")
-  func throwsAnErrorForAnUnknownSystemStatus() async throws {
+  @Test
+  func `throws an error for an unknown system status`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -75,8 +75,8 @@ struct SLMTests {
     #expect(error.type == .unknownValue)
   }
 
-  @Test("throws an error when location is Others but description is missing")
-  func throwsAnErrorWhenLocationIsOthersButDescriptionIsMissing() async throws {
+  @Test
+  func `throws an error when location is Others but description is missing`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

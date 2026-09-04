@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.26 DDC")
-struct DDCTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.26 DDC` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -31,8 +31,8 @@ struct DDCTests {
     )
   }
 
-  @Test("throws when the command mode is missing")
-  func throwsWhenTheCommandModeIsMissing() async throws {
+  @Test
+  func `throws when the command mode is missing`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

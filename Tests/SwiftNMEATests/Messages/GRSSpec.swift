@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.45 GRS")
-struct GRSTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.45 GRS` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -2)
     let sentence = createSentence(
@@ -43,8 +43,8 @@ struct GRSTests {
     #expect(!recomputed)
   }
 
-  @Test("returns an error for a too-short sentence instead of crashing")
-  func returnsAnErrorForATooShortSentenceInsteadOfCrashing() async throws {
+  @Test
+  func `returns an error for a too-short sentence instead of crashing`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -2)
     // Only the time/mode header plus the trailing System ID / Signal ID:

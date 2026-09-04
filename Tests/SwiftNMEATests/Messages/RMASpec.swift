@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.79 RMA")
-struct RMATests {
-  @Test("parses example (a) from the spec")
-  func parsesExampleAFromTheSpec() async throws {
+@Suite
+struct `8.3.79 RMA` {
+  @Test
+  func `parses example (a) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,V,,,,,14162.8,,,,,,N*6F\r\n"
     let data = sentence.data(using: .ascii)!
@@ -41,8 +41,8 @@ struct RMATests {
     #expect(mode == .invalid)
   }
 
-  @Test("parses example (b) from the spec")
-  func parsesExampleBFromTheSpec() async throws {
+  @Test
+  func `parses example (b) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,V,,,,,14172.3,26026.7,,,,,N*4C\r\n"
     let data = sentence.data(using: .ascii)!
@@ -76,8 +76,8 @@ struct RMATests {
     #expect(mode == .invalid)
   }
 
-  @Test("parses example (c) from the spec")
-  func parsesExampleCFromTheSpec() async throws {
+  @Test
+  func `parses example (c) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,A,,,,,14182.3,26026.7,,,,,A*5B\r\n"
     let data = sentence.data(using: .ascii)!
@@ -111,8 +111,8 @@ struct RMATests {
     #expect(mode == .autonomous)
   }
 
-  @Test("parses example (d) from the spec")
-  func parsesExampleDFromTheSpec() async throws {
+  @Test
+  func `parses example (d) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,A,4226.26,N,07125.89,W,14182.3,26026.7,8.5,275.,14.0,W,A*05\r\n"
     let data = sentence.data(using: .ascii)!
@@ -148,8 +148,8 @@ struct RMATests {
     #expect(mode == .autonomous)
   }
 
-  @Test("parses example (e) from the spec")
-  func parsesExampleEFromTheSpec() async throws {
+  @Test
+  func `parses example (e) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,V,4226.26,N,07125.89,W,14182.3,26026.7,8.5,275.,14.0,W,N*1D\r\n"
     let data = sentence.data(using: .ascii)!
@@ -185,8 +185,8 @@ struct RMATests {
     #expect(mode == .invalid)
   }
 
-  @Test("parses example (f) from the spec")
-  func parsesExampleFFromTheSpec() async throws {
+  @Test
+  func `parses example (f) from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,A,4226.265,N,07125.890,W,14172.33,26026.71,8.53,275.,14.0,W,D*3B\r\n"
     let data = sentence.data(using: .ascii)!

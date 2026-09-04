@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.95 SM4")
-struct SM4Tests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.95 SM4` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -66,8 +66,8 @@ struct SM4Tests {
     #expect(longitudeExtent == .init(value: 25, unit: .degrees))
   }
 
-  @Test("parses null service, position, and extent fields")
-  func parsesNullServicePositionAndExtentFields() async throws {
+  @Test
+  func `parses null service, position, and extent fields`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -112,8 +112,8 @@ struct SM4Tests {
     #expect(longitudeExtent == nil)
   }
 
-  @Test("throws an error for an invalid service code")
-  func throwsAnErrorForAnInvalidServiceCode() async throws {
+  @Test
+  func `throws an error for an invalid service code`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

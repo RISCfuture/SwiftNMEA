@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.5 ACA")
-struct ACATests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.5 ACA` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     // the “in-use changed” time field is null to keep the sentence within
     // the 82-character limit
@@ -61,8 +61,8 @@ struct ACATests {
     #expect(inUseChangedActual == nil)
   }
 
-  @Test("rejects an over-length sentence")
-  func rejectsAnOverLengthSentence() async throws {
+  @Test
+  func `rejects an over-length sentence`() async throws {
     let parser = SwiftNMEA()
     let inUseChanged = Date(timeIntervalSinceNow: -1000)
     let sentence = createSentence(

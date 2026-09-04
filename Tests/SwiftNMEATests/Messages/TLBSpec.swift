@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.102 TLB")
-struct TLBTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.102 TLB` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -22,8 +22,8 @@ struct TLBTests {
     #expect(payload == .targetLabels([1: "A", 2: "B", 3: nil]))
   }
 
-  @Test("throws an error for a duplicate target number")
-  func throwsAnErrorForADuplicateTargetNumber() async throws {
+  @Test
+  func `throws an error for a duplicate target number`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

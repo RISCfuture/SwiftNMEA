@@ -2,8 +2,8 @@ import Foundation
 import SwiftDSE
 import Testing
 
-@Suite("GeoAreaEnhancement")
-struct GeoAreaEnhancementTests {
+@Suite
+struct `GeoAreaEnhancement tests` {
   // lat 12.34, lon 56.78, Δlat 13.24, Δlon 57.68, speed 22.4 kt, course 180.1°
   private let bothPresent = "123456781324576802241801"
   // speed sub-field (chars 17–20) replaced by the "no data" sentinel
@@ -13,48 +13,48 @@ struct GeoAreaEnhancementTests {
 
   // MARK: - decoding
 
-  @Test("reads speed and course when present")
-  func readsSpeedAndCourseWhenPresent() {
+  @Test
+  func `reads speed and course when present`() {
     let enhancement = GeoAreaEnhancement(rawValue: bothPresent)
     #expect(enhancement?.speed == .init(value: 22.4, unit: .knots))
     #expect(enhancement?.course == .init(value: 180.1, unit: .degrees))
   }
 
-  @Test("reads a missing speed estimate as nil")
-  func readsAMissingSpeedEstimateAsNil() {
+  @Test
+  func `reads a missing speed estimate as nil`() {
     let enhancement = GeoAreaEnhancement(rawValue: noSpeed)
     #expect(enhancement?.speed == nil)
     #expect(enhancement?.course == .init(value: 180.1, unit: .degrees))
   }
 
-  @Test("reads a missing course estimate as nil")
-  func readsAMissingCourseEstimateAsNil() {
+  @Test
+  func `reads a missing course estimate as nil`() {
     let enhancement = GeoAreaEnhancement(rawValue: noCourse)
     #expect(enhancement?.speed == .init(value: 22.4, unit: .knots))
     #expect(enhancement?.course == nil)
   }
 
-  @Test("rejects a field that is not 24 characters")
-  func rejectsAFieldThatIsNot24Characters() {
+  @Test
+  func `rejects a field that is not 24 characters`() {
     #expect(GeoAreaEnhancement(rawValue: "1234") == nil)
   }
 
   // MARK: - round trip
 
-  @Test("preserves speed and course when present")
-  func preservesSpeedAndCourseWhenPresent() {
+  @Test
+  func `preserves speed and course when present`() {
     let enhancement = GeoAreaEnhancement(rawValue: bothPresent)
     #expect(enhancement?.rawValue == bothPresent)
   }
 
-  @Test("preserves a missing speed estimate")
-  func preservesAMissingSpeedEstimate() {
+  @Test
+  func `preserves a missing speed estimate`() {
     let enhancement = GeoAreaEnhancement(rawValue: noSpeed)
     #expect(enhancement?.rawValue == noSpeed)
   }
 
-  @Test("preserves a missing course estimate")
-  func preservesAMissingCourseEstimate() {
+  @Test
+  func `preserves a missing course estimate`() {
     let enhancement = GeoAreaEnhancement(rawValue: noCourse)
     #expect(enhancement?.rawValue == noCourse)
   }

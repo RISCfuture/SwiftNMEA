@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.55 MEB")
-struct MEBTests {
+@Suite
+struct `8.3.55 MEB` {
   // MARK: - .parse
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -74,8 +74,8 @@ struct MEBTests {
     )
   }
 
-  @Test("parses a stored message with a null channel")
-  func parsesAStoredMessageWithANullChannel() async throws {
+  @Test
+  func `parses a stored message with a null channel`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -105,8 +105,8 @@ struct MEBTests {
     #expect(behavior == .store)
   }
 
-  @Test("throws an error for a missing field")
-  func parseThrowsAnErrorForAMissingField()
+  @Test
+  func `throws an error for a missing field`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -160,8 +160,8 @@ struct MEBTests {
     #expect(error.fieldNumber == 4)
   }
 
-  @Test("throws an error for an incorrect sentence number")
-  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+  @Test
+  func `throws an error for an incorrect sentence number`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -207,8 +207,8 @@ struct MEBTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -266,8 +266,8 @@ struct MEBTests {
     #expect(actualData == "123456789012345678901".data(using: .ascii)!)
   }
 
-  @Test("throws an error for a missing field")
-  func throwsAnErrorForAMissingField() async throws {
+  @Test
+  func `throws an error for a missing field when flushing`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 

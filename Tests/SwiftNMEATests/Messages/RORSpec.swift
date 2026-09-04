@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.82 ROR")
-struct RORTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.82 ROR` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -47,8 +47,8 @@ struct RORTests {
     #expect(bowValid == false)
   }
 
-  @Test("throws when a rudder order has no corresponding status")
-  func throwsWhenARudderOrderHasNoCorrespondingStatus() async throws {
+  @Test
+  func `throws when a rudder order has no corresponding status`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

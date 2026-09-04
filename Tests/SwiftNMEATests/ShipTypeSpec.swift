@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("AISLongRange.ShipType (M.1371-6 Table 51)")
-struct ShipTypeTests {
-  @Test("parses and round-trips ship types added or changed in M.1371-6")
-  func parsesAndRoundTripsShipTypes() throws {
+@Suite
+struct `AISLongRange.ShipType (M.1371-6 Table 51)` {
+  @Test
+  func `parses and round-trips ship types added or changed in M.1371-6`() throws {
     let cases: [(Int, AISLongRange.ShipType)] = [
       (4, .specialPurpose(.iceBreaker)),
       (11, .supportVessel(.FPSO)),
@@ -26,8 +26,8 @@ struct ShipTypeTests {
     }
   }
 
-  @Test("returns nil for reserved ship-type codes")
-  func returnsNilForReservedShipTypeCodes()
+  @Test
+  func `returns nil for reserved ship-type codes`()
     throws
   {
     // 08, 15, 25, 47, 68, 87, 95 are reserved for future use

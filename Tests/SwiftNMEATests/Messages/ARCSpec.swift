@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.17 ARC")
-struct ARCTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.17 ARC` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -12)
     let sentence = createSentence(
@@ -35,8 +35,8 @@ struct ARCTests {
     #expect(refusedCommand == .acknowledge)
   }
 
-  @Test("parses a sentence with null optional fields")
-  func parsesASentenceWithNullOptionalFields() async throws {
+  @Test
+  func `parses a sentence with null optional fields`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -63,8 +63,8 @@ struct ARCTests {
     #expect(refusedCommand == .temporarySilence)
   }
 
-  @Test("throws an error for an invalid refused command")
-  func throwsAnErrorForAnInvalidRefusedCommand() async throws {
+  @Test
+  func `throws an error for an invalid refused command`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

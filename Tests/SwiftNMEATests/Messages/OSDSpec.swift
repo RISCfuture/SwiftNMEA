@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.75 OSD")
-struct OSDTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.75 OSD` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -53,8 +53,8 @@ struct OSDTests {
     #expect(drift == .init(value: 2.1, unit: .knots))
   }
 
-  @Test("parses a sentence with all data fields null")
-  func parsesASentenceWithAllDataFieldsNull() async throws {
+  @Test
+  func `parses a sentence with all data fields null`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

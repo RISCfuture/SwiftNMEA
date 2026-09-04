@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.50 HCR")
-struct HCRTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.50 HCR` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -34,8 +34,8 @@ struct HCRTests {
     #expect(correctionValue == .init(value: -12.3, unit: .degrees))
   }
 
-  @Test("parses a sentence with no correction value")
-  func parsesASentenceWithNoCorrectionValue() async throws {
+  @Test
+  func `parses a sentence with no correction value`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -62,8 +62,8 @@ struct HCRTests {
     #expect(correctionValue == nil)
   }
 
-  @Test("throws an error for an invalid mode indicator")
-  func throwsAnErrorForAnInvalidModeIndicator() async throws {
+  @Test
+  func `throws an error for an invalid mode indicator`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.65 MSK")
-struct MSKTests {
-  @Test("parses the example from the spec")
-  func parsesTheExampleFromTheSpec() async throws {
+@Suite
+struct `8.3.65 MSK` {
+  @Test
+  func `parses the example from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CRMSK,293.0,M,100,A,,10,C")
     let data = sentence.data(using: .ascii)!

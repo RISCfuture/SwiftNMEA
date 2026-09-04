@@ -4,8 +4,8 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("SwiftNMEA")
-struct NMEATests {
+@Suite
+struct `SwiftNMEA tests` {
   private static let filterData: Data = {
     let sentences = [
       applyChecksum(to: "$GPAAM,A,V,0.5,N,KSFO"),
@@ -20,8 +20,8 @@ struct NMEATests {
 
   // MARK: - .parse
 
-  @Test("handles chunked data")
-  func handlesChunkedData() async throws {
+  @Test
+  func `handles chunked data`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       "$GPAAM,A,V,0.5,N,KSFO*15\r\n",
@@ -41,8 +41,8 @@ struct NMEATests {
 
   // MARK: filtering by message type
 
-  @Test("filters in all messages with empty filters")
-  func filtersInAllMessagesWithEmptyFilters()
+  @Test
+  func `filters in all messages with empty filters`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -55,8 +55,8 @@ struct NMEATests {
     #expect(messages.filter { $0 is MessageError }.count == 1)
   }
 
-  @Test("filters parametric sentences")
-  func filtersParametricSentences() async throws {
+  @Test
+  func `filters parametric sentences`() async throws {
     let parser = SwiftNMEA(typeFilter: [ParametricSentence.self])
     let messages = try await parser.parse(data: Self.filterData)
     #expect(messages.count == 3)
@@ -64,24 +64,24 @@ struct NMEATests {
     #expect(messages.filter { $0 is MessageError }.count == 1)
   }
 
-  @Test("filters queries")
-  func filtersQueries() async throws {
+  @Test
+  func `filters queries`() async throws {
     let parser = SwiftNMEA(typeFilter: [Query.self])
     let messages = try await parser.parse(data: Self.filterData)
     #expect(messages.count == 2)
     #expect(messages.allSatisfy { $0 is Query })
   }
 
-  @Test("filters proprietary sentences")
-  func filtersProprietarySentences() async throws {
+  @Test
+  func `filters proprietary sentences`() async throws {
     let parser = SwiftNMEA(typeFilter: [ProprietarySentence.self])
     let messages = try await parser.parse(data: Self.filterData)
     #expect(messages.count == 1)
     #expect(messages.allSatisfy { $0 is ProprietarySentence })
   }
 
-  @Test("filters messages")
-  func filtersMessages() async throws {
+  @Test
+  func `filters messages`() async throws {
     let parser = SwiftNMEA(typeFilter: [Message.self])
     let messages = try await parser.parse(data: Self.filterData)
     #expect(messages.count == 3)
@@ -89,8 +89,8 @@ struct NMEATests {
     #expect(messages.filter { $0 is MessageError }.count == 1)
   }
 
-  @Test("filters by talker")
-  func filtersByTalker() async throws {
+  @Test
+  func `filters by talker`() async throws {
     let parser = SwiftNMEA(talkerFilter: [.GPS])
     let messages = try await parser.parse(data: Self.filterData)
 
@@ -112,8 +112,8 @@ struct NMEATests {
     )
   }
 
-  @Test("filters by format")
-  func filtersByFormat() async throws {
+  @Test
+  func `filters by format`() async throws {
     let parser = SwiftNMEA(formatFilter: [.waypointArrivalAlarm])
     let messages = try await parser.parse(data: Self.filterData)
 
@@ -137,8 +137,8 @@ struct NMEATests {
 
   // MARK: checksums
 
-  @Test("rejects an invalid checksum")
-  func rejectsAnInvalidChecksum() async throws {
+  @Test
+  func `rejects an invalid checksum`() async throws {
     let parser = SwiftNMEA()
     let data = "$GPAAM,A,V,0.5,N,KSFO*AA\r\n".data(using: .ascii)!
     let messages = try await parser.parse(data: data)
@@ -148,8 +148,8 @@ struct NMEATests {
     #expect(error.type == .wrongChecksum)
   }
 
-  @Test("ignores an invalid checksum when ignoreChecksums is true")
-  func ignoresAnInvalidChecksumWhenIgnoreChecksumsIsTrue() async throws {
+  @Test
+  func `ignores an invalid checksum when ignoreChecksums is true`() async throws {
     let parser = SwiftNMEA()
     let data = "$GPAAM,A,V,0.5,N,KSFO*AA\r\n".data(using: .ascii)!
 
@@ -158,8 +158,8 @@ struct NMEATests {
 
   // MARK: queries
 
-  @Test("parses a query")
-  func parsesAQuery() async throws {
+  @Test
+  func `parses a query`() async throws {
     let parser = SwiftNMEA()
     let data = "$GPCRQ,MSK*2E\r\n".data(using: .ascii)!
 
@@ -175,8 +175,8 @@ struct NMEATests {
 
   // MARK: proprietary messages
 
-  @Test("parses a proprietary message")
-  func parsesAProprietaryMessage() async throws {
+  @Test
+  func `parses a proprietary message`() async throws {
     let parser = SwiftNMEA()
     let data = "$PSRDA003[470738][1224523]???RST47, 3809, A004*47\r\n".data(using: .ascii)!
 
@@ -191,8 +191,8 @@ struct NMEATests {
 
   // MARK: malformed sentences
 
-  @Test("surfaces a sentence-like garbage line as an unknownSentenceType error")
-  func surfacesGarbageLineAsUnknownSentenceType() async throws {
+  @Test
+  func `surfaces a sentence-like garbage line as an unknownSentenceType error`() async throws {
     let parser = SwiftNMEA()
     let data = "$not a real sentence\r\n".data(using: .ascii)!
     let messages = try await parser.parse(data: data)
@@ -202,8 +202,8 @@ struct NMEATests {
     #expect(error.type == .unknownSentenceType)
   }
 
-  @Test("surfaces an over-long sentence-like line as a sentenceTooLong error")
-  func surfacesOverLongLineAsSentenceTooLong() async throws {
+  @Test
+  func `surfaces an over-long sentence-like line as a sentenceTooLong error`() async throws {
     let parser = SwiftNMEA()
     let longField = String(repeating: "K", count: 90)
     let data = "$GPAAM,A,V,0.5,N,\(longField)*15\r\n".data(using: .ascii)!
@@ -214,8 +214,8 @@ struct NMEATests {
     #expect(error.type == .sentenceTooLong)
   }
 
-  @Test("silently drops a non-sentence-like noise line")
-  func silentlyDropsNoiseLine()
+  @Test
+  func `silently drops a non-sentence-like noise line`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -225,8 +225,8 @@ struct NMEATests {
     #expect(messages.isEmpty)
   }
 
-  @Test("still parses a valid sentence")
-  func stillParsesAValidSentence() async throws {
+  @Test
+  func `still parses a valid sentence`() async throws {
     let parser = SwiftNMEA()
     let data = "$GPAAM,A,V,0.5,N,KSFO*15\r\n".data(using: .ascii)!
     let messages = try await parser.parse(data: data)

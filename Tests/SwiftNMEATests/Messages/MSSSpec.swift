@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.66 MSS")
-struct MSSTests {
-  @Test("parses the example from the spec")
-  func parsesTheExampleFromTheSpec() async throws {
+@Suite
+struct `8.3.66 MSS` {
+  @Test
+  func `parses the example from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$CRMSS,50,17,293.0,100,1*55\r\n"
     let data = sentence.data(using: .ascii)!

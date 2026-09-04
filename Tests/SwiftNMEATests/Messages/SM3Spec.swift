@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.94 SM3")
-struct SM3Tests {
-  @Test("parses a circular-area SafetyNET message")
-  func parsesACircularAreaSafetyNETMessage() async throws {
+@Suite
+struct `8.3.94 SM3` {
+  @Test
+  func `parses a circular-area SafetyNET message`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -59,8 +59,8 @@ struct SM3Tests {
     #expect(abs(radius!.converted(to: .nauticalMiles).value - 35) < 0.001)
   }
 
-  @Test("parses null centre, radius, and LES fields when MSI is incomplete")
-  func parsesNullCentreRadiusAndLESFieldsWhenMSIIsIncomplete() async throws {
+  @Test
+  func `parses null centre, radius, and LES fields when MSI is incomplete`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -100,8 +100,8 @@ struct SM3Tests {
     #expect(radius == nil)
   }
 
-  @Test("throws for a reserved ocean region code")
-  func throwsForAReservedOceanRegionCode() async throws {
+  @Test
+  func `throws for a reserved ocean region code`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

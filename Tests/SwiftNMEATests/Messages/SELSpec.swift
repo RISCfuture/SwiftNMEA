@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.89 SEL")
-struct SELTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.89 SEL` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -22,8 +22,8 @@ struct SELTests {
     #expect(payload == .dataSelection([.position: "GP0001", .heading: "HE0001"]))
   }
 
-  @Test("parses a null source SFI")
-  func parsesANullSourceSFI() async throws {
+  @Test
+  func `parses a null source SFI`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -39,8 +39,8 @@ struct SELTests {
     #expect(payload == .dataSelection([.speedCourseOverGround: nil, .time: "TI0001"]))
   }
 
-  @Test("throws an error for an unknown data id")
-  func throwsAnErrorForAnUnknownDataId()
+  @Test
+  func `throws an error for an unknown data id`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -62,8 +62,8 @@ struct SELTests {
     #expect(error.fieldNumber == 0)
   }
 
-  @Test("throws an error for a duplicate data id")
-  func throwsAnErrorForADuplicateDataId()
+  @Test
+  func `throws an error for a duplicate data id`()
     async throws
   {
     let parser = SwiftNMEA()

@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.115 VDO")
-struct VDOTests {
+@Suite
+struct `8.3.115 VDO` {
   // MARK: - .parse
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -42,8 +42,8 @@ struct VDOTests {
     #expect(payload2 == .VDLOwnshipReport(data2, channel: .B))
   }
 
-  @Test("parses a 62-character (46-byte) sentence when some fields are nil")
-  func parsesA62CharacterSentenceWhenSomeFieldsAreNil() async throws {
+  @Test
+  func `parses a 62-character (46-byte) sentence when some fields are nil`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -68,8 +68,8 @@ struct VDOTests {
     #expect(channel == nil)
   }
 
-  @Test("throws an error for an incorrect sentence number")
-  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+  @Test
+  func `throws an error for an incorrect sentence number`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -105,8 +105,8 @@ struct VDOTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 

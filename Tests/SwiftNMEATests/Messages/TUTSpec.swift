@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.109 TUT")
-struct TUTTests {
+@Suite
+struct `8.3.109 TUT` {
   // MARK: - .parse
 
-  @Test("parses the proprietary example from the spec")
-  func parsesTheProprietaryExampleFromTheSpec() async throws {
+  @Test
+  func `parses the proprietary example from the spec`() async throws {
     let parser = SwiftNMEA()
     let sentence = "$SDTUT,SD,01,01,1,PXYZ,02*6D\r\n"
     let data = sentence.data(using: .ascii)!
@@ -30,8 +30,8 @@ struct TUTTests {
     #expect(translationCode == "PXYZ")
   }
 
-  @Test("parses the Unicode example from the spec")
-  func parsesTheUnicodeExampleFromTheSpec()
+  @Test
+  func `parses the Unicode example from the spec`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -52,8 +52,8 @@ struct TUTTests {
     #expect(translationCode == "U")
   }
 
-  @Test("parses the ASCII example from the spec")
-  func parsesTheASCIIExampleFromTheSpec()
+  @Test
+  func `parses the ASCII example from the spec`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -74,8 +74,8 @@ struct TUTTests {
     #expect(translationCode == "A")
   }
 
-  @Test("throws an error for invalid encoded data")
-  func parseThrowsAnErrorForInvalidEncodedData() async throws {
+  @Test
+  func `throws an error for invalid encoded data`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -96,8 +96,8 @@ struct TUTTests {
     #expect(error.fieldNumber == 5)
   }
 
-  @Test("throws an error for an incorrect sentence number")
-  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+  @Test
+  func `throws an error for an incorrect sentence number`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -124,8 +124,8 @@ struct TUTTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete messages")
-  func flushesIncompleteMessages() async throws {
+  @Test
+  func `flushes incomplete messages`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -162,8 +162,8 @@ struct TUTTests {
     #expect(translationCode == "A")
   }
 
-  @Test("throws an error for invalid encoded data")
-  func flushThrowsAnErrorForInvalidEncodedData() async throws {
+  @Test
+  func `throws an error for invalid encoded data when flushing`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(

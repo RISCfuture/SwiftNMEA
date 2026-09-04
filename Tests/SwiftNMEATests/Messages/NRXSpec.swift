@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.73 NRX")
-struct NRXTests {
+@Suite
+struct `8.3.73 NRX` {
   // MARK: - .parse
 
-  @Test("parses the example sentence group")
-  func parsesTheExampleSentenceGroup() async throws {
+  @Test
+  func `parses the example sentence group`() async throws {
     let parser = SwiftNMEA()
     let string = """
       $CRNRX,007,001,00,IE69,1,135600,27,06,2001,241,3,A,==========================*09\r
@@ -73,8 +73,8 @@ struct NRXTests {
     #expect(isValid)
   }
 
-  @Test("parses a message with a null code when the source is not NAVTEX")
-  func parsesAMessageWithANullCodeWhenTheSourceIsNotNAVTEX() async throws {
+  @Test
+  func `parses a message with a null code when the source is not NAVTEX`() async throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(
       to: "$CRNRX,001,001,00,,1,135600,27,06,2001,26,0,A,HF-MSI BODY"
@@ -93,8 +93,8 @@ struct NRXTests {
     #expect(message == "HF-MSI BODY")
   }
 
-  @Test("throws an error for a missing field")
-  func parseThrowsAnErrorForAMissingField()
+  @Test
+  func `throws an error for a missing field`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -131,8 +131,8 @@ struct NRXTests {
     #expect(error.fieldNumber == 4)
   }
 
-  @Test("throws an error for a wrong sentence number")
-  func throwsAnErrorForAWrongSentenceNumber() async throws {
+  @Test
+  func `throws an error for a wrong sentence number`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(
@@ -169,8 +169,8 @@ struct NRXTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let string = """
       $CRNRX,007,001,00,IE69,1,135600,27,06,2001,241,3,A,==========================*09\r
@@ -230,8 +230,8 @@ struct NRXTests {
     #expect(isValid)
   }
 
-  @Test("throws an error for a missing field")
-  func flushThrowsAnErrorForAMissingField()
+  @Test
+  func `throws an error for a missing field when flushing`()
     async throws
   {
     let parser = SwiftNMEA()

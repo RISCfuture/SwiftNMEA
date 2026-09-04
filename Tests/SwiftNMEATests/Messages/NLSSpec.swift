@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.71 NLS")
-struct NLSTests {
-  @Test("parses a single-sentence message")
-  func parsesASingleSentenceMessage() async throws {
+@Suite
+struct `8.3.71 NLS` {
+  @Test
+  func `parses a single-sentence message`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -37,8 +37,8 @@ struct NLSTests {
     #expect(lights[1].remainingWorkingHours == nil)
   }
 
-  @Test("parses a multi-sentence message")
-  func parsesAMultiSentenceMessage() async throws {
+  @Test
+  func `parses a multi-sentence message`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -82,8 +82,8 @@ struct NLSTests {
     #expect(lights[5].status == .on)
   }
 
-  @Test("parses unavailable status and remaining hours as nil")
-  func parsesUnavailableStatusAndRemainingHoursAsNil() async throws {
+  @Test
+  func `parses unavailable status and remaining hours as nil`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -108,8 +108,8 @@ struct NLSTests {
     #expect(lights[0].remainingWorkingHours == nil)
   }
 
-  @Test("represents more than 9 800 remaining hours")
-  func representsMoreThan9800RemainingHours() async throws {
+  @Test
+  func `represents more than 9 800 remaining hours`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -131,8 +131,8 @@ struct NLSTests {
     #expect(lights[0].remainingWorkingHours == .moreThan9800Hours)
   }
 
-  @Test("throws an error for an unknown light status")
-  func throwsAnErrorForAnUnknownLightStatus() async throws {
+  @Test
+  func `throws an error for an unknown light status`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

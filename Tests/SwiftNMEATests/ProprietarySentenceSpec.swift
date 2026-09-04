@@ -2,12 +2,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("ProprietarySentence")
-struct ProprietarySentenceTests {
+@Suite
+struct `ProprietarySentence tests` {
   // MARK: - rawValue
 
-  @Test("encodes the sentence from the spec")
-  func encodesTheSentenceFromTheSpec() throws {
+  @Test
+  func `encodes the sentence from the spec`() throws {
     let sentence = ProprietarySentence(
       manufacturer: "SRD",
       data: "A003[470738][1224523]???RST47, 3809, A004"
@@ -17,8 +17,8 @@ struct ProprietarySentenceTests {
 
   // MARK: - parsing
 
-  @Test("parses the sentence from the spec")
-  func parsesTheSentenceFromTheSpec() async throws {
+  @Test
+  func `parses the sentence from the spec`() async throws {
     let sentence = try await ProprietarySentence(
       sentence: "$PSRDA003[470738][1224523]???RST47, 3809, A004*47"
     )!

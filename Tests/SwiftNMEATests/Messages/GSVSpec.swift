@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.48 GSV")
-struct GSVTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.48 GSV` {
+  @Test
+  func `parses a sentence`() async throws {
 
     // MARK: Setup
 
@@ -94,8 +94,8 @@ struct GSVTests {
     }
   }
 
-  @Test("derives the constellation from the talker and parses a hex signal ID")
-  func derivesTheConstellationFromTheTalkerAndParsesAHexSignalID() async throws {
+  @Test
+  func `derives the constellation from the talker and parses a hex signal ID`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -122,8 +122,8 @@ struct GSVTests {
     #expect(satellites[0].id == expectedID)
   }
 
-  @Test("throws an error for an out-of-range signal ID")
-  func throwsAnErrorForAnOutOfRangeSignalID() async throws {
+  @Test
+  func `throws an error for an out-of-range signal ID`() async throws {
     let parser = SwiftNMEA()
     // GPS signal IDs only range 0–8; hex "F" (15) is out of range.
     let sentence = createSentence(

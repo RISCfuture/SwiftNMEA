@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.90 SFI")
-struct SFITests {
+@Suite
+struct `8.3.90 SFI` {
   // MARK: - .parse
 
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+  @Test
+  func `parses a sentence`() async throws {
 
     // MARK: Setup
 
@@ -98,8 +98,8 @@ struct SFITests {
     )
   }
 
-  @Test("throws an error for an incorrect sentence number")
-  func throwsAnErrorForAnIncorrectSentenceNumber() async throws {
+  @Test
+  func `throws an error for an incorrect sentence number`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -141,8 +141,8 @@ struct SFITests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete sentences")
-  func flushesIncompleteSentences() async throws {
+  @Test
+  func `flushes incomplete sentences`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

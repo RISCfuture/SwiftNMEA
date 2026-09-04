@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.31 DTM")
-struct DTMTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.31 DTM` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -45,8 +45,8 @@ struct DTMTests {
     #expect(referenceDatum == .WGS84)
   }
 
-  @Test("parses a BDCS reference datum (C00)")
-  func parsesABDCSReferenceDatumC00() async throws {
+  @Test
+  func `parses a BDCS reference datum (C00)`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -73,8 +73,8 @@ struct DTMTests {
     #expect(referenceDatum == .BDCS)
   }
 
-  @Test("parses a sentence with an unknown (null) local datum")
-  func parsesASentenceWithAnUnknownNullLocalDatum() async throws {
+  @Test
+  func `parses a sentence with an unknown (null) local datum`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -104,8 +104,8 @@ struct DTMTests {
     #expect(referenceDatum == .WGS84)
   }
 
-  @Test("throws when a user-defined datum omits an offset")
-  func throwsWhenAUserDefinedDatumOmitsAnOffset() async throws {
+  @Test
+  func `throws when a user-defined datum omits an offset`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -128,8 +128,8 @@ struct DTMTests {
     #expect(error.fieldNumber == 4)
   }
 
-  @Test("throws for an invalid latitude-offset hemisphere character")
-  func throwsForAnInvalidLatitudeOffsetHemisphereCharacter() async throws {
+  @Test
+  func `throws for an invalid latitude-offset hemisphere character`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

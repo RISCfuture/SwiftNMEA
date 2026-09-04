@@ -4,12 +4,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.97 SMV")
-struct SMVTests {
+@Suite
+struct `8.3.97 SMV` {
   // MARK: - .parse
 
-  @Test("parses a single-sentence distress relay")
-  func parsesASingleSentenceDistressRelay()
+  @Test
+  func `parses a single-sentence distress relay`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -60,8 +60,8 @@ struct SMVTests {
     #expect(status == .distressActive)
   }
 
-  @Test("parses a single-sentence cancellation with null optional fields")
-  func parsesASingleSentenceCancellationWithNullOptionalFields() async throws {
+  @Test
+  func `parses a single-sentence cancellation with null optional fields`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -102,8 +102,8 @@ struct SMVTests {
     #expect(status == .distressCancelled)
   }
 
-  @Test("assembles a two-sentence message with position and name in separate sentences")
-  func assemblesATwoSentenceMessageWithPositionAndNameInSeparateSentences() async throws {
+  @Test
+  func `assembles a message whose position and name are in separate sentences`() async throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "$CSSMV,2,1,5,12,123456789,,1234.56,N,12345.67,W,2018,01,23,12,34,D"),
@@ -138,8 +138,8 @@ struct SMVTests {
     #expect(status == .distressActive)
   }
 
-  @Test("throws an error for a null sentence number in a multi-sentence message")
-  func throwsAnErrorForANullSentenceNumberInAMultiSentenceMessage() async throws {
+  @Test
+  func `throws an error for a null sentence number in a multi-sentence message`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -159,8 +159,8 @@ struct SMVTests {
     #expect(error.fieldNumber == 1)
   }
 
-  @Test("throws an error for an unknown distress status value")
-  func throwsAnErrorForAnUnknownDistressStatusValue() async throws {
+  @Test
+  func `throws an error for an unknown distress status value`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,

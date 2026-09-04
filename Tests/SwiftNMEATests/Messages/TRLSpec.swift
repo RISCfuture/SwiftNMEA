@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.106 TRL")
-struct TRLTests {
-  @Test("parses a single log entry")
-  func parsesASingleLogEntry() async throws {
+@Suite
+struct `8.3.106 TRL` {
+  @Test
+  func `parses a single log entry`() async throws {
     let parser = SwiftNMEA()
     // total=1, entry=1, sequentialID=3, switch off 15 May 2025 08:15:00,
     // switch on 15 May 2025 09:30:00, reason = power off
@@ -59,8 +59,8 @@ struct TRLTests {
     #expect(entry.switchOn == switchOn)
   }
 
-  @Test("assembles a multi-entry log")
-  func assemblesAMultiEntryLog() async throws {
+  @Test
+  func `assembles a multi-entry log`() async throws {
     let parser = SwiftNMEA()
     let first = createSentence(
       delimiter: .parametric,
@@ -93,8 +93,8 @@ struct TRLTests {
     #expect(entries[1].reason == .equipmentMalfunction)
   }
 
-  @Test("parses an empty log with null fields")
-  func parsesAnEmptyLogWithNullFields()
+  @Test
+  func `parses an empty log with null fields`()
     async throws
   {
     let parser = SwiftNMEA()
@@ -120,8 +120,8 @@ struct TRLTests {
     #expect(entries.isEmpty)
   }
 
-  @Test("throws an error for an invalid reason code")
-  func throwsAnErrorForAnInvalidReasonCode() async throws {
+  @Test
+  func `throws an error for an invalid reason code`() async throws {
     let parser = SwiftNMEA()
     // reason code 0 is not a defined value
     let sentence = createSentence(

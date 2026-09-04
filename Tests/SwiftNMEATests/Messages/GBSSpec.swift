@@ -3,10 +3,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.38 GBS")
-struct GBSTests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.38 GBS` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -10)
     let sentence = createSentence(
@@ -60,8 +60,8 @@ struct GBSTests {
     #expect(biasEstimateStddev == .init(value: 0.75, unit: .meters))
   }
 
-  @Test("throws an error for an out-of-range hex system ID")
-  func throwsAnErrorForAnOutOfRangeHexSystemID() async throws {
+  @Test
+  func `throws an error for an out-of-range hex system ID`() async throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -10)
     let sentence = createSentence(

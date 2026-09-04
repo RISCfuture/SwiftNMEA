@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("BitCoder")
-struct BitCoderTests {
-  @Test("encodes a bitwise format")
-  func encodesABitwiseFormat() throws {
+@Suite
+struct `BitCoder tests` {
+  @Test
+  func `encodes a bitwise format`() throws {
     var writer = BitWriter(size: 90)
     writer.write(0, bits: 2)  // 00
     writer.write(123, bits: 10)  // 0001111011
@@ -51,8 +51,8 @@ struct BitCoderTests {
     #expect(data[11] == 0x00)
   }
 
-  @Test("decodes a bitwise format")
-  func decodesABitwiseFormat() throws {
+  @Test
+  func `decodes a bitwise format`() throws {
     let data = Data([0x07, 0xB4, 0xD2, 0x09, 0xB5, 0x4D, 0xFF, 0xF8, 0xFE, 0xB2, 0x20, 0x00])
     var reader = BitReader(data: data)
 
@@ -72,8 +72,8 @@ struct BitCoderTests {
     #expect((reader.read(bits: 8) as UInt) == 128)
   }
 
-  @Test("sign-extends two's-complement reads into signed types")
-  func signExtendsTwosComplementReadsIntoSignedTypes() throws {
+  @Test
+  func `sign-extends two's-complement reads into signed types`() throws {
     var signedReader = BitReader(data: Data([0x8F]))
     #expect((signedReader.read(bits: 4) as Int) == -8)  // 1000
     #expect((signedReader.read(bits: 4) as Int) == -1)  // 1111

@@ -5,8 +5,8 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("encapsulation")
-struct SixBitTests {
+@Suite
+struct `encapsulation` {
   private static let encodedString = "1P000Oh1IT1svTP2r:43grwb05q4"
   private static let data: Data = {
     let binaryData = """
@@ -47,15 +47,15 @@ struct SixBitTests {
     return Data(bytes)
   }()
 
-  @Test("decodes the example string from the manual")
-  func decodesTheExampleString() throws {
+  @Test
+  func `decodes the example string from the manual`() throws {
     let coder = SixBitCoder()
     let decoded = coder.decode(Self.encodedString, fillBits: 0)!
     #expect(decoded == Self.data)
   }
 
-  @Test("encodes the example string from the manual")
-  func encodesTheExampleString() throws {
+  @Test
+  func `encodes the example string from the manual`() throws {
     let coder = SixBitCoder()
     let (chunks, fillBits) = coder.encode(Self.data, chunkSize: 48)
     #expect(chunks.count == 1)
@@ -63,8 +63,8 @@ struct SixBitTests {
     #expect(fillBits == 0)
   }
 
-  @Test("rejects characters outside the six-bit alphabet")
-  func rejectsCharactersOutsideTheSixBitAlphabet() throws {
+  @Test
+  func `rejects characters outside the six-bit alphabet`() throws {
     let coder = SixBitCoder()
     // 'X' (0x58) and 'z' (0x7A) fall in the gaps between the armoring ranges
     #expect(coder.decode("X", fillBits: 0) == nil)

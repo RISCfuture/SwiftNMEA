@@ -4,10 +4,10 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.63 LRI and friends")
-struct LRITests {
-  @Test("parses a sentence")
-  func parsesASentence() async throws {
+@Suite
+struct `8.3.63 LRI and friends` {
+  @Test
+  func `parses a sentence`() async throws {
     let parser = SwiftNMEA()
     let LRI = createSentence(
       delimiter: .parametric,
@@ -75,8 +75,8 @@ struct LRITests {
     )
   }
 
-  @Test("throws an error if a duplicate sentence is received")
-  func throwsAnErrorIfADuplicateSentenceIsReceived() async throws {
+  @Test
+  func `throws an error if a duplicate sentence is received`() async throws {
     let parser = SwiftNMEA()
     let LRI = createSentence(
       delimiter: .parametric,

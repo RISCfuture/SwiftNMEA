@@ -3,12 +3,12 @@ import Testing
 
 @testable import SwiftNMEA
 
-@Suite("8.3.39 GDC")
-struct GDCTests {
+@Suite
+struct `8.3.39 GDC` {
   // MARK: - .parse
 
-  @Test("parses a single-sentence message")
-  func parsesASingleSentenceMessage() async throws {
+  @Test
+  func `parses a single-sentence message`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -46,8 +46,8 @@ struct GDCTests {
     #expect(correction.UDRE == .init(value: 7.25, unit: .meters))
   }
 
-  @Test("accumulates corrections across multiple sentences")
-  func accumulatesCorrectionsAcrossMultipleSentences() async throws {
+  @Test
+  func `accumulates corrections across multiple sentences`() async throws {
     let parser = SwiftNMEA()
     let first = createSentence(
       delimiter: .parametric,
@@ -81,8 +81,8 @@ struct GDCTests {
     #expect(ids.contains(12) && ids.contains(17))
   }
 
-  @Test("throws an error for an invalid signal ID")
-  func throwsAnErrorForAnInvalidSignalID() async throws {
+  @Test
+  func `throws an error for an invalid signal ID`() async throws {
     let parser = SwiftNMEA()
     // GPS signal IDs only range 0–8; 9 is reserved/invalid.
     let sentence = createSentence(
@@ -102,8 +102,8 @@ struct GDCTests {
     #expect(error.fieldNumber == 9)
   }
 
-  @Test("throws an error for the disallowed combined-GNSS talker")
-  func throwsAnErrorForTheDisallowedCombinedGNSSTalker() async throws {
+  @Test
+  func `throws an error for the disallowed combined-GNSS talker`() async throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -123,8 +123,8 @@ struct GDCTests {
 
   // MARK: - .flush
 
-  @Test("flushes incomplete messages")
-  func flushesIncompleteMessages() async throws {
+  @Test
+  func `flushes incomplete messages`() async throws {
     let parser = SwiftNMEA()
     let first = createSentence(
       delimiter: .parametric,

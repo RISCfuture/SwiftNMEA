@@ -3,27 +3,27 @@ import Testing
 
 import SwiftDSE
 
-@Suite("PositionEnhancement")
-struct PositionEnhancementTests {
+@Suite
+struct `PositionEnhancement tests` {
   // MARK: - PositionEnhancement
 
-  @Test("round-trips through its raw value")
-  func roundTripsThroughItsRawValue() throws {
+  @Test
+  func `round-trips through its raw value`() throws {
     let enhancement = PositionEnhancement(rawValue: "12345678")
     #expect(enhancement != nil)
     #expect(enhancement?.rawValue == "12345678")
   }
 
-  @Test("rejects raw values that are not eight digits")
-  func rejectsRawValuesThatAreNotEightDigits() throws {
+  @Test
+  func `rejects raw values that are not eight digits`() throws {
     #expect(PositionEnhancement(rawValue: "12345") == nil)
     #expect(PositionEnhancement(rawValue: "1234567890") == nil)
   }
 
   // MARK: - PositionSourceDatum
 
-  @Test("round-trips through its raw value, including the datum digits")
-  func roundTripsThroughItsRawValueIncludingTheDatumDigits() throws {
+  @Test
+  func `round-trips through its raw value, including the datum digits`() throws {
     let sourceDatum = PositionSourceDatum(rawValue: "015500")
     #expect(sourceDatum != nil)
     #expect(sourceDatum?.source == .differentialGPS)
@@ -32,8 +32,8 @@ struct PositionEnhancementTests {
     #expect(sourceDatum?.rawValue == "015500")
   }
 
-  @Test("rejects raw values that are not six digits")
-  func rejectsRawValuesThatAreNotSixDigits() throws {
+  @Test
+  func `rejects raw values that are not six digits`() throws {
     #expect(PositionSourceDatum(rawValue: "0155") == nil)
   }
 }

@@ -165,6 +165,16 @@ private struct State {
     typeFilter.isEmpty || typeFilter.contains { $0 == Message.self }
   }
 
+  init(
+    typeFilter: [any Element.Type],
+    talkerFilter: Set<Talker>,
+    formatFilter: Set<Format>
+  ) {
+    self.typeFilter = typeFilter
+    self.talkerFilter = talkerFilter
+    self.formatFilter = formatFilter
+  }
+
   mutating func parse(data: Data, ignoreChecksums: Bool) throws -> [any Element] {
     buffer.append(data)
     var lines = [String]()

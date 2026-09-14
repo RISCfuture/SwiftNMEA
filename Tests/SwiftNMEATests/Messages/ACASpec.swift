@@ -71,7 +71,7 @@ struct `8.3.5 ACA` {
       format: .AISChannelAssignment,
       fields: [
         0, 3712.12, "N", 12112.35, "W", 3615.09, "N", 12011.11, "W", 2, 5, 0, 12, 1, 2, 0, "C",
-        1, hmsFractionFormatter.string(from: inUseChanged)
+        1, hmsFractionFormat.format(inUseChanged)
       ]
     )
     let data = sentence.data(using: .ascii)!

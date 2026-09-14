@@ -15,7 +15,7 @@ struct `8.3.78 RLM` {
       format: .returnLink,
       fields: [
         "ABCDEF012345678",
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "2",
         "0123456789ABCDEF01234567"
       ]

@@ -14,7 +14,7 @@ struct `8.3.47 GST` {
       talker: .GPS,
       format: .GNSSPseudorangeNoise,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         1.1, 2.2, 3.3, 4.4,
         5.5, 6.6, 7.7
       ]

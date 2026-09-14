@@ -15,7 +15,7 @@ struct `8.3.19 BEC` {
       talker: .integratedNavigation,
       format: .bearingDistanceToWaypointDR,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "3730.00", "N", "12145.00", "W",
         120.5, "T", 125.1, "M",
         123.4, "N",

@@ -14,7 +14,7 @@ struct `8.3.7 ACN` {
       talker: .integratedNavigation,
       format: .alertCommand,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "ABC", 2456789, 42, "C", "A"
       ]
     )

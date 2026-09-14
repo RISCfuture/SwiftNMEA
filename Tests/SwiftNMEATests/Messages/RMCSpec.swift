@@ -15,11 +15,11 @@ struct `8.3.81 RMC` {
       talker: .GPS,
       format: .GNSSMinimumData,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "A",
         "3630.00", "N", "12215.00", "W",
         12.3, 123.4,
-        dateFormatter.string(from: time),
+        dateFormat.format(time),
         1.2, "W",
         "D", "S"
       ]

@@ -14,7 +14,7 @@ struct `8.3.34 ETL` {
       talker: .engineRoomMonitor,
       format: .engineTelegraph,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "O", "04", "30", "B", 0
       ]
     )

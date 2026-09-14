@@ -14,7 +14,7 @@ struct `8.3.45 GRS` {
       talker: .GPS,
       format: .GNSSRangeResiduals,
       fields: [
-        hmsFractionFormatter.string(from: time), 0,
+        hmsFractionFormat.format(time), 0,
         0.1, 0.2, 0.3, 0.4, 0.5,
         1, 7
       ]
@@ -53,7 +53,7 @@ struct `8.3.45 GRS` {
       delimiter: .parametric,
       talker: .GPS,
       format: .GNSSRangeResiduals,
-      fields: [hmsFractionFormatter.string(from: time), 0, 7]
+      fields: [hmsFractionFormat.format(time), 0, 7]
     )
     let data = sentence.data(using: .ascii)!
     let messages = try await parser.parse(data: data)

@@ -4,11 +4,11 @@ class NRXParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
   private let decoder = EscapedStringCoder()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .NAVTEXMessage
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let lastSentence = try sentence.fields.int(at: 1)!
     let messageID = try sentence.fields.int(at: 2)!
@@ -37,17 +37,10 @@ class NRXParser: MessageFormat {
       message: body
     )
 
+    let finishedElement: BufferElement?
     do {
-      return try buffer.add(element: element, for: recipient).map { finishedElement in
-
-        return try makePayload(recipient: recipient, element: finishedElement)
-      }
-    } catch let error as NRXErrors {
-      switch error {
-        case .missingValue(let index):
-          throw sentence.fields.fieldError(type: .missingRequiredValue, index: index)
-      }
-    } catch let error as BufferErrors {
+      finishedElement = try buffer.add(element: element, for: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           throw sentence.fields.fieldError(type: .missingRequiredValue, index: 2)
@@ -55,34 +48,45 @@ class NRXParser: MessageFormat {
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
-  }
+    guard let finishedElement else { return nil }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
-    // complete messages are flushed upon receipt of the last message
-    if !includeIncomplete { return [] }
-
-    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
-    return try flushed.map { recipient, element in
-      do {
-        let payload = try makePayload(recipient: recipient, element: element)
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as NRXErrors {
-        switch error {
-          case .missingValue(let index):
-            return MessageError(type: .missingRequiredValue, fieldNumber: index)
-        }
-      } catch let error as BufferErrors {
-        switch error {
-          case .missingRecipient:
-            return MessageError(type: .missingRequiredValue, fieldNumber: 2)
-          case .wrongSentenceNumber:
-            return MessageError(type: .wrongSentenceNumber, fieldNumber: 1)
-        }
+    do {
+      return try makePayload(recipient: recipient, element: finishedElement)
+    } catch {
+      switch error {
+        case .missingValue(let index):
+          throw sentence.fields.fieldError(type: .missingRequiredValue, index: index)
       }
     }
   }
 
-  private func makePayload(recipient: Recipient, element: BufferElement) throws -> Message.Payload {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
+    // complete messages are flushed upon receipt of the last message
+    if !includeIncomplete { return [] }
+
+    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
+    return flushed.map { recipient, element in
+      message(recipient: recipient, element: element)
+    }
+  }
+
+  private func message(recipient: Recipient, element: BufferElement) -> any Element {
+    do {
+      let payload = try makePayload(recipient: recipient, element: element)
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      switch error {
+        case .missingValue(let index):
+          return MessageError(type: .missingRequiredValue, fieldNumber: index)
+      }
+    }
+  }
+
+  private func makePayload(recipient: Recipient, element: BufferElement) throws(NRXErrors)
+    -> Message.Payload
+  {
     guard let message = decoder.decode(string: element.message) else {
       throw NRXErrors.missingValue(index: 12)
     }

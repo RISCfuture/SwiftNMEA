@@ -14,7 +14,7 @@ struct `8.3.36 FIR` {
       talker: .fireDetection,
       format: .fireDetection,
       fields: [
-        "E", hmsFractionFormatter.string(from: time),
+        "E", hmsFractionFormat.format(time),
         "FS", "AB", 12, 2,
         "A", "V", "GALLEY"
       ]

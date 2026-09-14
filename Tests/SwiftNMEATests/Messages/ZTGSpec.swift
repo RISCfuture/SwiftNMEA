@@ -13,7 +13,7 @@ struct `8.3.133 ZTG` {
       delimiter: .parametric,
       talker: .radar,
       format: .timeToDestination,
-      fields: [hmsFractionFormatter.string(from: time), "010203.04", "KOAK"]
+      fields: [hmsFractionFormat.format(time), "010203.04", "KOAK"]
     )
     let data = sentence.data(using: .ascii)!
     let messages = try await parser.parse(data: data)

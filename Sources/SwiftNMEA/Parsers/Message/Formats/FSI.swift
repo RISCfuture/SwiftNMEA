@@ -1,11 +1,11 @@
 import Foundation
 
 class FSIParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .frequencySetInfo
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let transmit = try sentence.fields.enumeration(
       at: 0,
       ofType: Comm.Frequency.self,

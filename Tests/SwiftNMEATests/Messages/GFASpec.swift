@@ -14,7 +14,7 @@ struct `8.3.41 GFA` {
       talker: .GNSS,
       format: .GNSSAccuracyIntegrity,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         1.2, 3.4, 0.5, 0.75, 12.3, 0.6, 5.0, "VSC"
       ]
     )

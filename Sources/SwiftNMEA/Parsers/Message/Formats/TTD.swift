@@ -4,11 +4,11 @@ import NMEACommon
 class TTDParser: MessageFormat {
   private var buffer = SixBitBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .encapsulated && sentence.format == .trackedTargets
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.hex(at: 0, width: 2)!
     let sentenceNumber = try sentence.fields.hex(at: 1, width: 2)!
     let sequentialID = try sentence.fields.int(at: 2, optional: true)
@@ -20,26 +20,17 @@ class TTDParser: MessageFormat {
 
     let recipient = Recipient(sentence: sentence, sequentialID: sequentialID)
 
-    do {
-      let element = BufferElement(
-        lastSentence: Int(sentenceNumber),
-        totalSentences: Int(totalSentences),
-        encapsulatedData: data,
-        fillBits: fillBits
-      )
-      let finished = try buffer.add(element: element, optionallyFor: recipient)
+    let element = BufferElement(
+      lastSentence: Int(sentenceNumber),
+      totalSentences: Int(totalSentences),
+      encapsulatedData: data,
+      fillBits: fillBits
+    )
 
-      do {
-        return try zipOptionals(finished?.0, finished?.1).flatMap { recipient, element in
-          try makePayload(recipient: recipient, element: element)
-        }
-      } catch let error as TTDErrors {
-        switch error {
-          case .badData:
-            throw sentence.fields.fieldError(type: .badSixBitEncoding, index: 3)
-        }
-      }
-    } catch let error as BufferErrors {
+    let finished: (Recipient, BufferElement)?
+    do {
+      finished = try buffer.add(element: element, optionallyFor: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           fatalError("Unexpected missingRecipient error")
@@ -47,30 +38,46 @@ class TTDParser: MessageFormat {
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
-  }
+    guard let finished else { return nil }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
-    // complete messages are flushed upon receipt of the last message
-    if !includeIncomplete { return [] }
-
-    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
-    return try flushed.compactMap { recipient, element in
-      do {
-        guard let payload = try makePayload(recipient: recipient, element: element) else {
-          return nil
-        }
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as TTDErrors {
-        switch error {
-          case .badData:
-            return MessageError(type: .badSixBitEncoding, fieldNumber: 3)
-        }
+    do {
+      return try makePayload(recipient: finished.0, element: finished.1)
+    } catch {
+      switch error {
+        case .badData:
+          throw sentence.fields.fieldError(type: .badSixBitEncoding, index: 3)
       }
     }
   }
 
-  private func makePayload(recipient _: Recipient, element: BufferElement) throws -> Message
-    .Payload?
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
+    // complete messages are flushed upon receipt of the last message
+    if !includeIncomplete { return [] }
+
+    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
+    return flushed.compactMap { recipient, element in
+      message(for: recipient, element: element)
+    }
+  }
+
+  private func message(for recipient: Recipient, element: BufferElement) -> (any Element)? {
+    do {
+      guard let payload = try makePayload(recipient: recipient, element: element) else {
+        return nil
+      }
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      switch error {
+        case .badData:
+          return MessageError(type: .badSixBitEncoding, fieldNumber: 3)
+      }
+    }
+  }
+
+  private func makePayload(recipient _: Recipient, element: BufferElement) throws(TTDErrors)
+    -> Message.Payload?
   {
     guard let targets = try element.targets() else { throw TTDErrors.badData }
     return .trackedTargets(targets)
@@ -96,7 +103,7 @@ class TTDParser: MessageFormat {
     var encapsulatedData: String
     var fillBits: Int
 
-    func targets() throws -> [Radar.TrackedTarget]? {
+    func targets() throws(TTDErrors) -> [Radar.TrackedTarget]? {
       guard let data else { return nil }
       var reader = BitReader(data: data)
       var targets: [Radar.TrackedTarget] = []
@@ -104,14 +111,15 @@ class TTDParser: MessageFormat {
       // A sentence may mix protocol-zero (90-bit) and protocol-one (42-bit)
       // structures. Consume them sequentially until fewer than the smallest
       // structure remains (the tail is fill/padding bits).
-      while reader.remainingBits >= 42 {
+      readTargets: while reader.remainingBits >= 42 {
         do {
           targets.append(try .init(reader: &reader))
-        } catch Radar.TrackedTarget.DecodingError.unknownProtocolVersion {
-          throw TTDErrors.badData
-        } catch Radar.TrackedTarget.DecodingError.truncated {
-          // Remaining bits are padding, not a complete structure.
-          break
+        } catch {
+          switch error {
+            case .unknownProtocolVersion: throw .badData
+            // Remaining bits are padding, not a complete structure.
+            case .truncated: break readTargets
+          }
         }
       }
 

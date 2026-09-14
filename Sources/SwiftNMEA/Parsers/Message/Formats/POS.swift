@@ -1,11 +1,11 @@
 import Foundation
 
 class POSParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .positionDimensions
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let equipmentID = try sentence.fields.enumeration(at: 0, ofType: Talker.self)!
     let equipmentNum = try sentence.fields.int(at: 1)!
     let positionValid = try sentence.fields.bool(at: 2)!

@@ -1,11 +1,11 @@
 import Foundation
 
 class SELParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .dataSelection
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     var selections = [Selection.DataID: String?]()
     for index in stride(from: 0, to: sentence.fields.count, by: 2) {
       let dataID = try sentence.fields.enumeration(at: index, ofType: Selection.DataID.self)!

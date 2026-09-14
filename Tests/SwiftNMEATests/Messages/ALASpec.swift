@@ -14,7 +14,7 @@ struct `8.3.12 ALA` {
       talker: .commVHF,
       format: .detailAlarm,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "SG", nil, 3, 900, "H", "V", "example alarm"
       ]
     )
@@ -54,7 +54,7 @@ struct `8.3.12 ALA` {
       talker: .commVHF,
       format: .detailAlarm,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "EP", "PD", 1, 3, "H", "V", "overspeed"
       ]
     )
@@ -79,7 +79,7 @@ struct `8.3.12 ALA` {
       talker: .commVHF,
       format: .detailAlarm,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "EP", "PD", 1, 8, "H", "V", "removed code"
       ]
     )

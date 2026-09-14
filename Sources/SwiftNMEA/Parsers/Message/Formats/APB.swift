@@ -1,11 +1,11 @@
 import Foundation
 
 class APBParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .autopilotSentenceB
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let blinkFlag = try sentence.fields.bool(at: 0, trueValue: "V", falseValue: "A")!
     let cycleLockFlag = try sentence.fields.bool(at: 1, trueValue: "V", falseValue: "A")!
     let xte = try sentence.fields.measurement(

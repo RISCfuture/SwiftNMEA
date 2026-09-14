@@ -1,11 +1,11 @@
 import Foundation
 
 class GBSParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .GNSSFaultDetection
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.hmsDecimal(at: 0, searchDirection: .backward)!
     let latitudeError = try sentence.fields.measurement(
       at: 1,
@@ -59,7 +59,7 @@ class GBSParser: MessageFormat {
         biasEstimate: biasEstimate,
         biasEstimateStddev: standardDeviation
       )
-    } catch let error as GNSS.SatelliteID.Errors {
+    } catch {
       switch error {
         case .badSignalID:
           throw sentence.fields.fieldError(type: .unknownValue, index: 9)

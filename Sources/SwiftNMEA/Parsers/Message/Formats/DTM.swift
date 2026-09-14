@@ -1,11 +1,11 @@
 import Foundation
 
 class DTMParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .datumReference
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let localDatumStr = try sentence.fields.string(at: 0, optional: true)
     let localSubdivision = try sentence.fields.character(at: 1, optional: true)
     let latOffsetMag = try sentence.fields.measurement(
@@ -30,11 +30,12 @@ class DTMParser: MessageFormat {
     )
     let referenceDatumStr = try sentence.fields.string(at: 7)!
 
-    let localDatum = try localDatumStr.map { localDatumStr in
+    var localDatum: Datum?
+    if let localDatumStr {
       guard let datum = Datum(rawValue: localDatumStr, subdivision: localSubdivision) else {
         throw sentence.fields.fieldError(type: .unknownValue, index: 0)
       }
-      return datum
+      localDatum = datum
     }
     guard let referenceDatum = Datum(rawValue: referenceDatumStr) else {
       throw sentence.fields.fieldError(type: .unknownValue, index: 7)
@@ -60,18 +61,20 @@ class DTMParser: MessageFormat {
       }
     }
 
-    let latOffset = try latOffsetMag.map { latOffsetMag in
+    var latOffset: Measurement<UnitAngle>?
+    if let latOffsetMag {
       switch latOffsetHemisphere {
-        case "N": latOffsetMag
-        case "S": latOffsetMag * -1
+        case "N": latOffset = latOffsetMag
+        case "S": latOffset = latOffsetMag * -1
         default: throw sentence.fields.fieldError(type: .badCharacterValue, index: 3)
       }
     }
 
-    let lonOffset = try lonOffsetMag.map { lonOffsetMag in
+    var lonOffset: Measurement<UnitAngle>?
+    if let lonOffsetMag {
       switch lonOffsetHemisphere {
-        case "E": lonOffsetMag
-        case "W": lonOffsetMag * -1
+        case "E": lonOffset = lonOffsetMag
+        case "W": lonOffset = lonOffsetMag * -1
         default: throw sentence.fields.fieldError(type: .badCharacterValue, index: 5)
       }
     }

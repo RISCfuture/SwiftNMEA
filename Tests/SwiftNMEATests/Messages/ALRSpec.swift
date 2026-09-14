@@ -14,7 +14,7 @@ struct `8.3.15 ALR` {
       talker: .commVHF,
       format: .alarmState,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         123, "A", "V", "test alarm"
       ]
     )

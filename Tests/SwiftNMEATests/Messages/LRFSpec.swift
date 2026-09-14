@@ -37,7 +37,7 @@ struct `8.3.62 LRF and friends` {
       format: .AISLongRangeReply2,
       fields: [
         1, 1_234_567_890,
-        dateFormatter.string(from: fixTime), hmsFractionFormatter.string(from: fixTime),
+        dateFormat.format(fixTime), hmsFractionFormat.format(fixTime),
         "3530.00", "N", "12115.00", "W",
         "225.5", "T",
         "12.3", "N"
@@ -50,7 +50,7 @@ struct `8.3.62 LRF and friends` {
       fields: [
         1, 1_234_567_890,
         "OAKLAND",
-        dateFormatter.string(from: ETA), hmsFractionFormatter.string(from: ETA),
+        dateFormat.format(ETA), hmsFractionFormat.format(ETA),
         1.2, 31, 34.5, 12.3, 81, 123
       ]
     )
@@ -152,7 +152,7 @@ struct `8.3.62 LRF and friends` {
       format: .AISLongRangeReply2,
       fields: [
         1, 1_234_567_890,
-        dateFormatter.string(from: fixTime), hmsFractionFormatter.string(from: fixTime),
+        dateFormat.format(fixTime), hmsFractionFormat.format(fixTime),
         "3530.00", "N", "12115.00", "W",
         "225.5", "T",
         "12.3", "N"
@@ -165,7 +165,7 @@ struct `8.3.62 LRF and friends` {
       format: .AISLongRangeReply2,
       fields: [
         1, 1_234_567_890,
-        dateFormatter.string(from: fixTime), hmsFractionFormatter.string(from: fixTime),
+        dateFormat.format(fixTime), hmsFractionFormat.format(fixTime),
         "3530.00", "N", "12115.00", "W",
         "225.5", "T",
         "12.3", "N"
@@ -214,7 +214,7 @@ struct `8.3.62 LRF and friends` {
       fields: [
         1, 1_234_567_890,
         "OAKLAND",
-        dateFormatter.string(from: ETA), hmsFractionFormatter.string(from: ETA),
+        dateFormat.format(ETA), hmsFractionFormat.format(ETA),
         1.2, 31, 34.5, 12.3, 81, 123
       ]
     )
@@ -259,7 +259,7 @@ struct `8.3.62 LRF and friends` {
       format: .AISLongRangeReply2,
       fields: [
         1, 1_234_567_890,
-        dateFormatter.string(from: fixTime), hmsFractionFormatter.string(from: fixTime),
+        dateFormat.format(fixTime), hmsFractionFormat.format(fixTime),
         "3530.00", "N", "12115.00", "W",
         "225.5", "T",
         "12.3", "N"

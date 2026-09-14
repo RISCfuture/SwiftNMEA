@@ -1,7 +1,10 @@
 protocol BufferElement {
+  /// The error thrown when another sentence's element cannot be merged in.
+  associatedtype AppendError: Error = BufferErrors
+
   var isComplete: Bool { get }
 
-  mutating func append(_ other: Self) throws
+  mutating func append(_ other: Self) throws(AppendError)
 }
 
 protocol BufferRecipient: Hashable, Equatable {
@@ -15,14 +18,17 @@ protocol Buffer {
 
   var buffer: [Recipient: Element] { get set }
 
-  mutating func add(element: Element, for recipient: Recipient) throws -> Element?
+  mutating func add(element: Element, for recipient: Recipient) throws(Element.AppendError)
+    -> Element?
   mutating func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) -> [Recipient:
     Element]
 }
 
 extension Buffer {
   @discardableResult
-  mutating func add(element: Element, for recipient: Recipient) throws -> Element? {
+  mutating func add(element: Element, for recipient: Recipient) throws(Element.AppendError)
+    -> Element?
+  {
     if buffer.keys.contains(recipient) {
       try buffer[recipient]!.append(element)
     } else {

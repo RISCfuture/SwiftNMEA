@@ -6,44 +6,34 @@ class TXTParser: MessageFormat {
 
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .text
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     if sentence.fields.count == 1 { return try parseSTA8089FG(sentence: sentence) }
     return try parseSpec(sentence: sentence)
   }
 
-  private func parseSpec(sentence: ParametricSentence) throws -> Message.Payload? {
+  private func parseSpec(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let identifier = try sentence.fields.int(at: 2, optional: true)
     let message = try sentence.fields.string(at: 3)!
 
-    do {
-      let recipient = identifier.map { identifier in
-        Recipient(sentence: sentence, identifier: identifier)
-      }
-      let element = BufferElement(
-        lastSentence: sentenceNumber,
-        totalSentences: totalSentences,
-        message: message
-      )
-      let finished = try buffer.add(
-        element: element,
-        optionallyFor: recipient
-      )
+    let recipient = identifier.map { identifier in
+      Recipient(sentence: sentence, identifier: identifier)
+    }
+    let element = BufferElement(
+      lastSentence: sentenceNumber,
+      totalSentences: totalSentences,
+      message: message
+    )
 
-      return try zipOptionals(finished?.0, finished?.1)
-        .map { recipient, element in
-          try makePayload(recipient: recipient, element: element)
-        }
-    } catch let error as TXTErrors {
-      switch error {
-        case .badMessage: throw sentence.fields.fieldError(type: .badEncoding, index: 3)
-      }
-    } catch let error as BufferErrors {
+    let finished: (Recipient, BufferElement)?
+    do {
+      finished = try buffer.add(element: element, optionallyFor: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           fatalError("Unexpected missingRecipient error")
@@ -51,9 +41,18 @@ class TXTParser: MessageFormat {
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
+    guard let finished else { return nil }
+
+    do {
+      return try makePayload(recipient: finished.0, element: finished.1)
+    } catch {
+      switch error {
+        case .badMessage: throw sentence.fields.fieldError(type: .badEncoding, index: 3)
+      }
+    }
   }
 
-  private func parseSTA8089FG(sentence: ParametricSentence) throws -> Message.Payload? {
+  private func parseSTA8089FG(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let message = try sentence.fields.string(at: 0)!
 
     guard let decodedMessage = Self.coder.decode(string: message) else {
@@ -63,7 +62,9 @@ class TXTParser: MessageFormat {
     return .text(decodedMessage, identifier: nil)
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
     if !includeIncomplete {
       return []
     }  // complete messages are flushed upon receipt of the last message
@@ -74,20 +75,26 @@ class TXTParser: MessageFormat {
       includeIncomplete: includeIncomplete
     )
 
-    return try flushed.compactMap { recipient, element in
-      do {
-        let payload = try makePayload(recipient: recipient, element: element)
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as TXTErrors {
-        switch error {
-          case .badMessage:
-            return MessageError(type: .badEncoding, fieldNumber: 3)
-        }
+    return flushed.map { recipient, element in
+      message(for: recipient, element: element)
+    }
+  }
+
+  private func message(for recipient: Recipient, element: BufferElement) -> any Element {
+    do {
+      let payload = try makePayload(recipient: recipient, element: element)
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      switch error {
+        case .badMessage:
+          return MessageError(type: .badEncoding, fieldNumber: 3)
       }
     }
   }
 
-  private func makePayload(recipient: Recipient, element: BufferElement) throws -> Message.Payload {
+  private func makePayload(recipient: Recipient, element: BufferElement) throws(TXTErrors)
+    -> Message.Payload
+  {
     guard let text = element.text else { throw TXTErrors.badMessage }
     return .text(text, identifier: recipient.identifier)
   }

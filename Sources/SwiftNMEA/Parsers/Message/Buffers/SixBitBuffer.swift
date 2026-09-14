@@ -25,9 +25,9 @@ extension SixBitElement {
 struct SixBitBuffer<Recipient: BufferRecipient, Element: SixBitElement> {
   var buffer = SentenceCountingBuffer<Recipient, Element>()
 
-  mutating func add(element: Element, optionallyFor recipient: Recipient?) throws -> (
-    Recipient, Element
-  )? {
+  mutating func add(element: Element, optionallyFor recipient: Recipient?) throws(BufferErrors)
+    -> (Recipient, Element)?
+  {
     try buffer.add(element: element, optionallyFor: recipient)
   }
 

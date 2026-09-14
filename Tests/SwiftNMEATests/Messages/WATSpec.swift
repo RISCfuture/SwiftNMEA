@@ -14,7 +14,7 @@ struct `8.3.123 WAT` {
       talker: .waterLevelDetection,
       format: .waterLevel,
       fields: [
-        "E", hmsFractionFormatter.string(from: time),
+        "E", hmsFractionFormat.format(time),
         "WL", "CA", "01", 3,
         "H", "O", "Detector CA01"
       ]

@@ -4,11 +4,11 @@ import NMEACommon
 class RTEParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .route
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let mode = try sentence.fields.enumeration(
@@ -33,7 +33,7 @@ class RTEParser: MessageFormat {
       return zipOptionals(finished?.0, finished?.1).map { recipient, element in
         makePayload(recipient: recipient, element: element)
       }
-    } catch let error as BufferErrors {
+    } catch {
       switch error {
         case .missingRecipient:
           // the first sentence of a route must carry the route mode and identifier

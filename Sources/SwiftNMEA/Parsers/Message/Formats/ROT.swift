@@ -2,11 +2,11 @@ import Foundation
 import NMEAUnits
 
 class ROTParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .rateOfTurn
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let rate = try sentence.fields.measurement(
       at: 0,
       valueType: .float,

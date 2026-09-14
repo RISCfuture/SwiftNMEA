@@ -4,34 +4,36 @@ import NMEACommon
 class LRIParser: MessageFormat {
   private var buffer = LRIBuffer()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric
       && (sentence.format == .AISLongRangeInterrogation || sentence.format == .AISLongRangeFunction)
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     guard let element = LRIElement(sentence: sentence),
       let recipient = try LRIRecipient(sentence: sentence)
     else {
       return nil
     }
 
+    let finished: LRIElement?
     do {
-      return try buffer.add(element: element, for: recipient).map { element in
-        return try .AISLongRangeInterrogation(
-          replyLogic: element.replyLogic!,
-          requestorMMSI: recipient.MMSI,
-          requestorName: element.requestorName!,
-          destination: element.destination!,
-          functions: element.functions!
-        )
-      }
-    } catch let error as LRIErrors {
+      finished = try buffer.add(element: element, for: recipient)
+    } catch {
       switch error {
         case .formatAlreadySeen:
           throw sentence.fields.lineError(type: .unexpectedFormat)
       }
     }
+    guard let finished else { return nil }
+
+    return try .AISLongRangeInterrogation(
+      replyLogic: finished.replyLogic!,
+      requestorMMSI: recipient.MMSI,
+      requestorName: finished.requestorName!,
+      destination: finished.destination!,
+      functions: finished.functions!
+    )
   }
 
   private struct LRIRecipient: BufferRecipient {
@@ -41,7 +43,7 @@ class LRIParser: MessageFormat {
     var MMSI: Int
     var sequence: Int
 
-    init?(sentence: ParametricSentence) throws {
+    init?(sentence: ParametricSentence) throws(NMEAError) {
       talker = sentence.talker
 
       switch sentence.format {
@@ -64,7 +66,7 @@ class LRIParser: MessageFormat {
     var isComplete: Bool { Set(sentences.keys) == Self.formats }
 
     var replyLogic: AISLongRange.ReplyLogic? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeInterrogation]?.fields.enumeration(
           at: 1,
           ofType: AISLongRange.ReplyLogic.self
@@ -73,13 +75,13 @@ class LRIParser: MessageFormat {
     }
 
     var requestorName: String? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeFunction]?.fields.string(at: 2)
       }
     }
 
     var destination: AISLongRange.Destination? {
-      get throws {
+      get throws(NMEAError) {
         guard let sentence = sentences[.AISLongRangeInterrogation] else { return nil }
         if let MMSI = try sentence.fields.int(at: 3, optional: true) {
           return .MMSI(MMSI)
@@ -102,7 +104,7 @@ class LRIParser: MessageFormat {
     }
 
     var functions: Set<AISLongRange.Function>? {
-      get throws {
+      get throws(NMEAError) {
         guard let sentence = sentences[.AISLongRangeFunction] else { return nil }
         return try .init(LRFunctions(fields: sentence.fields))
       }
@@ -115,9 +117,10 @@ class LRIParser: MessageFormat {
       sentences[sentence.format] = sentence
     }
 
-    mutating func append(_ other: Self) throws {
-      try sentences.merge(other.sentences) { _, _ in
-        throw LRIErrors.formatAlreadySeen
+    mutating func append(_ other: Self) throws(LRIErrors) {
+      for (format, sentence) in other.sentences {
+        guard sentences[format] == nil else { throw .formatAlreadySeen }
+        sentences[format] = sentence
       }
     }
   }

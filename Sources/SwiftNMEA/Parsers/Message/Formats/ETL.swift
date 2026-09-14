@@ -1,11 +1,11 @@
 import Foundation
 
 class ETLParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .engineTelegraph
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.hmsDecimal(at: 0, searchDirection: .backward, optional: true)
     let type = try sentence.fields.enumeration(at: 1, ofType: EngineTelegraph.MessageType.self)!
     let position = try sentence.fields.enumeration(at: 2, ofType: EngineTelegraph.Position.self)!

@@ -30,12 +30,16 @@ struct `8.3.109 TUT` {
     #expect(translationCode == "PXYZ")
   }
 
-  @Test
-  func `parses the Unicode example from the spec`()
-    async throws
-  {
+  @Test(arguments: [
+    ("$INTUT,SD,01,01,1,U,6D45702C5371967A*5D\r\n", "浅瀬危険", "U"),
+    ("$INTUT,SD,01,01,1,A,5368616C6C6F7720576174657221*4B\r\n", "Shallow Water!", "A")
+  ])
+  func `parses an example from the spec`(
+    _ sentence: String,
+    _ expectedText: String,
+    _ expectedTranslationCode: String
+  ) async throws {
     let parser = SwiftNMEA()
-    let sentence = "$INTUT,SD,01,01,1,U,6D45702C5371967A*5D\r\n"
     let data = sentence.data(using: .ascii)!
     let messages = try await parser.parse(data: data)
 
@@ -48,30 +52,8 @@ struct `8.3.109 TUT` {
     }
 
     #expect(source == .depthSounder)
-    #expect(text == "浅瀬危険")
-    #expect(translationCode == "U")
-  }
-
-  @Test
-  func `parses the ASCII example from the spec`()
-    async throws
-  {
-    let parser = SwiftNMEA()
-    let sentence = "$INTUT,SD,01,01,1,A,5368616C6C6F7720576174657221*4B\r\n"
-    let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
-
-    #expect(messages.count == 2)
-    let payload = try #require((messages[1] as? Message)?.payload)
-    guard case let .multiLanguageText(source, text, _, translationCode) = payload
-    else {
-      Issue.record("expected .multiLanguageText, got \(payload)")
-      return
-    }
-
-    #expect(source == .depthSounder)
-    #expect(text == "Shallow Water!")
-    #expect(translationCode == "A")
+    #expect(text == expectedText)
+    #expect(translationCode == expectedTranslationCode)
   }
 
   @Test

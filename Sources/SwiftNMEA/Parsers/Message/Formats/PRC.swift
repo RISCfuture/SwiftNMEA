@@ -2,11 +2,11 @@ import Foundation
 import NMEAUnits
 
 class PRCParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .propulsionRemoteControl
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let leverPosition = try sentence.fields.float(at: 0)!
     let leverStatus = try sentence.fields.bool(at: 1)!
     let RPMMode = try sentence.fields.character(at: 3)!

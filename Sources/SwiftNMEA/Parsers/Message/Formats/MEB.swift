@@ -4,11 +4,11 @@ import NMEACommon
 class MEBParser: MessageFormat {
   private var buffer = SixBitBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .encapsulated && sentence.format == .broadcastCommandMessage
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let sequentialID = try sentence.fields.int(at: 2)!
@@ -53,32 +53,25 @@ class MEBParser: MessageFormat {
       )
     }
 
-    do {
-      let element = BufferElement(
-        lastSentence: sentenceNumber,
-        totalSentences: totalSentences,
-        AISChannel: channel,
-        MMSI: MMSI,
-        messageID: messageID,
-        messageIndex: messageIndex,
-        broadcastBehavior: behavior,
-        destinationMMSI: destMMSI,
-        binaryStructure: dataFlag,
-        sentenceType: sentenceType,
-        encapsulatedData: data,
-        fillBits: fillBits
-      )
-      let finished = try buffer.add(element: element, optionallyFor: recipient)
+    let element = BufferElement(
+      lastSentence: sentenceNumber,
+      totalSentences: totalSentences,
+      AISChannel: channel,
+      MMSI: MMSI,
+      messageID: messageID,
+      messageIndex: messageIndex,
+      broadcastBehavior: behavior,
+      destinationMMSI: destMMSI,
+      binaryStructure: dataFlag,
+      sentenceType: sentenceType,
+      encapsulatedData: data,
+      fillBits: fillBits
+    )
 
-      return try zipOptionals(finished?.0, finished?.1).flatMap { recipient, element in
-        try makePayload(recipient: recipient, element: element, sentence: sentence.rawValue)
-      }
-    } catch let error as MEBErrors {
-      switch error {
-        case .badData:
-          throw sentence.fields.fieldError(type: .badSixBitEncoding, index: 11)
-      }
-    } catch let error as BufferErrors {
+    let finished: (Recipient, BufferElement)?
+    do {
+      finished = try buffer.add(element: element, optionallyFor: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           if MMSI == nil {
@@ -89,32 +82,40 @@ class MEBParser: MessageFormat {
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
+    guard let finished else { return nil }
+
+    return try makePayload(
+      recipient: finished.0,
+      element: finished.1,
+      sentence: sentence.rawValue
+    )
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
     // complete messages are flushed upon receipt of the last message
     if !includeIncomplete { return [] }
 
     let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
-    return try flushed.compactMap { recipient, element in
-      do {
-        guard let payload = try makePayload(recipient: recipient, element: element) else {
-          return nil
-        }
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as MEBErrors {
-        switch error {
-          case .badData:
-            return MessageError(type: .badSixBitEncoding, fieldNumber: 11)
-        }
-      } catch let error as NMEAError {
-        return MessageError(from: error)
+    return flushed.compactMap { recipient, element in
+      message(for: recipient, element: element)
+    }
+  }
+
+  private func message(for recipient: Recipient, element: BufferElement) -> (any Element)? {
+    do {
+      guard let payload = try makePayload(recipient: recipient, element: element) else {
+        return nil
       }
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      return MessageError(from: error)
     }
   }
 
   private func makePayload(recipient: Recipient, element: BufferElement, sentence: String? = nil)
-    throws -> Message.Payload?
+    throws(NMEAError) -> Message.Payload?
   {
     guard let MMSI = element.MMSI else {
       throw NMEAError(type: .missingRequiredValue, line: sentence, fieldNumber: 4)
@@ -134,7 +135,9 @@ class MEBParser: MessageFormat {
     guard let sentenceType = element.sentenceType else {
       throw NMEAError(type: .missingRequiredValue, line: sentence, fieldNumber: 10)
     }
-    guard let data = element.data else { throw MEBErrors.badData }
+    guard let data = element.data else {
+      throw NMEAError(type: .badSixBitEncoding, line: sentence, fieldNumber: 11)
+    }
 
     return .broadcastMessage(
       sequence: recipient.sequentialID,

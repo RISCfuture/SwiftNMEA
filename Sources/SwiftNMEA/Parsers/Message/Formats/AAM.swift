@@ -1,11 +1,11 @@
 import Foundation
 
 class AAMParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .waypointArrivalAlarm
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let arrivalCircleEntered = try sentence.fields.bool(at: 0)!
     let perpendicularPassed = try sentence.fields.bool(at: 1)!
     let radius = try sentence.fields.measurement(

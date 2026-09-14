@@ -25,8 +25,8 @@ actor ProprietaryParser {
     }
   }()
 
-  func parse(sentence: String) throws -> ProprietaryResult? {
-    guard let match = try rx.wholeMatch(in: sentence) else { return nil }
+  func parse(sentence: String) -> ProprietaryResult? {
+    guard let match = sentence.wholeMatch(of: rx) else { return nil }
 
     return .init(
       manufacturer: String(match.output.1),

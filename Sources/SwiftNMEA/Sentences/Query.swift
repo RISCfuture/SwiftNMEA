@@ -32,8 +32,8 @@ public struct Query: Sentence, Element, Sendable, Codable, Equatable {
     checksum = fields.checksum
   }
 
-  public init?(sentence: String, ignoreChecksum: Bool = false) async throws {
-    guard let result = try await Self.parser.parse(sentence: sentence) else { return nil }
+  public init?(sentence: String, ignoreChecksum: Bool = false) async throws(NMEAError) {
+    guard let result = await Self.parser.parse(sentence: sentence) else { return nil }
     fields = .init(data: result.fields)
     checksum = result.checksum
 

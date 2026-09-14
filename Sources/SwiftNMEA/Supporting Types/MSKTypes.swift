@@ -15,8 +15,8 @@ public struct MSK {
     /// Frequency or bit rate is manually determined.
     case manual(_ value: Measurement<Unit>)
 
-    init(isAuto: Bool, value: () throws -> Measurement<Unit>) throws {
-      if isAuto { self = .auto(try value()) } else { self = .manual(try value()) }
+    init(isAuto: Bool, value: Measurement<Unit>) {
+      self = isAuto ? .auto(value) : .manual(value)
     }
   }
 }

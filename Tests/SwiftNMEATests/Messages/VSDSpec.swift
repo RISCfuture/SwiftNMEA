@@ -16,8 +16,8 @@ struct `8.3.121 VSD` {
       format: .AISVoyageData,
       fields: [
         51, 25.5, 8191, "KOAK",
-        hmsFractionFormatter.string(from: time), dayFormatter.string(from: time),
-        monthFormatter.string(from: time),
+        hmsFractionFormat.format(time), dayFormat.format(time),
+        monthFormat.format(time),
         0, 0
       ]
     )
@@ -108,8 +108,8 @@ struct `8.3.121 VSD` {
       format: .AISVoyageData,
       fields: [
         51, 25.5, 8191, "KOAK",
-        hmsFractionFormatter.string(from: time), dayFormatter.string(from: time),
-        monthFormatter.string(from: time),
+        hmsFractionFormat.format(time), dayFormat.format(time),
+        monthFormat.format(time),
         14, 0
       ]
     )

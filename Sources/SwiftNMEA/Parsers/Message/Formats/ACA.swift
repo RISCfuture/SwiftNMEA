@@ -1,11 +1,11 @@
 import Foundation
 
 class ACAParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .AISChannelAssignment
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let sequenceNumber = try sentence.fields.int(at: 0, optional: true)
     let northeastCorner = try sentence.fields.position(
       latitudeIndex: (1, 2),

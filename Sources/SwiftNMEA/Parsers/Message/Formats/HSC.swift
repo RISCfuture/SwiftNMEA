@@ -1,11 +1,11 @@
 import Foundation
 
 class HSCParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .headingSteeringCommand
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let headingTrue = try sentence.fields.bearing(at: 0, valueType: .float, referenceIndex: 1)!
     let headingMag = try sentence.fields.bearing(at: 2, valueType: .float, referenceIndex: 3)!
     let status = try sentence.fields.enumeration(at: 4, ofType: SentenceType.self)!

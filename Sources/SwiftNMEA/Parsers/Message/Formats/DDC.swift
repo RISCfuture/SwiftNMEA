@@ -1,11 +1,11 @@
 import Foundation
 
 class DDCParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .displayDimmingControl
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let preset = try sentence.fields.enumeration(at: 0, ofType: DimmingPreset.self, optional: true)
     let brightness = try sentence.fields.int(at: 1, optional: true)
     let palette = try sentence.fields.enumeration(at: 2, ofType: DimmingPreset.self, optional: true)

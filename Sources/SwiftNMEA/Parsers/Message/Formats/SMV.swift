@@ -6,11 +6,11 @@ class SMVParser: MessageFormat {
 
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .safetyNETVesselDistress
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1, optional: true)
     let identifier = try sentence.fields.int(at: 2, optional: true)
@@ -64,13 +64,10 @@ class SMVParser: MessageFormat {
       status: status
     )
 
+    let finishedElement: BufferElement?
     do {
-      return try buffer.add(element: element, for: recipient).map { finishedElement in
-        try makePayload(recipient: recipient, element: finishedElement)
-      }
-    } catch let error as SMVErrors {
-      throw error.lineError(in: sentence)
-    } catch let error as BufferErrors {
+      finishedElement = try buffer.add(element: element, for: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           fatalError("Unexpected missingRecipient error")
@@ -78,9 +75,18 @@ class SMVParser: MessageFormat {
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
+    guard let finishedElement else { return nil }
+
+    do {
+      return try makePayload(recipient: recipient, element: finishedElement)
+    } catch {
+      throw error.lineError(in: sentence)
+    }
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
     // complete messages are flushed upon receipt of the last sentence
     if !includeIncomplete { return [] }
 
@@ -90,21 +96,27 @@ class SMVParser: MessageFormat {
       includeIncomplete: includeIncomplete
     )
 
-    return try flushed.map { recipient, element in
-      do {
-        let payload = try makePayload(recipient: recipient, element: element)
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as SMVErrors {
-        return error.messageError
-      }
+    return flushed.map { recipient, element in
+      message(for: recipient, element: element)
     }
   }
 
-  private func positionTime(from sentence: ParametricSentence) throws -> Date? {
+  private func message(for recipient: Recipient, element: BufferElement) -> any Element {
+    do {
+      let payload = try makePayload(recipient: recipient, element: element)
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      return error.messageError
+    }
+  }
+
+  private func positionTime(from sentence: ParametricSentence) throws(NMEAError) -> Date? {
     return try sentence.fields.datetime(ymdhmIndex: (10, 11, 12, 13, 14), optional: true)
   }
 
-  private func makePayload(recipient: Recipient, element: BufferElement) throws -> Message.Payload {
+  private func makePayload(recipient: Recipient, element: BufferElement) throws(SMVErrors)
+    -> Message.Payload
+  {
     let name: String?
     if let rawName = element.name {
       guard let decoded = Self.coder.decode(string: rawName) else {

@@ -4,11 +4,11 @@ class EPMParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
   private let decoder = EscapedStringCoder()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .equipmentPropertyLong
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let lastSentence = try sentence.fields.int(at: 1)!
     let messageID = try sentence.fields.int(at: 2)!
@@ -33,16 +33,10 @@ class EPMParser: MessageFormat {
       value: value
     )
 
+    let finishedElement: BufferElement?
     do {
-      return try buffer.add(element: element, for: recipient).map { finishedElement in
-        try makePayload(element: finishedElement)
-      }
-    } catch let error as EPMErrors {
-      switch error {
-        case .badValue(let index):
-          throw sentence.fields.fieldError(type: .badValue, index: index)
-      }
-    } catch let error as BufferErrors {
+      finishedElement = try buffer.add(element: element, for: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           throw sentence.fields.fieldError(type: .missingRequiredValue, index: 2)
@@ -50,27 +44,43 @@ class EPMParser: MessageFormat {
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
-  }
+    guard let finishedElement else { return nil }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
-    // complete messages are flushed upon receipt of the last sentence
-    if !includeIncomplete { return [] }
-
-    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
-    return try flushed.map { recipient, element in
-      do {
-        let payload = try makePayload(element: element)
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as EPMErrors {
-        switch error {
-          case .badValue(let index):
-            return MessageError(type: .badValue, fieldNumber: index)
-        }
+    do {
+      return try makePayload(element: finishedElement)
+    } catch {
+      switch error {
+        case .badValue(let index):
+          throw sentence.fields.fieldError(type: .badValue, index: index)
       }
     }
   }
 
-  private func makePayload(element: BufferElement) throws -> Message.Payload {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
+    // complete messages are flushed upon receipt of the last sentence
+    if !includeIncomplete { return [] }
+
+    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
+    return flushed.map { recipient, element in
+      message(for: recipient, element: element)
+    }
+  }
+
+  private func message(for recipient: Recipient, element: BufferElement) -> any Element {
+    do {
+      let payload = try makePayload(element: element)
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      switch error {
+        case .badValue(let index):
+          return MessageError(type: .badValue, fieldNumber: index)
+      }
+    }
+  }
+
+  private func makePayload(element: BufferElement) throws(EPMErrors) -> Message.Payload {
     guard let value = decoder.decode(string: element.value) else {
       throw EPMErrors.badValue(index: 7)
     }

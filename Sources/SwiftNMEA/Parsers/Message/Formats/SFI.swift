@@ -3,14 +3,15 @@ import Foundation
 class SFIParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .scanningFrequencies
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
-    let frequencies = try (0..<6).compactMap { index in
+    var frequencies = [Comm.FrequencyMode]()
+    for index in 0..<6 {
       let freqIndex = index * 2 + 2
       let modeIndex = index * 2 + 3
       let freq = try sentence.fields.enumeration(
@@ -24,7 +25,7 @@ class SFIParser: MessageFormat {
         optional: true
       )
 
-      return freq.map { Comm.FrequencyMode(frequency: $0, mode: mode) }
+      if let freq { frequencies.append(Comm.FrequencyMode(frequency: freq, mode: mode)) }
     }
 
     let recipient = Recipient(sentence: sentence)
@@ -38,7 +39,7 @@ class SFIParser: MessageFormat {
       return try buffer.add(element: element, for: recipient).map { finishedElement in
         makePayload(element: finishedElement)
       }
-    } catch let error as BufferErrors {
+    } catch {
       switch error {
         case .missingRecipient:
           fatalError("Unexpected missingRecipient error")

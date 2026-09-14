@@ -25,8 +25,8 @@ actor QueryParser {
     }
   }()
 
-  func parse(sentence: String) throws -> QueryResult? {
-    guard let match = try rx.wholeMatch(in: sentence) else { return nil }
+  func parse(sentence: String) -> QueryResult? {
+    guard let match = sentence.wholeMatch(of: rx) else { return nil }
 
     return .init(fields: match.output.1, checksum: match.output.2)
   }

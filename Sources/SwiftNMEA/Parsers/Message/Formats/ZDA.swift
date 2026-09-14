@@ -2,11 +2,11 @@ import Collections
 import Foundation
 
 class ZDAParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .dateTime
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let tzHours = try sentence.fields.int(at: 4)!
     let tzMinutes = try sentence.fields.int(at: 5)!
     let tzSeconds = (abs(tzHours) * 60 * 60 + tzMinutes * 60) * tzHours.signum()

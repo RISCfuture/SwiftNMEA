@@ -6,11 +6,11 @@ class ALCParser: MessageFormat {
 
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .cyclicAlertList
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let sequentialID = try sentence.fields.int(at: 2)!
@@ -20,8 +20,9 @@ class ALCParser: MessageFormat {
     }
 
     // Alert entries beyond the declared number are ignored (comment 3).
-    let entries = try (0..<numberOfEntries).map { entry in
-      try parseEntry(sentence: sentence, entry: entry)
+    var entries = [Alert.ListEntry]()
+    for entry in 0..<numberOfEntries {
+      entries.append(try parseEntry(sentence: sentence, entry: entry))
     }
 
     do {
@@ -34,7 +35,7 @@ class ALCParser: MessageFormat {
       return try buffer.add(element: element, for: recipient).map { finishedElement in
         makePayload(recipient: recipient, element: finishedElement)
       }
-    } catch let error as BufferErrors {
+    } catch {
       switch error {
         case .missingRecipient:
           fatalError("Unexpected missingRecipient error")
@@ -55,7 +56,9 @@ class ALCParser: MessageFormat {
     }
   }
 
-  private func parseEntry(sentence: ParametricSentence, entry: Int) throws -> Alert.ListEntry {
+  private func parseEntry(sentence: ParametricSentence, entry: Int) throws(NMEAError)
+    -> Alert.ListEntry
+  {
     let base = Self.entryStartIndex + entry * Self.entryFieldCount
     let mnemonicIndex = base
     let identifierIndex = base + 1

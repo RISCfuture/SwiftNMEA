@@ -1,11 +1,11 @@
 import Foundation
 
 class ALAParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .detailAlarm
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.hmsDecimal(at: 0, searchDirection: .backward, optional: true)
     let system = try sentence.fields.string(at: 1)!
     let subsystem = try sentence.fields.string(at: 2, optional: true)

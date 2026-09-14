@@ -1,11 +1,11 @@
 import Foundation
 
 class SSDParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .AISShipStaticData
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let callsignStr = try sentence.fields.string(at: 0, optional: true)
     let nameStr = try sentence.fields.string(at: 1, optional: true)
     let pointAValue = try sentence.fields.measurement(

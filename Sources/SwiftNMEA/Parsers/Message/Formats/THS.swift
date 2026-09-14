@@ -1,11 +1,11 @@
 import Foundation
 
 class THSParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .trueHeadingMode
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let heading = try sentence.fields.bearing(at: 0, valueType: .float, reference: .true)!
     let mode = try sentence.fields.enumeration(at: 1, ofType: Heading.Mode.self)!
 

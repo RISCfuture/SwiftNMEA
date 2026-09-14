@@ -1,11 +1,11 @@
 import Foundation
 
 class AKDParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .detailAlarmAcknowledgement
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.hmsDecimal(at: 0, searchDirection: .backward, optional: true)
     let sourceSystem = try sentence.fields.string(at: 1)!
     let sourceSubsystem = try sentence.fields.string(at: 2, optional: true)

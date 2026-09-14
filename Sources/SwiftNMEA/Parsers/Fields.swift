@@ -55,7 +55,7 @@ public struct Fields: Sendable, Codable, Equatable {
     return .init(type: type, line: rawValue, fieldNumber: index, value: self[index])
   }
 
-  func character(at valueIndex: Int, optional: Bool = false) throws -> Character? {
+  func character(at valueIndex: Int, optional: Bool = false) throws(NMEAError) -> Character? {
     guard let value = self[valueIndex] else {
       if optional { return nil }
       throw lineError(type: .missingRequiredValue)
@@ -66,7 +66,7 @@ public struct Fields: Sendable, Codable, Equatable {
     return value.first!
   }
 
-  func string(at valueIndex: Int, optional: Bool = false) throws -> String? {
+  func string(at valueIndex: Int, optional: Bool = false) throws(NMEAError) -> String? {
     guard let value = self[valueIndex] else {
       if optional { return nil }
       throw lineError(type: .missingRequiredValue)
@@ -74,7 +74,7 @@ public struct Fields: Sendable, Codable, Equatable {
     return value
   }
 
-  func int(at valueIndex: Int, optional: Bool = false) throws -> Int? {
+  func int(at valueIndex: Int, optional: Bool = false) throws(NMEAError) -> Int? {
     guard let value = self[valueIndex] else {
       if optional { return nil }
       throw lineError(type: .missingRequiredValue)
@@ -85,7 +85,7 @@ public struct Fields: Sendable, Codable, Equatable {
     return intValue
   }
 
-  func float(at valueIndex: Int, optional: Bool = false) throws -> Double? {
+  func float(at valueIndex: Int, optional: Bool = false) throws(NMEAError) -> Double? {
     guard let value = self[valueIndex] else {
       if optional { return nil }
       throw lineError(type: .missingRequiredValue)
@@ -101,7 +101,7 @@ public struct Fields: Sendable, Codable, Equatable {
     trueValue: String = "A",
     falseValue: String = "V",
     optional: Bool = false
-  ) throws -> Bool? {
+  ) throws(NMEAError) -> Bool? {
     guard let value = self[valueIndex] else {
       if optional { return nil }
       throw lineError(type: .missingRequiredValue)
@@ -111,7 +111,7 @@ public struct Fields: Sendable, Codable, Equatable {
     throw fieldError(type: .badValue, index: valueIndex)
   }
 
-  func hex(at valueIndex: Int, width: Int?, optional: Bool = false) throws -> UInt? {
+  func hex(at valueIndex: Int, width: Int?, optional: Bool = false) throws(NMEAError) -> UInt? {
     guard let value = self[valueIndex] else {
       if optional { return nil }
       throw lineError(type: .missingRequiredValue)
@@ -129,7 +129,7 @@ public struct Fields: Sendable, Codable, Equatable {
     at valueIndex: Int,
     ofType _: T.Type,
     optional: Bool = false
-  ) throws -> T? where T.RawValue == String {
+  ) throws(NMEAError) -> T? where T.RawValue == String {
     guard let value = self[valueIndex] else {
       if optional { return nil }
       throw lineError(type: .missingRequiredValue)
@@ -144,7 +144,7 @@ public struct Fields: Sendable, Codable, Equatable {
     at valueIndex: Int,
     ofType _: T.Type,
     optional: Bool = false
-  ) throws -> T? where T.RawValue == Character {
+  ) throws(NMEAError) -> T? where T.RawValue == Character {
     guard let value = self[valueIndex] else {
       if optional { return nil }
       throw lineError(type: .missingRequiredValue)
@@ -161,7 +161,7 @@ public struct Fields: Sendable, Codable, Equatable {
     at valueIndex: Int,
     ofType _: T.Type,
     optional: Bool = false
-  ) throws -> T? where T.RawValue == Int {
+  ) throws(NMEAError) -> T? where T.RawValue == Int {
     guard let value = try int(at: valueIndex, optional: optional) else {
       if optional { return nil }
       throw lineError(type: .missingRequiredValue)
@@ -178,7 +178,7 @@ public struct Fields: Sendable, Codable, Equatable {
     unitAt unitIndex: Int,
     units: [String: U],
     optional: Bool = false
-  ) throws -> Measurement<U>? {
+  ) throws(NMEAError) -> Measurement<U>? {
     guard
       let value =
         switch valueType {
@@ -206,7 +206,7 @@ public struct Fields: Sendable, Codable, Equatable {
     valueType: ValueType,
     units: U,
     optional: Bool = false
-  ) throws -> Measurement<U>? {
+  ) throws(NMEAError) -> Measurement<U>? {
     guard
       let value =
         switch valueType {
@@ -226,7 +226,7 @@ public struct Fields: Sendable, Codable, Equatable {
     valueType: ValueType,
     referenceIndex: Int,
     optional: Bool = false
-  ) throws -> Bearing? {
+  ) throws(NMEAError) -> Bearing? {
     guard
       let reference = try enumeration(
         at: referenceIndex,
@@ -250,7 +250,7 @@ public struct Fields: Sendable, Codable, Equatable {
     valueType: ValueType,
     reference: Bearing.Reference,
     optional: Bool = false
-  ) throws -> Bearing? {
+  ) throws(NMEAError) -> Bearing? {
     guard
       let value =
         switch valueType {
@@ -264,9 +264,11 @@ public struct Fields: Sendable, Codable, Equatable {
     return .init(degrees: value, reference: reference)
   }
 
-  func deviation(at valueIndex: (Int, Int), valueType: ValueType, optional: Bool = false) throws
-    -> Measurement<UnitAngle>?
-  {
+  func deviation(
+    at valueIndex: (Int, Int),
+    valueType: ValueType,
+    optional: Bool = false
+  ) throws(NMEAError) -> Measurement<UnitAngle>? {
     guard
       var value =
         switch valueType {
@@ -293,7 +295,7 @@ public struct Fields: Sendable, Codable, Equatable {
     optional: Bool = false,
     altitudeOptional: Bool = true,
     altitudeType: ValueType = .integer
-  ) throws -> Position? {
+  ) throws(NMEAError) -> Position? {
     guard
       let latitudeHemisphere = try enumeration(
         at: latitudeIndex.1,
@@ -322,30 +324,21 @@ public struct Fields: Sendable, Codable, Equatable {
       if optional { return nil }
       throw fieldError(type: .missingRequiredValue, index: longitudeIndex.0)
     }
-    guard let latitude = try Self.latitudeParser.parse(latitudeStr, hemisphere: latitudeHemisphere)
+    guard let latitude = Self.latitudeParser.parse(latitudeStr, hemisphere: latitudeHemisphere)
     else {
       throw fieldError(type: .badLatLon, index: latitudeIndex.0)
     }
     guard
-      let longitude = try Self.longitudeParser.parse(longitudeStr, hemisphere: longitudeHemisphere)
+      let longitude = Self.longitudeParser.parse(longitudeStr, hemisphere: longitudeHemisphere)
     else {
       throw fieldError(type: .badLatLon, index: longitudeIndex.0)
     }
 
-    let altitude = try altitudeIndex.flatMap { altitudeIndex in
-      if let unitAt = altitudeIndex.1 {
-        return try measurement(
-          at: altitudeIndex.0,
-          valueType: altitudeType,
-          unitAt: unitAt,
-          units: lengthUnits,
-          optional: altitudeOptional
-        )
-      }
-      return try measurement(
-        at: altitudeIndex.0,
+    var altitude: Measurement<UnitLength>?
+    if let altitudeIndex {
+      altitude = try altitudeMeasurement(
+        at: altitudeIndex,
         valueType: altitudeType,
-        units: UnitLength.meters,
         optional: altitudeOptional
       )
     }
@@ -353,7 +346,9 @@ public struct Fields: Sendable, Codable, Equatable {
     return .init(latitude: latitude, longitude: longitude, altitude: altitude)
   }
 
-  func ymd(at index: Int, optional: Bool = false, timeZone: TimeZone = .gmt) throws -> Date? {
+  func ymd(at index: Int, optional: Bool = false, timeZone: TimeZone = .gmt) throws(NMEAError)
+    -> Date?
+  {
     guard let dateStr = try string(at: index, optional: optional) else {
       if optional { return nil }
       throw fieldError(type: .missingRequiredValue, index: index)
@@ -380,14 +375,14 @@ public struct Fields: Sendable, Codable, Equatable {
     searchDirection: Calendar.SearchDirection,
     optional: Bool = false,
     timeZone: TimeZone = .gmt
-  ) throws -> Date? {
+  ) throws(NMEAError) -> Date? {
     guard let valueStr = self[index] else {
       if optional { return nil }
       throw fieldError(type: .missingRequiredValue, index: index)
     }
     if valueStr.contains(".") {
       guard
-        let time = try Self.timeParser.parseHmsDecimal(
+        let time = Self.timeParser.parseHmsDecimal(
           valueStr,
           searchDirection: searchDirection,
           timeZone: timeZone
@@ -398,7 +393,7 @@ public struct Fields: Sendable, Codable, Equatable {
       return time
     }
     guard
-      let time = try Self.timeParser.parseHms(
+      let time = Self.timeParser.parseHms(
         valueStr,
         searchDirection: searchDirection,
         timeZone: timeZone
@@ -409,12 +404,12 @@ public struct Fields: Sendable, Codable, Equatable {
     return time
   }
 
-  func hmsDecimalDuration(at index: Int, optional: Bool = false) throws -> Duration? {
+  func hmsDecimalDuration(at index: Int, optional: Bool = false) throws(NMEAError) -> Duration? {
     guard let valueStr = self[index] else {
       if optional { return nil }
       throw fieldError(type: .missingRequiredValue, index: index)
     }
-    guard let time = try Self.timeParser.parseHmsDecimalDuration(valueStr) else {
+    guard let time = Self.timeParser.parseHmsDecimalDuration(valueStr) else {
       throw fieldError(type: .badTime, index: index)
     }
     return time
@@ -425,7 +420,7 @@ public struct Fields: Sendable, Codable, Equatable {
     hmsDecimalIndex: Int,
     optional: Bool = false,
     timeZone: TimeZone = .gmt
-  ) throws -> Date? {
+  ) throws(NMEAError) -> Date? {
     guard let year = try int(at: ymdIndex.0, optional: optional) else {
       if optional { return nil }
       throw fieldError(type: .missingRequiredValue, index: ymdIndex.0)
@@ -450,7 +445,7 @@ public struct Fields: Sendable, Codable, Equatable {
       throw lineError(type: .badDate)
     }
     guard
-      let date = try Self.timeParser.parseHmsDecimal(
+      let date = Self.timeParser.parseHmsDecimal(
         timeStr,
         searchDirection: .forward,
         referenceDate: dayPortion,
@@ -467,7 +462,7 @@ public struct Fields: Sendable, Codable, Equatable {
     hmsIndex: Int,
     optional: Bool = false,
     timeZone: TimeZone = .gmt
-  ) throws -> Date? {
+  ) throws(NMEAError) -> Date? {
     guard let year = try int(at: ymdIndex.0, optional: optional) else {
       if optional { return nil }
       throw fieldError(type: .missingRequiredValue, index: ymdIndex.0)
@@ -492,7 +487,7 @@ public struct Fields: Sendable, Codable, Equatable {
       throw lineError(type: .badDate)
     }
     guard
-      let date = try Self.timeParser.parseHms(
+      let date = Self.timeParser.parseHms(
         timeStr,
         searchDirection: .forward,
         referenceDate: dayPortion,
@@ -509,7 +504,7 @@ public struct Fields: Sendable, Codable, Equatable {
     hmsDecimalIndex: Int,
     optional: Bool = false,
     timeZone: TimeZone = .gmt
-  ) throws -> Date? {
+  ) throws(NMEAError) -> Date? {
     guard let dayPortion = try ymd(at: ymdIndex, optional: optional, timeZone: timeZone) else {
       if optional { return nil }
       throw fieldError(type: .missingRequiredValue, index: ymdIndex)
@@ -519,7 +514,7 @@ public struct Fields: Sendable, Codable, Equatable {
       throw fieldError(type: .missingRequiredValue, index: hmsDecimalIndex)
     }
     guard
-      let date = try Self.timeParser.parseHmsDecimal(
+      let date = Self.timeParser.parseHmsDecimal(
         timeStr,
         searchDirection: .forward,
         referenceDate: dayPortion,
@@ -537,7 +532,7 @@ public struct Fields: Sendable, Codable, Equatable {
     ymdhmIndex: (Int, Int, Int, Int, Int),
     optional: Bool = false,
     timeZone: TimeZone = .gmt
-  ) throws -> Date? {
+  ) throws(NMEAError) -> Date? {
     guard let year = try int(at: ymdhmIndex.0, optional: optional) else {
       if optional { return nil }
       throw fieldError(type: .missingRequiredValue, index: ymdhmIndex.0)
@@ -572,6 +567,28 @@ public struct Fields: Sendable, Codable, Equatable {
       throw lineError(type: .badDate)
     }
     return date
+  }
+
+  private func altitudeMeasurement(
+    at index: (Int, Int?),
+    valueType: ValueType,
+    optional: Bool
+  ) throws(NMEAError) -> Measurement<UnitLength>? {
+    guard let unitIndex = index.1 else {
+      return try measurement(
+        at: index.0,
+        valueType: valueType,
+        units: UnitLength.meters,
+        optional: optional
+      )
+    }
+    return try measurement(
+      at: index.0,
+      valueType: valueType,
+      unitAt: unitIndex,
+      units: lengthUnits,
+      optional: optional
+    )
   }
 
   private func toFloat(_ int: Int?) -> Double? {

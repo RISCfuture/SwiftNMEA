@@ -3,11 +3,11 @@ import Foundation
 class NLSParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .navigationLightStatus
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let messageID = try parseMessageID(sentence: sentence)
@@ -16,7 +16,8 @@ class NLSParser: MessageFormat {
       throw sentence.fields.fieldError(type: .badValue, index: 3)
     }
 
-    let lights = try (0..<lightCount).map { lightIndex -> NavigationLight in
+    var lights = [NavigationLight]()
+    for lightIndex in 0..<lightCount {
       let base = 4 + lightIndex * 3
       let identifier = try sentence.fields.int(at: base)!
       guard identifier >= 1 else {
@@ -28,10 +29,12 @@ class NLSParser: MessageFormat {
         optional: true
       )
       let hours = try parseRemainingHours(sentence: sentence, index: base + 2)
-      return NavigationLight(
-        identifier: UInt(identifier),
-        status: status,
-        remainingWorkingHours: hours
+      lights.append(
+        NavigationLight(
+          identifier: UInt(identifier),
+          status: status,
+          remainingWorkingHours: hours
+        )
       )
     }
 
@@ -59,7 +62,7 @@ class NLSParser: MessageFormat {
       return finished.map { recipient, element in
         makePayload(recipient: recipient, element: element)
       }
-    } catch let error as BufferErrors {
+    } catch {
       switch error {
         case .missingRecipient:
           throw sentence.fields.fieldError(type: .missingRequiredValue, index: 2)
@@ -69,7 +72,9 @@ class NLSParser: MessageFormat {
     }
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
     // complete messages are flushed upon receipt of the last sentence
     if !includeIncomplete { return [] }
 
@@ -80,7 +85,7 @@ class NLSParser: MessageFormat {
     }
   }
 
-  private func parseMessageID(sentence: ParametricSentence) throws -> UInt? {
+  private func parseMessageID(sentence: ParametricSentence) throws(NMEAError) -> UInt? {
     guard let raw = try sentence.fields.int(at: 2, optional: true) else { return nil }
     guard (0...99).contains(raw) else {
       throw sentence.fields.fieldError(type: .badValue, index: 2)
@@ -91,7 +96,7 @@ class NLSParser: MessageFormat {
   private func parseRemainingHours(
     sentence: ParametricSentence,
     index: Int
-  ) throws -> NavigationLight.RemainingWorkingHours? {
+  ) throws(NMEAError) -> NavigationLight.RemainingWorkingHours? {
     guard let raw = try sentence.fields.int(at: index, optional: true) else { return nil }
     guard raw >= 0, let hours = NavigationLight.RemainingWorkingHours(rawValue: UInt(raw)) else {
       throw sentence.fields.fieldError(type: .badValue, index: index)

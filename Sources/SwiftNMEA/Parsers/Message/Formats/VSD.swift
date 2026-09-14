@@ -3,11 +3,11 @@ import Foundation
 import NMEACommon
 
 class VSDParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .AISVoyageData
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let shipType = try sentence.fields.enumeration(
       at: 0,
       ofType: AISLongRange.ShipType.self,

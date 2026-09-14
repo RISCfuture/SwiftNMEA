@@ -2,11 +2,11 @@ import Foundation
 import NMEACommon
 
 class GFAParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .GNSSAccuracyIntegrity
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.hmsDecimal(at: 0, searchDirection: .backward)!
     let HPL = try sentence.fields.measurement(at: 1, valueType: .float, units: UnitLength.meters)!
     let VPL = try sentence.fields.measurement(at: 2, valueType: .float, units: UnitLength.meters)!

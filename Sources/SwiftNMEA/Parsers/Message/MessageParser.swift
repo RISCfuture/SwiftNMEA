@@ -29,18 +29,25 @@ actor MessageParser {
     ZTGParser()
   ]
 
-  func parse(sentence: ParametricSentence) throws -> Message? {
-    let parsers = try formatParsers.filter { try $0.canParse(sentence: sentence) }
-    guard !parsers.isEmpty else { return nil }
-
-    guard let payload = try parsers.lazy.compactMap({ try $0.parse(sentence: sentence) }).first
-    else { return nil }
-    return .init(talker: sentence.talker, format: sentence.format, payload: payload)
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message? {
+    for parser in formatParsers where try parser.canParse(sentence: sentence) {
+      guard let payload = try parser.parse(sentence: sentence) else { continue }
+      return .init(talker: sentence.talker, format: sentence.format, payload: payload)
+    }
+    return nil
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
-    try formatParsers.flatMap {
-      try $0.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
+    var elements = [any Element]()
+    for parser in formatParsers {
+      elements += try parser.flush(
+        talker: talker,
+        format: format,
+        includeIncomplete: includeIncomplete
+      )
     }
+    return elements
   }
 }

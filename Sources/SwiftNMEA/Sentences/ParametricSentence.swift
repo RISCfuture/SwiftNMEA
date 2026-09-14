@@ -18,8 +18,8 @@ public struct ParametricSentence: Sentence, Element, Sendable, Codable, Equatabl
   /// The message format.
   public var format: Format { .init(rawValue: fields.address.sslice(from: 2, to: 4))! }
 
-  public init?(sentence: String, ignoreChecksum: Bool = false) async throws {
-    guard let result = try await Self.parser.parse(sentence: sentence) else { return nil }
+  public init?(sentence: String, ignoreChecksum: Bool = false) async throws(NMEAError) {
+    guard let result = await Self.parser.parse(sentence: sentence) else { return nil }
     delimiter = result.delimiter
     fields = .init(data: result.fields)
     checksum = result.checksum

@@ -2,11 +2,11 @@ import Foundation
 import NMEAUnits
 
 class MSSParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .MSKReceiverSignalStatus
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let signalStrength = try sentence.fields.float(at: 0)!
     let SNR = try sentence.fields.float(at: 1)!
     let frequency = try sentence.fields.measurement(

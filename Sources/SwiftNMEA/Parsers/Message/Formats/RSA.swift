@@ -1,11 +1,11 @@
 import Foundation
 
 class RSAParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .rudderSensorAngle
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let starboard = try sentence.fields.float(at: 0, optional: true)
     let starboardValid = try sentence.fields.bool(at: 1, optional: true)
     let port = try sentence.fields.float(at: 2, optional: true)

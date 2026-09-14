@@ -1,11 +1,11 @@
 import Foundation
 
 class CURParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .currentWaterLayer
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let validity = try sentence.fields.bool(at: 0)!
     let set = try sentence.fields.int(at: 1)!
     let layer = try sentence.fields.int(at: 2)!

@@ -1,11 +1,11 @@
 import Foundation
 
 class RORParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .rudderOrder
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let starboard = try sentence.fields.float(at: 0)!
     let starboardValid = try sentence.fields.bool(at: 1)!
     let port = try sentence.fields.float(at: 2, optional: true)

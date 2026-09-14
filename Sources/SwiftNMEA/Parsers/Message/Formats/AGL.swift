@@ -3,11 +3,11 @@ import Foundation
 class AGLParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .alertGroupList
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let lastSentence = try sentence.fields.int(at: 1)!
     let messageID = try sentence.fields.int(at: 2)!
@@ -52,7 +52,7 @@ class AGLParser: MessageFormat {
       return try buffer.add(element: element, for: recipient).map { finishedElement in
         makePayload(recipient: recipient, element: finishedElement)
       }
-    } catch let error as BufferErrors {
+    } catch {
       switch error {
         case .missingRecipient:
           throw sentence.fields.fieldError(type: .missingRequiredValue, index: 2)
@@ -62,7 +62,9 @@ class AGLParser: MessageFormat {
     }
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
     // complete messages are flushed upon receipt of the last sentence
     if !includeIncomplete { return [] }
 

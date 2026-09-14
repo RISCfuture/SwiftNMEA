@@ -136,28 +136,26 @@ public enum SafetyNET {
       uniqueIndex: Int,
       lesSequenceIndex: Int,
       lesIDIndex: Int
-    ) throws {
+    ) throws(NMEAError) {
       let uniqueValue = try fields.int(at: uniqueIndex)!
       guard (0...999_999).contains(uniqueValue) else {
         throw fields.fieldError(type: .badNumericValue, index: uniqueIndex)
       }
-      let lesSequence = try fields.int(at: lesSequenceIndex, optional: true).map { value -> UInt in
-        guard let unsigned = UInt(exactly: value) else {
-          throw fields.fieldError(type: .badNumericValue, index: lesSequenceIndex)
-        }
-        return unsigned
-      }
-      let lesID = try fields.int(at: lesIDIndex, optional: true).map { value -> UInt in
-        guard let unsigned = UInt(exactly: value) else {
-          throw fields.fieldError(type: .badNumericValue, index: lesIDIndex)
-        }
-        return unsigned
-      }
+      let lesSequence = try Self.unsigned(in: fields, at: lesSequenceIndex)
+      let lesID = try Self.unsigned(in: fields, at: lesIDIndex)
       self.init(
         uniqueMessageNumber: UInt(uniqueValue),
         lesSequenceNumber: lesSequence,
         lesID: lesID
       )
+    }
+
+    private static func unsigned(in fields: Fields, at index: Int) throws(NMEAError) -> UInt? {
+      guard let value = try fields.int(at: index, optional: true) else { return nil }
+      guard let unsigned = UInt(exactly: value) else {
+        throw fields.fieldError(type: .badNumericValue, index: index)
+      }
+      return unsigned
     }
   }
 }

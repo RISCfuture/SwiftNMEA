@@ -1,11 +1,11 @@
 import Foundation
 
 class MWVParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .windAngleSpeed
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let angle = try sentence.fields.measurement(at: 0, valueType: .float, units: UnitAngle.degrees)!
     let reference = try sentence.fields.enumeration(at: 1, ofType: RelativeWindReference.self)!
     let speed = try sentence.fields.measurement(

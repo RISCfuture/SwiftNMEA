@@ -2,11 +2,11 @@ import Foundation
 import NMEACommon
 
 class GNSParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .GNSSFix
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.hmsDecimal(at: 0, searchDirection: .backward)!
     let position = try sentence.fields.position(
       latitudeIndex: (1, 2),
@@ -33,25 +33,20 @@ class GNSParser: MessageFormat {
     let dReferenceID = try sentence.fields.int(at: 11, optional: true)
     let status = try sentence.fields.enumeration(at: 12, ofType: GNSS.IntegrityStatus.self)!
 
-    let mode = try modes.map { modes -> [GNSS.System: Navigation.Mode] in
+    var mode: [GNSS.System: Navigation.Mode]?
+    if let modes {
       // ed.6.0 defines six mode-indicator characters: GPS, GLONASS, Galileo,
       // BDS, QZSS, NavIC. Shorter strings report only the leading systems.
-      func parseMode(at index: Int) throws -> Navigation.Mode? {
-        try modes.char(at: index).map { char in
-          guard let mode = Navigation.Mode(rawValue: char) else {
-            throw sentence.fields.fieldError(type: .unknownValue, index: 5)
-          }
-          return mode
+      let systems: [GNSS.System] = [.GPS, .GLONASS, .galileo, .beidou, .QZSS, .navIC]
+      var parsed = [GNSS.System: Navigation.Mode]()
+      for (index, system) in systems.enumerated() {
+        guard let char = modes.char(at: index) else { continue }
+        guard let parsedMode = Navigation.Mode(rawValue: char) else {
+          throw sentence.fields.fieldError(type: .unknownValue, index: 5)
         }
+        parsed[system] = parsedMode
       }
-      return [
-        GNSS.System.GPS: try parseMode(at: 0),
-        GNSS.System.GLONASS: try parseMode(at: 1),
-        GNSS.System.galileo: try parseMode(at: 2),
-        GNSS.System.beidou: try parseMode(at: 3),
-        GNSS.System.QZSS: try parseMode(at: 4),
-        GNSS.System.navIC: try parseMode(at: 5)
-      ].compactMapValues(\.self)
+      mode = parsed
     }
 
     return .GNSSFix(

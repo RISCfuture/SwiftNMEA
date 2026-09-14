@@ -2,11 +2,11 @@ import Collections
 import Foundation
 
 class VTGParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .groundSpeedCourse
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let courseTrue = try sentence.fields.bearing(at: 0, valueType: .float, referenceIndex: 1)!
     let courseMag = try sentence.fields.bearing(at: 2, valueType: .float, referenceIndex: 3)!
     let speedKts = try sentence.fields.measurement(

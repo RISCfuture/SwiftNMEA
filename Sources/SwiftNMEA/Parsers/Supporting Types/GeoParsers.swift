@@ -31,8 +31,8 @@ final class LatitudeParser {
     Anchor.endOfSubject
   }
 
-  func parse(_ value: String, hemisphere: LatitudeHemisphere) throws -> Measurement<UnitAngle>? {
-    guard let match = try rx.firstMatch(in: value) else {
+  func parse(_ value: String, hemisphere: LatitudeHemisphere) -> Measurement<UnitAngle>? {
+    guard let match = value.firstMatch(of: rx) else {
       return nil
     }
     var magnitude = Double(match[degrees]) + match[minutes] / 60.0
@@ -61,8 +61,8 @@ final class LongitudeParser {
     Anchor.endOfSubject
   }
 
-  func parse(_ value: String, hemisphere: LongitudeHemisphere) throws -> Measurement<UnitAngle>? {
-    guard let match = try rx.firstMatch(in: value) else {
+  func parse(_ value: String, hemisphere: LongitudeHemisphere) -> Measurement<UnitAngle>? {
+    guard let match = value.firstMatch(of: rx) else {
       return nil
     }
     var magnitude = Double(match[degrees]) + match[minutes] / 60.0

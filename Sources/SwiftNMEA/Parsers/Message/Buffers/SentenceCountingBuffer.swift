@@ -1,4 +1,4 @@
-protocol SentenceCountingElement: BufferElement {
+protocol SentenceCountingElement: BufferElement where AppendError == BufferErrors {
   var lastSentence: Int { get }
   var totalSentences: Int { get }
   var allSentences: Set<Int> { get set }
@@ -13,7 +13,7 @@ extension SentenceCountingElement {
     totalSentences == 1 || allSentences == allExpectedSentences
   }
 
-  mutating func append(_ other: Self) throws {
+  mutating func append(_ other: Self) throws(BufferErrors) {
     // `lastSentence` for the stored element is recorded lazily on first append.
     var received = allSentences
     received.insert(lastSentence)
@@ -44,9 +44,9 @@ struct SentenceCountingBuffer<Recipient: BufferRecipient, Element: SentenceCount
   var buffer = [Recipient: Element]()
   var lastRecipient: Recipient?
 
-  mutating func add(element: Element, optionallyFor recipient: Recipient?) throws -> (
-    Recipient, Element
-  )? {
+  mutating func add(element: Element, optionallyFor recipient: Recipient?) throws(BufferErrors)
+    -> (Recipient, Element)?
+  {
     // reject out-of-range counts before they reach `1...totalSentences`, which
     // would trap on a non-positive total
     guard element.totalSentences >= 1,

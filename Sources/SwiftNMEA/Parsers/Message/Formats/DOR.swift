@@ -1,11 +1,11 @@
 import Foundation
 
 class DORParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .doorStatus
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let messageType = try sentence.fields.enumeration(at: 0, ofType: Doors.MessageType.self)!
     let time = try sentence.fields.hmsDecimal(at: 1, searchDirection: .backward, optional: true)
     let systemType = try sentence.fields.enumeration(at: 2, ofType: Doors.SystemType.self)!

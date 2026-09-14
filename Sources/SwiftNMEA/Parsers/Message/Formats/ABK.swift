@@ -1,11 +1,11 @@
 import Foundation
 
 class ABKParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .AISBroadcastAcknowledgement
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let MMSI = try sentence.fields.int(at: 0, optional: true)
     let channel = try sentence.fields.enumeration(at: 1, ofType: AIS.Channel.self, optional: true)
     let messageID = try sentence.fields.string(at: 2)!

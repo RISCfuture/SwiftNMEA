@@ -6,11 +6,11 @@ import SwiftDSE
 class DSEParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .DSE
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let type = try sentence.fields.enumeration(at: 2, ofType: DSE.MessageType.self, optional: true)
@@ -21,7 +21,8 @@ class DSEParser: MessageFormat {
       Recipient(sentence: sentence, MMSI: MMSI, type: type)
     }
 
-    let messages = try fields.chunks(ofCount: 2).enumerated().map { index, pair in
+    var messages = [SwiftDSE.Message]()
+    for (index, pair) in fields.chunks(ofCount: 2).enumerated() {
       guard pair.count == 2 else {
         throw sentence.fields.lineError(type: .missingRequiredValue)
       }
@@ -32,7 +33,7 @@ class DSEParser: MessageFormat {
       else {
         throw sentence.fields.lineError(type: .badValue)
       }
-      return message
+      messages.append(message)
     }
 
     do {
@@ -46,7 +47,7 @@ class DSEParser: MessageFormat {
       return zipOptionals(finished?.0, finished?.1).flatMap { recipient, element in
         makePayload(recipient: recipient, element: element)
       }
-    } catch let error as BufferErrors {
+    } catch {
       switch error {
         case .missingRecipient:
           if MMSI == nil {
@@ -59,7 +60,9 @@ class DSEParser: MessageFormat {
     }
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
     // complete messages are flushed upon receipt of the last message
     if !includeIncomplete { return [] }
 

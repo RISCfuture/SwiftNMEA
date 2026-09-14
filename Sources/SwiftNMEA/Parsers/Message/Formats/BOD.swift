@@ -1,11 +1,11 @@
 import Foundation
 
 class BODParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .bearingOriginToDest
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let trueBearing = try sentence.fields.bearing(at: 0, valueType: .float, referenceIndex: 1)!
     let magneticBearing = try sentence.fields.bearing(at: 2, valueType: .float, referenceIndex: 3)!
     let destID = try sentence.fields.string(at: 4)!

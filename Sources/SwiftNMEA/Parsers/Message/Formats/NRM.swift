@@ -1,11 +1,11 @@
 import Foundation
 
 class NRMParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .NAVTEXReceiverMask
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let function = try sentence.fields.enumeration(at: 0, ofType: NAVTEX.FunctionCode.self)!
     let frequency = try sentence.fields.enumeration(at: 1, ofType: NAVTEX.Frequency.self)!
     let coverageMask = try sentence.fields.enumeration(

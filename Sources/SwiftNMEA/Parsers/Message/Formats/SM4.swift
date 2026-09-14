@@ -1,11 +1,11 @@
 import Foundation
 
 class SM4Parser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .safetyNETRectangularArea
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let status = try sentence.fields.enumeration(at: 0, ofType: SafetyNET.MSIStatus.self)!
 
     let identification = try SafetyNET.MessageIdentification(

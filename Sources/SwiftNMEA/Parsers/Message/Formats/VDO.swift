@@ -4,11 +4,11 @@ import NMEACommon
 class VDOParser: MessageFormat {
   private var buffer = SixBitBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .encapsulated && sentence.format == .VDLOwnshipReport
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let sequentialID = try sentence.fields.int(at: 2, optional: true)
@@ -18,25 +18,18 @@ class VDOParser: MessageFormat {
 
     let recipient = Recipient(sentence: sentence, sequentialID: sequentialID)
 
-    do {
-      let element = BufferElement(
-        lastSentence: sentenceNumber,
-        totalSentences: totalSentences,
-        channel: channel,
-        encapsulatedData: data,
-        fillBits: fillBits
-      )
-      let finished = try buffer.add(element: element, optionallyFor: recipient)
+    let element = BufferElement(
+      lastSentence: sentenceNumber,
+      totalSentences: totalSentences,
+      channel: channel,
+      encapsulatedData: data,
+      fillBits: fillBits
+    )
 
-      return try zipOptionals(finished?.0, finished?.1).flatMap { recipient, element in
-        try makePayload(recipient: recipient, element: element)
-      }
-    } catch let error as VDOErrors {
-      switch error {
-        case .badData:
-          throw sentence.fields.fieldError(type: .badSixBitEncoding, index: 4)
-      }
-    } catch let error as BufferErrors {
+    let finished: (Recipient, BufferElement)?
+    do {
+      finished = try buffer.add(element: element, optionallyFor: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           fatalError("Unexpected missingRecipient error")
@@ -44,30 +37,46 @@ class VDOParser: MessageFormat {
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
-  }
+    guard let finished else { return nil }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
-    // complete messages are flushed upon receipt of the last message
-    if !includeIncomplete { return [] }
-
-    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
-    return try flushed.compactMap { recipient, element in
-      do {
-        guard let payload = try makePayload(recipient: recipient, element: element) else {
-          return nil
-        }
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as VDOErrors {
-        switch error {
-          case .badData:
-            return MessageError(type: .badSixBitEncoding, fieldNumber: 4)
-        }
+    do {
+      return try makePayload(recipient: finished.0, element: finished.1)
+    } catch {
+      switch error {
+        case .badData:
+          throw sentence.fields.fieldError(type: .badSixBitEncoding, index: 4)
       }
     }
   }
 
-  private func makePayload(recipient _: Recipient, element: BufferElement) throws -> Message
-    .Payload?
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
+    // complete messages are flushed upon receipt of the last message
+    if !includeIncomplete { return [] }
+
+    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
+    return flushed.compactMap { recipient, element in
+      message(for: recipient, element: element)
+    }
+  }
+
+  private func message(for recipient: Recipient, element: BufferElement) -> (any Element)? {
+    do {
+      guard let payload = try makePayload(recipient: recipient, element: element) else {
+        return nil
+      }
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      switch error {
+        case .badData:
+          return MessageError(type: .badSixBitEncoding, fieldNumber: 4)
+      }
+    }
+  }
+
+  private func makePayload(recipient _: Recipient, element: BufferElement) throws(VDOErrors)
+    -> Message.Payload?
   {
     guard let data = element.data else { throw VDOErrors.badData }
     return .VDLOwnshipReport(data, channel: element.channel)

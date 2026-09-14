@@ -1,11 +1,11 @@
 import Foundation
 
 class TLBParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .targetLabels
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     var labels = [Int: String?]()
     for index in stride(from: 0, to: sentence.fields.count, by: 2) {
       let target = try sentence.fields.int(at: index)!

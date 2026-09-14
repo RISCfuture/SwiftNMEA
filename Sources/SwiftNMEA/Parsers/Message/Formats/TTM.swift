@@ -2,11 +2,11 @@ import Collections
 import Foundation
 
 class TTMParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .trackedTarget
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let number = try sentence.fields.int(at: 0)!
     let distance = try sentence.fields.measurement(
       at: 1,

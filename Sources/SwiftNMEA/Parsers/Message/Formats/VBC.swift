@@ -1,11 +1,11 @@
 import Foundation
 
 class VBCParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .dockingSpeedData
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let waterLongitudinal = try sentence.fields.measurement(
       at: 0,
       valueType: .float,

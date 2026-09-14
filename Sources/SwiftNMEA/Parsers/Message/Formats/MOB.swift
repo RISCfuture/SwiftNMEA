@@ -1,11 +1,11 @@
 import Foundation
 
 class MOBParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .manOverboard
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let emitterID = try sentence.fields.hex(at: 0, width: 5, optional: true)
     let status = try sentence.fields.enumeration(at: 1, ofType: ManOverboard.Status.self)!
     let activationTime = try sentence.fields.hmsDecimal(at: 2, searchDirection: .backward)!

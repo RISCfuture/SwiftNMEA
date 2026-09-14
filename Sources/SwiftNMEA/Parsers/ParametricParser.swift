@@ -32,8 +32,8 @@ actor ParametricParser {
     }
   }()
 
-  func parse(sentence: String) throws -> SentenceResult? {
-    guard let match = try rx.wholeMatch(in: sentence) else { return nil }
+  func parse(sentence: String) -> SentenceResult? {
+    guard let match = sentence.wholeMatch(of: rx) else { return nil }
 
     return .init(
       delimiter: match.output.1,

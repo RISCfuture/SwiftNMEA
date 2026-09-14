@@ -3,11 +3,11 @@ import Foundation
 class TRLParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .AISTransmitterNonFunctioningLog
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalEntries = try sentence.fields.int(at: 0)!
 
     // When a query is received and no log entries exist, the total is "0" and
@@ -45,7 +45,7 @@ class TRLParser: MessageFormat {
       return try buffer.add(element: element, for: recipient).map { finishedElement in
         makePayload(recipient: recipient, element: finishedElement)
       }
-    } catch let error as BufferErrors {
+    } catch {
       switch error {
         case .missingRecipient:
           throw sentence.fields.fieldError(type: .missingRequiredValue, index: 2)
@@ -55,7 +55,9 @@ class TRLParser: MessageFormat {
     }
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
     // complete messages are flushed upon receipt of the last log entry
     if !includeIncomplete { return [] }
 

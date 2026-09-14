@@ -207,8 +207,4 @@ class MEBParser: MessageFormat {
       sentenceType ??= other.sentenceType
     }
   }
-
-  private enum MEBErrors: Error {
-    case badData
-  }
 }

@@ -1,11 +1,11 @@
 import Foundation
 
 class RRTParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .routeTransferReport
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let transferType = try sentence.fields.enumeration(
       at: 0,
       ofType: RouteTransfer.TransferType.self

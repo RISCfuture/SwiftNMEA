@@ -17,7 +17,7 @@ struct `8.3.108 TTM` {
         12,
         12.3, 234.5, "T", 15.5, 110.1, "R",
         45.6, 10.7, "K",
-        "TGT1", "T", "R", hmsFractionFormatter.string(from: time), "A"
+        "TGT1", "T", "R", hmsFractionFormat.format(time), "A"
       ]
     )
     let data = sentence.data(using: .ascii)!

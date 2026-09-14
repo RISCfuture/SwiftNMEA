@@ -144,51 +144,19 @@ struct `8.3.114 VDM` {
     #expect(error.fieldNumber == 1)
   }
 
-  @Test
-  func `parses the first example from the spec`()
-    async throws
-  {
+  @Test(arguments: [
+    ["!AIVDM,1,1,,A,1P000Oh1IT1svTP2r:43grwb05q4,0"],
+    ["!AIVDM,2,1,7,A,1P000Oh1IT1svT,0", "!AIVDM,2,2,7,A,P2r:43grwb05q4,0"],
+    ["!AIVDM,2,1,9,A,1P000Oh1IT1svTP2r:43,0", "!AIVDM,2,2,9,A,grwb05q4,0"]
+  ])
+  func `parses an example from the spec`(_ sentences: [String]) async throws {
     let parser = SwiftNMEA()
-    let sentence = applyChecksum(to: "!AIVDM,1,1,,A,1P000Oh1IT1svTP2r:43grwb05q4,0")
-    let sentenceData = sentence.data(using: .ascii)!
+    let sentenceData = sentences.map { applyChecksum(to: $0) }.joined().data(using: .ascii)!
     let messages = try await parser.parse(data: sentenceData)
 
-    #expect(messages.count == 2)
-    let payload = try #require((messages[1] as? Message)?.payload)
-    #expect(payload == .VDLMessage(Self.VDLData, channel: .A))
-  }
-
-  @Test
-  func `parses the second example from the spec`()
-    async throws
-  {
-    let parser = SwiftNMEA()
-    let sentences = [
-      applyChecksum(to: "!AIVDM,2,1,7,A,1P000Oh1IT1svT,0"),
-      applyChecksum(to: "!AIVDM,2,2,7,A,P2r:43grwb05q4,0")
-    ]
-    let sentenceData = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
-
-    #expect(messages.count == 3)
-    let payload = try #require((messages[2] as? Message)?.payload)
-    #expect(payload == .VDLMessage(Self.VDLData, channel: .A))
-  }
-
-  @Test
-  func `parses the third example from the spec`()
-    async throws
-  {
-    let parser = SwiftNMEA()
-    let sentences = [
-      applyChecksum(to: "!AIVDM,2,1,9,A,1P000Oh1IT1svTP2r:43,0"),
-      applyChecksum(to: "!AIVDM,2,2,9,A,grwb05q4,0")
-    ]
-    let sentenceData = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
-
-    #expect(messages.count == 3)
-    let payload = try #require((messages[2] as? Message)?.payload)
+    // one Element per sentence, plus the Message the group completes
+    #expect(messages.count == sentences.count + 1)
+    let payload = try #require((messages.last as? Message)?.payload)
     #expect(payload == .VDLMessage(Self.VDLData, channel: .A))
   }
 

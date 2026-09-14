@@ -4,47 +4,47 @@ import NMEACommon
 class LRFParser: MessageFormat {
   private var buffer = LRFBuffer()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric
       && (sentence.format == .AISLongRangeFunction || sentence.format == .AISLongRangeReply1
         || sentence.format == .AISLongRangeReply2 || sentence.format == .AISLongRangeReply3)
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     guard let element = try LRFElement(sentence: sentence) else { return nil }
     let recipient = try LRFRecipient(sentence: sentence)
 
+    let finished: LRFElement?
     do {
-      return try buffer.add(element: element, for: recipient).map { element in
-        try makePayload(recipient: recipient, element: element)
-      }
-    } catch let error as LRFErrors {
+      finished = try buffer.add(element: element, for: recipient)
+    } catch {
       switch error {
         case .formatAlreadySeen, .unexpectedFormat:
           throw sentence.fields.lineError(type: .unexpectedFormat)
       }
     }
+    guard let finished else { return nil }
+
+    return try makePayload(recipient: recipient, element: finished)
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
     // complete messages are flushed upon receipt of the last message
     if !includeIncomplete { return [] }
 
     let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
-    return try flushed.compactMap { recipient, element in
-      do {
-        let payload = try makePayload(recipient: recipient, element: element)
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as LRFErrors {
-        switch error {
-          case .formatAlreadySeen, .unexpectedFormat:
-            return MessageError(type: .unexpectedFormat)
-        }
-      }
+    var messages = [any Element]()
+    for (recipient, element) in flushed {
+      let payload = try makePayload(recipient: recipient, element: element)
+      messages.append(Message(talker: recipient.talker, format: recipient.format, payload: payload))
     }
+    return messages
   }
 
-  private func makePayload(recipient _: LRFRecipient, element: LRFElement) throws -> Message.Payload
+  private func makePayload(recipient _: LRFRecipient, element: LRFElement) throws(NMEAError)
+    -> Message.Payload
   {
     try .AISLongRangeReply(
       requestorMMSI: element.MMSI,
@@ -75,7 +75,7 @@ class LRFParser: MessageFormat {
     var MMSI: Int
     var sequence: Int
 
-    init(sentence: ParametricSentence) throws {
+    init(sentence: ParametricSentence) throws(NMEAError) {
       talker = sentence.talker
       MMSI = try sentence.fields.int(at: 1)!
       sequence = try sentence.fields.int(at: 0)!
@@ -103,22 +103,22 @@ class LRFParser: MessageFormat {
     var isComplete: Bool { !formats.isEmpty && Set(sentences.keys) == formats }
 
     var MMSI: Int {
-      get throws {
+      get throws(NMEAError) {
         guard let sentence = sentences[.AISLongRangeFunction] else {
-          throw LRFErrors.formatAlreadySeen
+          throw NMEAError(type: .missingFormat)
         }
         return try sentence.fields.int(at: 1)!
       }
     }
 
     var requestorName: String? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeFunction]?.fields.string(at: 2, optional: true)
       }
     }
 
     var replyStatuses: [AISLongRange.Function: AISLongRange.FunctionStatus] {
-      get throws {
+      get throws(NMEAError) {
         guard let sentence = sentences[.AISLongRangeFunction] else {
           fatalError("Missing LRF sentence")
         }
@@ -129,7 +129,7 @@ class LRFParser: MessageFormat {
     }
 
     var time: Date? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply2]?.fields.datetime(
           ymdIndex: 2,
           hmsDecimalIndex: 3,
@@ -139,7 +139,7 @@ class LRFParser: MessageFormat {
     }
 
     var shipName: String? {
-      get throws {
+      get throws(NMEAError) {
         guard let name = try sentences[.AISLongRangeReply1]?.fields.string(at: 3, optional: true)
         else {
           return nil
@@ -149,7 +149,7 @@ class LRFParser: MessageFormat {
     }
 
     var shipCallsign: String? {
-      get throws {
+      get throws(NMEAError) {
         guard
           let callsign = try sentences[.AISLongRangeReply1]?.fields.string(at: 4, optional: true)
         else {
@@ -160,13 +160,13 @@ class LRFParser: MessageFormat {
     }
 
     var shipIMO: Int? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply1]?.fields.int(at: 5, optional: true)
       }
     }
 
     var position: Position? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply2]?.fields.position(
           latitudeIndex: (4, 5),
           longitudeIndex: (6, 7),
@@ -176,7 +176,7 @@ class LRFParser: MessageFormat {
     }
 
     var course: Bearing? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply2]?.fields.bearing(
           at: 8,
           valueType: .float,
@@ -187,7 +187,7 @@ class LRFParser: MessageFormat {
     }
 
     var speed: Measurement<UnitSpeed>? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply2]?.fields.measurement(
           at: 10,
           valueType: .float,
@@ -199,7 +199,7 @@ class LRFParser: MessageFormat {
     }
 
     var destination: String? {
-      get throws {
+      get throws(NMEAError) {
         guard let dest = try sentences[.AISLongRangeReply3]?.fields.string(at: 2, optional: true)
         else {
           return nil
@@ -209,7 +209,7 @@ class LRFParser: MessageFormat {
     }
 
     var ETA: Date? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply3]?.fields.datetime(
           ymdIndex: 3,
           hmsDecimalIndex: 4,
@@ -219,7 +219,7 @@ class LRFParser: MessageFormat {
     }
 
     var shipType: AISLongRange.ShipType? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply3]?.fields.enumeration(
           at: 6,
           ofType: AISLongRange.ShipType.self,
@@ -229,7 +229,7 @@ class LRFParser: MessageFormat {
     }
 
     var shipType2: AISLongRange.ShipType? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply3]?.fields.enumeration(
           at: 9,
           ofType: AISLongRange.ShipType.self,
@@ -239,7 +239,7 @@ class LRFParser: MessageFormat {
     }
 
     var length: Measurement<UnitLength>? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply3]?.fields.measurement(
           at: 7,
           valueType: .float,
@@ -250,7 +250,7 @@ class LRFParser: MessageFormat {
     }
 
     var breadth: Measurement<UnitLength>? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply3]?.fields.measurement(
           at: 8,
           valueType: .float,
@@ -261,7 +261,7 @@ class LRFParser: MessageFormat {
     }
 
     var draught: Measurement<UnitLength>? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply3]?.fields.measurement(
           at: 5,
           valueType: .float,
@@ -272,12 +272,12 @@ class LRFParser: MessageFormat {
     }
 
     var soulsOnboard: Int? {
-      get throws {
+      get throws(NMEAError) {
         try sentences[.AISLongRangeReply3]?.fields.int(at: 10, optional: true)
       }
     }
 
-    init?(sentence: ParametricSentence) throws {
+    init?(sentence: ParametricSentence) throws(NMEAError) {
       switch sentence.format {
         case .AISLongRangeFunction:
           let functions = try LRFunctions(fields: sentence.fields)
@@ -293,9 +293,10 @@ class LRFParser: MessageFormat {
       sentences[sentence.format] = sentence
     }
 
-    mutating func append(_ other: Self) throws {
-      try sentences.merge(other.sentences) { _, _ in
-        throw LRFErrors.formatAlreadySeen
+    mutating func append(_ other: Self) throws(LRFErrors) {
+      for (format, sentence) in other.sentences {
+        guard sentences[format] == nil else { throw .formatAlreadySeen }
+        sentences[format] = sentence
       }
       formats.formUnion(other.formats)
 
@@ -319,24 +320,30 @@ class LRFParser: MessageFormat {
   }
 }
 
-func LRFunctions(fields: Fields) throws -> [AISLongRange.Function] {
+func LRFunctions(fields: Fields) throws(NMEAError) -> [AISLongRange.Function] {
   let functionStr = try fields.string(at: 3, optional: false)!
-  return try functionStr.map { char in
+  var functions = [AISLongRange.Function]()
+  for char in functionStr {
     guard let function = AISLongRange.Function(rawValue: char) else {
       throw fields.fieldError(type: .badCharacterValue, index: 2)
     }
-    return function
+    functions.append(function)
   }
+  return functions
 }
 
-private func LRFunctionReplies(fields: Fields) throws -> [AISLongRange.FunctionStatus] {
+private func LRFunctionReplies(fields: Fields) throws(NMEAError)
+  -> [AISLongRange.FunctionStatus]
+{
   let replyStr = try fields.string(at: 4, optional: false)!
-  return try replyStr.map { char in
+  var statuses = [AISLongRange.FunctionStatus]()
+  for char in replyStr {
     guard let rawValue = Int(String(char)),
       let status = AISLongRange.FunctionStatus(rawValue: rawValue)
     else {
       throw fields.fieldError(type: .badCharacterValue, index: 2)
     }
-    return status
+    statuses.append(status)
   }
+  return statuses
 }

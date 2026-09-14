@@ -1,11 +1,11 @@
 import Foundation
 
 class UIDParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .userIdentification
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let code1 = try sentence.fields.string(at: 0)!
     let code2 = try sentence.fields.string(at: 1, optional: true)
 

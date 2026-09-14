@@ -2,11 +2,11 @@ import Foundation
 import NMEACommon
 
 class DSCParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .DSC
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let format = try sentence.fields.enumeration(at: 0, ofType: DSC.FormatSpecifier.self)!
     let address = try sentence.fields.string(at: 1)!
     let category = try sentence.fields.enumeration(at: 2, ofType: DSC.Category.self)!

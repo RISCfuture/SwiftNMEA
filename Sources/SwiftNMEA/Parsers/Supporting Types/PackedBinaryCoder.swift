@@ -15,21 +15,24 @@ final class PackedBinaryCoder: Sendable {
   ///   decoded bytes.
   /// - Throws: ``Errors/invalidChunk(index:)`` if a non-null field is not a
   ///   valid 4-character HEX value.
-  func decodeEntities(_ value: some Sequence<String?>) throws -> [Int: Data] {
-    try value.enumerated().reduce(into: [Int: Data]()) { entities, chunk in
-      guard let element = chunk.element else { return }  // null field: no update
+  func decodeEntities(_ value: some Sequence<String?>) throws(Errors) -> [Int: Data] {
+    var entities = [Int: Data]()
+    for chunk in value.enumerated() {
+      guard let element = chunk.element else { continue }  // null field: no update
       entities[chunk.offset] = try decode([element], offsetBy: chunk.offset)
     }
+    return entities
   }
 
-  func decode(_ value: some Sequence<String>, offsetBy offset: Int = 0) throws -> Data {
-    let bytes = try value.enumerated().reduce(into: [UInt8]()) { data, chunk in
+  func decode(_ value: some Sequence<String>, offsetBy offset: Int = 0) throws(Errors) -> Data {
+    var bytes = [UInt8]()
+    for chunk in value.enumerated() {
       switch chunk.element.count {
         case 2:
           guard let byte = UInt8(chunk.element, radix: 16) else {
-            throw Errors.invalidChunk(index: chunk.offset + offset)
+            throw .invalidChunk(index: chunk.offset + offset)
           }
-          data.append(byte)
+          bytes.append(byte)
 
         case 4:
           let highStr = chunk.element.prefix(2)
@@ -37,13 +40,13 @@ final class PackedBinaryCoder: Sendable {
           guard let high = UInt8(highStr, radix: 16),
             let low = UInt8(lowStr, radix: 16)
           else {
-            throw Errors.invalidChunk(index: chunk.offset + offset)
+            throw .invalidChunk(index: chunk.offset + offset)
           }
-          data.append(high)
-          data.append(low)
+          bytes.append(high)
+          bytes.append(low)
 
         default:
-          throw Errors.invalidChunk(index: chunk.offset + offset)
+          throw .invalidChunk(index: chunk.offset + offset)
       }
     }
 

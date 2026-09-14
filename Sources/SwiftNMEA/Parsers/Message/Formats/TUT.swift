@@ -4,11 +4,11 @@ import NMEACommon
 class TUTParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .multiLanguageText
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let source = try sentence.fields.enumeration(at: 0, ofType: Talker.self)!
     let totalSentences = try sentence.fields.hex(at: 1, width: 2)!
     let sentenceNumber = try sentence.fields.hex(at: 2, width: 2)!
@@ -16,34 +16,24 @@ class TUTParser: MessageFormat {
     let translationCode = try sentence.fields.string(at: 4)!
     let body = try sentence.fields.string(at: 5)!
 
-    do {
-      let recipient = identifier.map { identifier in
-        Recipient(
-          sentence: sentence,
-          source: source,
-          identifier: identifier
-        )
-      }
-      let element = BufferElement(
-        lastSentence: Int(sentenceNumber),
-        totalSentences: Int(totalSentences),
-        translationCode: translationCode,
-        body: body
+    let recipient = identifier.map { identifier in
+      Recipient(
+        sentence: sentence,
+        source: source,
+        identifier: identifier
       )
-      let finished = try buffer.add(
-        element: element,
-        optionallyFor: recipient
-      )
+    }
+    let element = BufferElement(
+      lastSentence: Int(sentenceNumber),
+      totalSentences: Int(totalSentences),
+      translationCode: translationCode,
+      body: body
+    )
 
-      return try zipOptionals(finished?.0, finished?.1)
-        .map { recipient, element in
-          try makePayload(recipient: recipient, element: element)
-        }
-    } catch let error as TUTErrors {
-      switch error {
-        case .badData: throw sentence.fields.fieldError(type: .badValue, index: 5)
-      }
-    } catch let error as BufferErrors {
+    let finished: (Recipient, BufferElement)?
+    do {
+      finished = try buffer.add(element: element, optionallyFor: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           fatalError("Unexpected missingRecipient error")
@@ -51,9 +41,20 @@ class TUTParser: MessageFormat {
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
+    guard let finished else { return nil }
+
+    do {
+      return try makePayload(recipient: finished.0, element: finished.1)
+    } catch {
+      switch error {
+        case .badData: throw sentence.fields.fieldError(type: .badValue, index: 5)
+      }
+    }
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
     if !includeIncomplete {
       return []
     }  // complete messages are flushed upon receipt of the last message
@@ -63,20 +64,26 @@ class TUTParser: MessageFormat {
       format: format,
       includeIncomplete: includeIncomplete
     )
-    return try flushed.compactMap { recipient, element in
-      do {
-        let payload = try makePayload(recipient: recipient, element: element)
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as TUTErrors {
-        switch error {
-          case .badData:
-            return MessageError(type: .badValue, fieldNumber: 5)
-        }
+    return flushed.map { recipient, element in
+      message(for: recipient, element: element)
+    }
+  }
+
+  private func message(for recipient: Recipient, element: BufferElement) -> any Element {
+    do {
+      let payload = try makePayload(recipient: recipient, element: element)
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      switch error {
+        case .badData:
+          return MessageError(type: .badValue, fieldNumber: 5)
       }
     }
   }
 
-  private func makePayload(recipient: Recipient, element: BufferElement) throws -> Message.Payload {
+  private func makePayload(recipient: Recipient, element: BufferElement) throws(TUTErrors)
+    -> Message.Payload
+  {
     guard let data = element.data else { throw TUTErrors.badData }
     return .multiLanguageText(
       source: recipient.source,

@@ -1,11 +1,11 @@
 import Foundation
 
 class HDGParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .heading
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let heading = try sentence.fields.bearing(at: 0, valueType: .float, reference: .magnetic)!
     let deviation = try sentence.fields.deviation(at: (1, 2), valueType: .float, optional: true)
     let variation = try sentence.fields.deviation(at: (3, 4), valueType: .float, optional: true)

@@ -3,11 +3,11 @@ import Foundation
 class EPVParser: MessageFormat {
   private let decoder = EscapedStringCoder()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .equipmentProperty
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let status = try sentence.fields.enumeration(at: 0, ofType: SentenceType.self)!
     let type = try sentence.fields.enumeration(at: 1, ofType: Talker.self)!
     let uniqueID = try sentence.fields.string(at: 2)!

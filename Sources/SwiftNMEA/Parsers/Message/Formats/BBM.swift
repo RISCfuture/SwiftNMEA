@@ -4,11 +4,11 @@ import NMEACommon
 class BBMParser: MessageFormat {
   private var buffer = SixBitBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .encapsulated && sentence.format == .AISBroadcastBinaryMessage
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let sequentialID = try sentence.fields.int(at: 2)!
@@ -34,24 +34,17 @@ class BBMParser: MessageFormat {
       )
     }
 
-    do {
-      let element = BufferElement(
-        lastSentence: sentenceNumber,
-        totalSentences: totalSentences,
-        encapsulatedData: data,
-        fillBits: fillBits
-      )
-      let finished = try buffer.add(element: element, optionallyFor: recipient)
+    let element = BufferElement(
+      lastSentence: sentenceNumber,
+      totalSentences: totalSentences,
+      encapsulatedData: data,
+      fillBits: fillBits
+    )
 
-      return try zipOptionals(finished?.0, finished?.1).flatMap { recipient, element in
-        try makePayload(recipient: recipient, element: element)
-      }
-    } catch let error as BBMErrors {
-      switch error {
-        case .badData:
-          throw sentence.fields.fieldError(type: .badSixBitEncoding, index: 5)
-      }
-    } catch let error as BufferErrors {
+    let finished: (Recipient, BufferElement)?
+    do {
+      finished = try buffer.add(element: element, optionallyFor: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           if channel == nil {
@@ -62,31 +55,46 @@ class BBMParser: MessageFormat {
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
+    guard let finished else { return nil }
+
+    do {
+      return try makePayload(recipient: finished.0, element: finished.1)
+    } catch {
+      switch error {
+        case .badData:
+          throw sentence.fields.fieldError(type: .badSixBitEncoding, index: 5)
+      }
+    }
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool = false) throws
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool = false) throws(NMEAError)
     -> [any Element]
   {
     // complete messages are flushed upon receipt of the last message
     if !includeIncomplete { return [] }
 
     let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
-    return try flushed.compactMap { recipient, element in
-      do {
-        guard let payload = try makePayload(recipient: recipient, element: element) else {
-          return nil
-        }
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as BBMErrors {
-        switch error {
-          case .badData:
-            return MessageError(type: .badSixBitEncoding, fieldNumber: 5)
-        }
+    return flushed.compactMap { recipient, element in
+      message(for: recipient, element: element)
+    }
+  }
+
+  private func message(for recipient: Recipient, element: BufferElement) -> (any Element)? {
+    do {
+      guard let payload = try makePayload(recipient: recipient, element: element) else {
+        return nil
+      }
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      switch error {
+        case .badData:
+          return MessageError(type: .badSixBitEncoding, fieldNumber: 5)
       }
     }
   }
 
-  private func makePayload(recipient: Recipient, element: BufferElement) throws -> Message.Payload?
+  private func makePayload(recipient: Recipient, element: BufferElement) throws(BBMErrors)
+    -> Message.Payload?
   {
     guard let data = element.data else { throw BBMErrors.badData }
 

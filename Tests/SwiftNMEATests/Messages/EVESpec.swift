@@ -14,7 +14,7 @@ struct `8.3.35 EVE` {
       talker: .waterLevelDetection,
       format: .event,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "COC", "Change of command"
       ]
     )

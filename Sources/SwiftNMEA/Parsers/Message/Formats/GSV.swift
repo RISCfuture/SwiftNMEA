@@ -4,11 +4,11 @@ import Foundation
 class GSVParser: MessageFormat {
   private var satellites = [Talker: SatelliteData]()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .GNSSSatellitesInView
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalMessages = try sentence.fields.int(at: 0)!
     let messageNumber = try sentence.fields.int(at: 1)!
     let totalSatellites = try sentence.fields.int(at: 2, optional: true)
@@ -22,10 +22,10 @@ class GSVParser: MessageFormat {
       throw sentence.fields.fieldError(type: .badNumericValue, index: sentence.fields.endIndex - 1)
     }
     let systemID = GNSS.systemID(forTalker: sentence.talker)
-    let satelliteData = try (3..<(sentence.fields.endIndex - 1)).chunks(ofCount: 4).compactMap {
-      chunk in
+    var satelliteData = [GNSS.SatelliteInView]()
+    for chunk in (3..<(sentence.fields.endIndex - 1)).chunks(ofCount: 4) {
       guard let svID = try sentence.fields.int(at: chunk.startIndex, optional: true) else {
-        return nil as GNSS.SatelliteInView?
+        continue
       }
       let elevation = try sentence.fields.measurement(
         at: chunk.index(after: chunk.startIndex),
@@ -43,10 +43,12 @@ class GSVParser: MessageFormat {
       )
       let id: GNSS.SatelliteID
       do {
-        id =
-          try systemID.map { try GNSS.SatelliteID(systemID: $0, svID: svID, signalID: signalID) }
-          ?? GNSS.SatelliteID(svID: svID, signalID: signalID)
-      } catch let error as GNSS.SatelliteID.Errors {
+        if let systemID {
+          id = try GNSS.SatelliteID(systemID: systemID, svID: svID, signalID: signalID)
+        } else {
+          id = try GNSS.SatelliteID(svID: svID, signalID: signalID)
+        }
+      } catch {
         switch error {
           case .badSignalID:
             throw sentence.fields.fieldError(
@@ -59,10 +61,12 @@ class GSVParser: MessageFormat {
             throw sentence.fields.lineError(type: .unknownTalker)
         }
       }
-      return GNSS.SatelliteInView(
-        id: id,
-        position: .init(elevation: elevation, azimuth: azimuth),
-        SNR: SNR
+      satelliteData.append(
+        GNSS.SatelliteInView(
+          id: id,
+          position: .init(elevation: elevation, azimuth: azimuth),
+          SNR: SNR
+        )
       )
     }
 

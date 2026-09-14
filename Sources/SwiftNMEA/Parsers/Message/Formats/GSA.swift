@@ -1,11 +1,11 @@
 import Foundation
 
 class GSAParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .GNSS_DOP
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let lastValue = try sentence.fields.string(at: sentence.fields.endIndex - 1)!
     if lastValue.contains(".") {  // last parameter is a DOP
       return try parseSTA8089FG(sentence: sentence)
@@ -13,18 +13,19 @@ class GSAParser: MessageFormat {
     return try parseSpec(sentence: sentence)
   }
 
-  private func parseSpec(sentence: ParametricSentence) throws -> Message.Payload? {
+  private func parseSpec(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let autoMode = try sentence.fields.bool(at: 0, trueValue: "A", falseValue: "M")!
     let fixMode = try sentence.fields.enumeration(at: 1, ofType: GNSS.SolutionType.self)!
     let PDOP = try sentence.fields.float(at: sentence.fields.endIndex - 4)!
     let HDOP = try sentence.fields.float(at: sentence.fields.endIndex - 3)!
     let VDOP = try sentence.fields.float(at: sentence.fields.endIndex - 2)!
     let systemID = try sentence.fields.int(at: sentence.fields.endIndex - 1)!
-    let ids = try (2..<(sentence.fields.endIndex - 4)).compactMap { index in
+    var ids = [GNSS.SatelliteID]()
+    for index in 2..<(sentence.fields.endIndex - 4) {
+      guard let svID = try sentence.fields.int(at: index, optional: true) else { continue }
       do {
-        let svID = try sentence.fields.int(at: index, optional: true)
-        return try svID.map { try GNSS.SatelliteID(systemID: systemID, svID: $0) }
-      } catch let error as GNSS.SatelliteID.Errors {
+        ids.append(try GNSS.SatelliteID(systemID: systemID, svID: svID))
+      } catch {
         switch error {
           case .badSignalID:
             fatalError("No signalID")
@@ -33,8 +34,8 @@ class GSAParser: MessageFormat {
               type: .unknownValue,
               index: sentence.fields.endIndex - 1
             )
-          default:
-            fatalError("Did not expect \(error)")
+          case .badSvID(let id):
+            fatalError("Did not expect badSvID(\(id))")
         }
       }
     }
@@ -49,17 +50,18 @@ class GSAParser: MessageFormat {
     )
   }
 
-  private func parseSTA8089FG(sentence: ParametricSentence) throws -> Message.Payload? {
+  private func parseSTA8089FG(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let autoMode = try sentence.fields.bool(at: 0, trueValue: "A", falseValue: "M")!
     let fixMode = try sentence.fields.enumeration(at: 1, ofType: GNSS.SolutionType.self)!
     let PDOP = try sentence.fields.float(at: sentence.fields.endIndex - 3)!
     let HDOP = try sentence.fields.float(at: sentence.fields.endIndex - 2)!
     let VDOP = try sentence.fields.float(at: sentence.fields.endIndex - 1)!
-    let ids = try (2..<(sentence.fields.endIndex - 3)).compactMap { index in
+    var ids = [GNSS.SatelliteID]()
+    for index in 2..<(sentence.fields.endIndex - 3) {
+      guard let svID = try sentence.fields.int(at: index, optional: true) else { continue }
       do {
-        let svID = try sentence.fields.int(at: index, optional: true)
-        return try svID.map { try GNSS.SatelliteID(svID: $0) }
-      } catch let error as GNSS.SatelliteID.Errors {
+        ids.append(try GNSS.SatelliteID(svID: svID))
+      } catch {
         switch error {
           case .badSignalID:
             fatalError("No signalID")
@@ -68,8 +70,8 @@ class GSAParser: MessageFormat {
               type: .unknownValue,
               index: sentence.fields.endIndex - 1
             )
-          default:
-            fatalError("Did not expect \(error)")
+          case .badSvID(let id):
+            fatalError("Did not expect badSvID(\(id))")
         }
       }
     }

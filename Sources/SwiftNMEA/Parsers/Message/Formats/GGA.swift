@@ -1,11 +1,11 @@
 import Foundation
 
 class GGAParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .GPSFix
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.hmsDecimal(at: 0, searchDirection: .backward)!
     let position = try sentence.fields.position(
       latitudeIndex: (1, 2),

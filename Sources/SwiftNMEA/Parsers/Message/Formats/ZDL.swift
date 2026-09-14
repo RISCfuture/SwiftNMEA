@@ -2,11 +2,11 @@ import Collections
 import Foundation
 
 class ZDLParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .timeDistanceToVariablePoint
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.hmsDecimalDuration(at: 0)!
     let distance = try sentence.fields.measurement(
       at: 1,

@@ -14,7 +14,7 @@ struct `8.3.38 GBS` {
       talker: .GPS,
       format: .GNSSFaultDetection,
       fields: [
-        hmsFractionFormatter.string(from: time), 1.2, 3.4, 5.6,
+        hmsFractionFormat.format(time), 1.2, 3.4, 5.6,
         35, 0.5, 1.5, 0.75,
         1, 5
       ]
@@ -69,7 +69,7 @@ struct `8.3.38 GBS` {
       talker: .GPS,
       format: .GNSSFaultDetection,
       fields: [
-        hmsFractionFormatter.string(from: time), 1.2, 3.4, 5.6,
+        hmsFractionFormat.format(time), 1.2, 3.4, 5.6,
         35, 0.5, 1.5, 0.75,
         "FFFFFFFFFFFFFFFF", 5
       ]

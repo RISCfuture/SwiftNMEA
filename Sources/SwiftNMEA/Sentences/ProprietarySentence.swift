@@ -34,8 +34,8 @@ public struct ProprietarySentence: Sentence, Element, Sendable, Codable, Equatab
   /// Manufacturer's data
   public let data: String
 
-  public init?(sentence: String, ignoreChecksum: Bool = false) async throws {
-    guard let result = try await Self.parser.parse(sentence: sentence) else { return nil }
+  public init?(sentence: String, ignoreChecksum: Bool = false) async throws(NMEAError) {
+    guard let result = await Self.parser.parse(sentence: sentence) else { return nil }
     manufacturer = result.manufacturer
     data = result.data
     checksum = result.checksum

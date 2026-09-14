@@ -2,11 +2,11 @@ import Collections
 import Foundation
 
 class XTEParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .crossTrackError
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let blink = try sentence.fields.bool(at: 0, trueValue: "V", falseValue: "A")!
     let cycleLock = try sentence.fields.bool(at: 1, trueValue: "V", falseValue: "A")!
     let xte = try sentence.fields.measurement(

@@ -2,11 +2,11 @@ import Collections
 import Foundation
 
 class WPLParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .waypointLocation
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let position = try sentence.fields.position(latitudeIndex: (0, 1), longitudeIndex: (2, 3))!
     let identifier = try sentence.fields.string(at: 4)!
 

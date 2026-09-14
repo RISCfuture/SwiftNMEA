@@ -1,11 +1,11 @@
 import Foundation
 
 class DPTParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .depth
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let depth = try sentence.fields.measurement(at: 0, valueType: .float, units: UnitLength.meters)!
     let offset = try sentence.fields.measurement(
       at: 1,

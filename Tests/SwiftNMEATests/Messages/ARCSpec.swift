@@ -14,7 +14,7 @@ struct `8.3.17 ARC` {
       talker: .integratedNavigation,
       format: .alertCommandRefused,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "NMA", 2456789, 12, "A"
       ]
     )

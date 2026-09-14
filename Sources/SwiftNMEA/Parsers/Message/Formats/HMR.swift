@@ -1,11 +1,11 @@
 import Foundation
 
 class HMRParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .headingMonitorReceive
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let sensor1ID = try sentence.fields.string(at: 0)!
     let sensor2ID = try sentence.fields.string(at: 1)!
     let setDifference = try sentence.fields.measurement(

@@ -3,11 +3,11 @@ import NMEACommon
 import NMEAUnits
 
 class HTCParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .headingControlCommand
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let overrideOn = try sentence.fields.bool(at: 0)!
     let rudderAngle = try sentence.fields.measurement(
       at: 1,

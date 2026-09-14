@@ -82,7 +82,7 @@ public struct GNSS {
       }
     }
 
-    init(systemID: Int, svID: Int, signalID: Int? = nil) throws {
+    init(systemID: Int, svID: Int, signalID: Int? = nil) throws(Errors) {
       switch systemID {
         case 1:
           guard let signalID else {
@@ -143,7 +143,7 @@ public struct GNSS {
       }
     }
 
-    init(svID: Int, signalID: Int? = nil) throws {
+    init(svID: Int, signalID: Int? = nil) throws(Errors) {
       switch svID {
         case 1...64:
           guard let signalID else {

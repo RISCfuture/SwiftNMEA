@@ -4,11 +4,11 @@ import NMEACommon
 class VERParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .version
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let deviceType = try sentence.fields.string(at: 2, optional: true)
@@ -24,29 +24,22 @@ class VERParser: MessageFormat {
       throw sentence.fields.fieldError(type: .missingRequiredValue, index: 9)
     }
 
-    do {
-      let recipient = Recipient(sentence: sentence, uniqueID: uniqueID, sequentialID: sequentialID)
-      let element = BufferElement(
-        lastSentence: sentenceNumber,
-        totalSentences: totalSentences,
-        deviceType: deviceType,
-        vendorID: vendorID,
-        serialNumber: serialNumber,
-        modelCode: modelCode,
-        softwareRevision: softwareRevision,
-        hardwareRevision: hardwareRevision
-      )
-      let finished = try buffer.add(element: element, optionallyFor: recipient)
+    let recipient = Recipient(sentence: sentence, uniqueID: uniqueID, sequentialID: sequentialID)
+    let element = BufferElement(
+      lastSentence: sentenceNumber,
+      totalSentences: totalSentences,
+      deviceType: deviceType,
+      vendorID: vendorID,
+      serialNumber: serialNumber,
+      modelCode: modelCode,
+      softwareRevision: softwareRevision,
+      hardwareRevision: hardwareRevision
+    )
 
-      return try zipOptionals(finished?.0, finished?.1).map { recipient, element in
-        try makePayload(recipient: recipient, element: element)
-      }
-    } catch let error as VERErrors {
-      switch error {
-        case .missingField(let index):
-          throw sentence.fields.fieldError(type: .missingRequiredValue, index: index)
-      }
-    } catch let error as BufferErrors {
+    let finished: (Recipient, BufferElement)?
+    do {
+      finished = try buffer.add(element: element, optionallyFor: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           fatalError("Unexpected missingRecipient error")
@@ -54,29 +47,45 @@ class VERParser: MessageFormat {
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
-  }
+    guard let finished else { return nil }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
-    // complete messages are flushed upon receipt of the last message
-    if !includeIncomplete { return [] }
-
-    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
-    return flushed.compactMap { recipient, element in
-      do {
-        let payload = try makePayload(recipient: recipient, element: element)
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as VERErrors {
-        switch error {
-          case .missingField(let index):
-            return MessageError(type: .missingRequiredValue, fieldNumber: index)
-        }
-      } catch {
-        fatalError("Unexpected error \(error)")
+    do {
+      return try makePayload(recipient: finished.0, element: finished.1)
+    } catch {
+      switch error {
+        case .missingField(let index):
+          throw sentence.fields.fieldError(type: .missingRequiredValue, index: index)
       }
     }
   }
 
-  private func makePayload(recipient: Recipient, element: BufferElement) throws -> Message.Payload {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
+    // complete messages are flushed upon receipt of the last message
+    if !includeIncomplete { return [] }
+
+    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
+    return flushed.map { recipient, element in
+      message(for: recipient, element: element)
+    }
+  }
+
+  private func message(for recipient: Recipient, element: BufferElement) -> any Element {
+    do {
+      let payload = try makePayload(recipient: recipient, element: element)
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      switch error {
+        case .missingField(let index):
+          return MessageError(type: .missingRequiredValue, fieldNumber: index)
+      }
+    }
+  }
+
+  private func makePayload(recipient: Recipient, element: BufferElement) throws(VERErrors)
+    -> Message.Payload
+  {
     guard let deviceType = element.deviceType else { throw VERErrors.missingField(index: 2) }
     guard let vendorID = element.vendorID else { throw VERErrors.missingField(index: 3) }
     guard let serialNumber = element.serialNumber else { throw VERErrors.missingField(index: 5) }

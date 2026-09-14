@@ -2,11 +2,11 @@ import Foundation
 import NMEACommon
 
 class CBRParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .navaidMessageBroadcastRates
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let MMSI = try sentence.fields.int(at: 0)!
     let messageID = try sentence.fields.enumeration(at: 1, ofType: Navaid.MessageID.self)!
     let index = try sentence.fields.int(at: 2)!

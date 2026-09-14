@@ -3,11 +3,11 @@ import Foundation
 class GDCParser: MessageFormat {
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .GNSSDifferentialCorrection
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let totalSatellites = try sentence.fields.int(at: 2)!
@@ -59,7 +59,7 @@ class GDCParser: MessageFormat {
         modifiedZCount: modifiedZCount,
         UDRE: UDRE
       )
-    } catch let error as GNSS.SatelliteID.Errors {
+    } catch {
       switch error {
         case .badSignalID:
           throw sentence.fields.fieldError(type: .unknownValue, index: 9)
@@ -82,7 +82,7 @@ class GDCParser: MessageFormat {
       return try buffer.add(element: element, for: recipient).map { finishedElement in
         makePayload(element: finishedElement)
       }
-    } catch let error as BufferErrors {
+    } catch {
       switch error {
         case .missingRecipient:
           throw sentence.fields.fieldError(type: .missingRequiredValue, index: 1)
@@ -92,7 +92,9 @@ class GDCParser: MessageFormat {
     }
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
     // complete messages are flushed upon receipt of the last sentence
     if !includeIncomplete { return [] }
 

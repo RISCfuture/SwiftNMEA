@@ -15,7 +15,7 @@ struct `8.3.42 GGA` {
       talker: .GPS,
       format: .GPSFix,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "3730.00", "N", "12115.00", "W",
         2, 11, 0.5,
         104.5, "M",

@@ -1,11 +1,11 @@
 import Foundation
 
 class RMCParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .GNSSMinimumData
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.datetime(ymdIndex: 8, hmsDecimalIndex: 0, optional: true)
     let isValid = try sentence.fields.bool(at: 1)!
     let position = try sentence.fields.position(

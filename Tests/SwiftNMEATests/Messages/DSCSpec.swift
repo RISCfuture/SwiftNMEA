@@ -6,6 +6,10 @@ import Testing
 
 @Suite
 struct `8.3.29 DSC` {
+  private static func hertz(_ value: Double) -> Measurement<UnitFrequency> {
+    .init(value: value, unit: .hertz)
+  }
+
   @Test
   func `parses the distress example from the spec`() async throws {
     let parser = SwiftNMEA()
@@ -220,72 +224,42 @@ struct `8.3.29 DSC` {
 
   // MARK: - DSC.FrequencyChannel (ITU-R M.493-16 Table A1-5)
 
-  private func hertz(_ value: Double) -> Measurement<UnitFrequency> {
-    .init(value: value, unit: .hertz)
-  }
-
-  @Test
-  func `round-trips a multiple-of-100-Hz MF/HF frequency (six-digit form)`() throws {
+  @Test(arguments: [
     // 2 187 500 Hz (MF DSC distress frequency) = 21875 × 100 Hz.
-    let value = DSC.FrequencyChannel.frequency(hertz(2_187_500))
-    #expect(value.rawValue == "021875")
+    (DSC.FrequencyChannel.frequency(Self.hertz(2_187_500)), "021875"),
+    // from the Table A1-5 worked usage: 41252165 = 1252165 × 10 = 12 521 650 Hz
+    (DSC.FrequencyChannel.frequency(Self.hertz(12_521_650)), "41252165"),
+    (DSC.FrequencyChannel.channelHF_MF(1234), "301234"),
+    (DSC.FrequencyChannel.autoVHF(2087), "802087"),
+    // VHF channel 16 (distress/safety) coded as 90 + four-digit channel
+    (DSC.FrequencyChannel.channelVHF(16), "900016")
+  ])
+  func `round-trips a frequency or channel through its symbol string`(
+    _ value: DSC.FrequencyChannel,
+    _ rawValue: String
+  ) throws {
+    #expect(value.rawValue == rawValue)
     #expect(DSC.FrequencyChannel(rawValue: value.rawValue) == value)
-    #expect(DSC.FrequencyChannel(rawValue: "021875") == value)
-  }
-
-  @Test
-  func `round-trips a seven-digit (10 Hz resolution) frequency`() throws {
-    // From the Table A1-5 worked usage: 41252165 = 1252165 × 10 = 12 521 650 Hz.
-    let value = DSC.FrequencyChannel.frequency(hertz(12_521_650))
-    #expect(value.rawValue == "41252165")
-    #expect(DSC.FrequencyChannel(rawValue: value.rawValue) == value)
-    #expect(DSC.FrequencyChannel(rawValue: "41252165") == value)
-  }
-
-  @Test
-  func `round-trips an HF/MF channel number`() throws {
-    let value = DSC.FrequencyChannel.channelHF_MF(1234)
-    #expect(value.rawValue == "301234")
-    #expect(DSC.FrequencyChannel(rawValue: value.rawValue) == value)
-    #expect(DSC.FrequencyChannel(rawValue: "301234") == value)
-  }
-
-  @Test
-  func `round-trips an auto-VHF channel number`() throws {
-    let value = DSC.FrequencyChannel.autoVHF(2087)
-    #expect(value.rawValue == "802087")
-    #expect(DSC.FrequencyChannel(rawValue: value.rawValue) == value)
-    #expect(DSC.FrequencyChannel(rawValue: "802087") == value)
-  }
-
-  @Test
-  func `round-trips a VHF working channel number`() throws {
-    // VHF channel 16 (distress/safety) coded as 90 + four-digit channel.
-    let value = DSC.FrequencyChannel.channelVHF(16)
-    #expect(value.rawValue == "900016")
-    #expect(DSC.FrequencyChannel(rawValue: value.rawValue) == value)
-    #expect(DSC.FrequencyChannel(rawValue: "900016") == value)
+    #expect(DSC.FrequencyChannel(rawValue: rawValue) == value)
   }
 
   @Test
   func `clamps an out-of-range frequency instead of crashing`() throws {
     // ≥ 30 MHz is not representable; encoding clamps to the maximum 10 Hz form.
-    let value = DSC.FrequencyChannel.frequency(hertz(30_000_000))
+    let value = DSC.FrequencyChannel.frequency(Self.hertz(30_000_000))
     #expect(value.rawValue == "42999999")
-    #expect(DSC.FrequencyChannel(rawValue: value.rawValue) == .frequency(hertz(29_999_990)))
+    #expect(DSC.FrequencyChannel(rawValue: value.rawValue) == .frequency(Self.hertz(29_999_990)))
   }
 
-  @Test
-  func `returns nil for malformed or out-of-range symbol strings`() throws {
-    #expect(DSC.FrequencyChannel(rawValue: "") == nil)
-    #expect(DSC.FrequencyChannel(rawValue: "12AB45") == nil)
-    // too short for the six-digit form
-    #expect(DSC.FrequencyChannel(rawValue: "0218") == nil)
-    // seven-digit form needs eight digits
-    #expect(DSC.FrequencyChannel(rawValue: "412345") == nil)
-    // VHF requires the TM digit to be 0
-    #expect(DSC.FrequencyChannel(rawValue: "910016") == nil)
-    // unused HM digit
-    #expect(DSC.FrequencyChannel(rawValue: "700000") == nil)
+  @Test(arguments: [
+    "",
+    "12AB45",
+    "0218",  // too short for the six-digit form
+    "412345",  // seven-digit form needs eight digits
+    "910016",  // VHF requires the TM digit to be 0
+    "700000"  // unused HM digit
+  ])
+  func `returns nil for a malformed or out-of-range symbol string`(_ rawValue: String) throws {
+    #expect(DSC.FrequencyChannel(rawValue: rawValue) == nil)
   }
 }

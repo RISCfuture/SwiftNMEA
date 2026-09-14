@@ -100,7 +100,7 @@ public struct Radar {
     /// one structures. "-" = increasing. `nil` = invalid or N/A data.
     public let CPATime: Measurement<UnitDuration>?
 
-    init(reader: inout BitReader) throws {
+    init(reader: inout BitReader) throws(DecodingError) {
       let version: UInt8 = reader.peek(bits: 2)
       switch version {
         case 0: try self.init(protocolZeroReader: &reader)
@@ -109,7 +109,7 @@ public struct Radar {
       }
     }
 
-    private init(protocolZeroReader reader: inout BitReader) throws {
+    private init(protocolZeroReader reader: inout BitReader) throws(DecodingError) {
       guard reader.remainingBits >= 90 else { throw DecodingError.truncated }
 
       protocolVersion = reader.read(bits: 2)
@@ -150,7 +150,7 @@ public struct Radar {
       CPATime = nil
     }
 
-    private init(protocolOneReader reader: inout BitReader) throws {
+    private init(protocolOneReader reader: inout BitReader) throws(DecodingError) {
       guard reader.remainingBits >= 42 else { throw DecodingError.truncated }
 
       protocolVersion = reader.read(bits: 2)

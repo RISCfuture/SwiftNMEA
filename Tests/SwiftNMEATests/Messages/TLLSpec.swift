@@ -18,7 +18,7 @@ struct `8.3.103 TLL` {
         12,
         "3730.00", "N", "12115.00", "W",
         "TGT1",
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "Q", nil
       ]
     )

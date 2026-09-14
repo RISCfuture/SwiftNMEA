@@ -14,7 +14,7 @@ struct `8.3.11 AKD` {
       talker: .commVHF,
       format: .detailAlarmAcknowledgement,
       fields: [
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         "SG", "PU", 1, 2, "SG", nil, 1
       ]
     )

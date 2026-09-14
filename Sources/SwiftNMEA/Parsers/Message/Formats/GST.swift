@@ -1,11 +1,11 @@
 import Foundation
 
 class GSTParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .GNSSPseudorangeNoise
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.hmsDecimal(at: 0, searchDirection: .backward)!
     let RMS = try sentence.fields.float(at: 1)!
     let semimajorStddev = try sentence.fields.measurement(

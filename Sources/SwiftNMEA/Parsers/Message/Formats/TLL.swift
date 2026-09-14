@@ -2,11 +2,11 @@ import Collections
 import Foundation
 
 class TLLParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .targetPosition
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let number = try sentence.fields.int(at: 0)!
     let position = try sentence.fields.position(latitudeIndex: (1, 2), longitudeIndex: (3, 4))!
     let name = try sentence.fields.string(at: 5)!

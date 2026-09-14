@@ -17,7 +17,7 @@ struct `8.3.8 ACS` {
       fields: [
         1,
         123_456_789,
-        hmsFractionFormatter.string(from: time),
+        hmsFractionFormat.format(time),
         components.day,
         components.month,
         components.year

@@ -1,9 +1,9 @@
 class SM1Parser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .safetyNETAllShips
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let status = try sentence.fields.enumeration(at: 0, ofType: SafetyNET.MSIStatus.self)!
 
     let identification = try SafetyNET.MessageIdentification(
@@ -27,8 +27,9 @@ class SM1Parser: MessageFormat {
 
     let receptionTime = try sentence.fields.datetime(ymdhmIndex: (8, 9, 10, 11, 12))!
 
-    let addressCode = try sentence.fields.int(at: 13, optional: true).map { value -> UInt in
-      try validateAddressCode(value, sentence: sentence)
+    var addressCode: UInt?
+    if let rawAddressCode = try sentence.fields.int(at: 13, optional: true) {
+      addressCode = try validateAddressCode(rawAddressCode, sentence: sentence)
     }
 
     return .safetyNETAllShips(
@@ -43,7 +44,9 @@ class SM1Parser: MessageFormat {
     )
   }
 
-  private func validateAddressCode(_ value: Int, sentence: ParametricSentence) throws -> UInt {
+  private func validateAddressCode(_ value: Int, sentence: ParametricSentence)
+    throws(NMEAError) -> UInt
+  {
     guard value == 0 || (1...21).contains(value) else {
       throw sentence.fields.fieldError(type: .badNumericValue, index: 13)
     }

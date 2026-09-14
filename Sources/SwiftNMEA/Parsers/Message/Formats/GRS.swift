@@ -1,11 +1,11 @@
 import Foundation
 
 class GRSParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .GNSSRangeResiduals
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let time = try sentence.fields.hmsDecimal(at: 0, searchDirection: .backward)!
     let mode = try sentence.fields.bool(at: 1, trueValue: "1", falseValue: "0")!
     // Residuals occupy the fields between the time/mode header and the trailing
@@ -31,37 +31,38 @@ class GRSParser: MessageFormat {
     else {
       throw sentence.fields.fieldError(type: .badNumericValue, index: sentence.fields.endIndex - 2)
     }
-    let residuals: [GNSS.SatelliteID: Measurement<UnitLength>] = try (2..<residualsEnd).reduce(
-      into: [:]) { dict, index in
-        do {
-          let id = try GNSS.SatelliteID(systemID: systemID, svID: index - 2, signalID: signalID)
-          // unused satellite slots are null fields; omit them from the dictionary
-          guard
-            let residual = try sentence.fields.measurement(
-              at: index,
-              valueType: .float,
-              units: UnitLength.meters,
-              optional: true
+    var residuals = [GNSS.SatelliteID: Measurement<UnitLength>]()
+    for index in 2..<residualsEnd {
+      let id: GNSS.SatelliteID
+      do {
+        id = try GNSS.SatelliteID(systemID: systemID, svID: index - 2, signalID: signalID)
+      } catch {
+        switch error {
+          case .badSignalID:
+            throw sentence.fields.fieldError(
+              type: .unknownValue,
+              index: sentence.fields.endIndex - 1
             )
-          else { return }
-          dict[id] = residual
-        } catch let error as GNSS.SatelliteID.Errors {
-          switch error {
-            case .badSignalID:
-              throw sentence.fields.fieldError(
-                type: .unknownValue,
-                index: sentence.fields.endIndex - 1
-              )
-            case .badSystemID:
-              throw sentence.fields.fieldError(
-                type: .unknownValue,
-                index: sentence.fields.endIndex - 2
-              )
-            default:
-              fatalError("Did not expect \(error)")
-          }
+          case .badSystemID:
+            throw sentence.fields.fieldError(
+              type: .unknownValue,
+              index: sentence.fields.endIndex - 2
+            )
+          case .badSvID(let svID):
+            fatalError("Did not expect badSvID(\(svID))")
         }
       }
+      // unused satellite slots are null fields; omit them from the dictionary
+      guard
+        let residual = try sentence.fields.measurement(
+          at: index,
+          valueType: .float,
+          units: UnitLength.meters,
+          optional: true
+        )
+      else { continue }
+      residuals[id] = residual
+    }
 
     return .GNSSRangeResiduals(residuals, time: time, recomputed: mode)
   }

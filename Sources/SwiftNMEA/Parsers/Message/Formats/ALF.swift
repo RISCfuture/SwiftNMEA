@@ -6,11 +6,11 @@ class ALFParser: MessageFormat {
 
   private var buffer = SentenceCountingBuffer<Recipient, BufferElement>()
 
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .alert
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let totalSentences = try sentence.fields.int(at: 0)!
     let sentenceNumber = try sentence.fields.int(at: 1)!
     let sequentialID = try sentence.fields.int(at: 2, optional: true)
@@ -88,17 +88,10 @@ class ALFParser: MessageFormat {
       texts: [sentenceNumber: text]
     )
 
+    let finished: (Recipient, BufferElement)?
     do {
-      let finished = try buffer.add(element: element, optionallyFor: recipient)
-
-      return try zipOptionals(finished?.0, finished?.1).map { recipient, element in
-        try makePayload(recipient: recipient, element: element)
-      }
-    } catch let error as ALFErrors {
-      switch error {
-        case .badText(let index): throw sentence.fields.fieldError(type: .badEncoding, index: index)
-      }
-    } catch let error as BufferErrors {
+      finished = try buffer.add(element: element, optionallyFor: recipient)
+    } catch {
       switch error {
         case .missingRecipient:
           // Per comment 2, the sequential message identifier may be a null
@@ -108,35 +101,63 @@ class ALFParser: MessageFormat {
           guard totalSentences == 1 else {
             throw sentence.fields.fieldError(type: .missingRequiredValue, index: 2)
           }
-          return try makePayload(
-            recipient: Recipient(sentence: sentence, sequentialID: nil),
-            element: element
+          return try payload(
+            for: Recipient(sentence: sentence, sequentialID: nil),
+            element: element,
+            sentence: sentence
           )
         case .wrongSentenceNumber:
           throw sentence.fields.fieldError(type: .wrongSentenceNumber, index: 1)
       }
     }
+    guard let finished else { return nil }
+
+    return try payload(for: finished.0, element: finished.1, sentence: sentence)
   }
 
-  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws -> [any Element] {
-    // complete messages are flushed upon receipt of the last sentence
-    if !includeIncomplete { return [] }
-
-    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
-    return try flushed.compactMap { recipient, element in
-      do {
-        let payload = try makePayload(recipient: recipient, element: element)
-        return Message(talker: recipient.talker, format: recipient.format, payload: payload)
-      } catch let error as ALFErrors {
-        switch error {
-          case .badText(let index):
-            return MessageError(type: .badEncoding, fieldNumber: index)
-        }
+  /// Builds the payload, translating an undecodable alert text into a field error.
+  private func payload(
+    for recipient: Recipient,
+    element: BufferElement,
+    sentence: ParametricSentence
+  ) throws(NMEAError) -> Message.Payload {
+    do {
+      return try makePayload(recipient: recipient, element: element)
+    } catch {
+      switch error {
+        case .badText(let index):
+          throw sentence.fields.fieldError(type: .badEncoding, index: index)
       }
     }
   }
 
-  private func makePayload(recipient: Recipient, element: BufferElement) throws -> Message.Payload {
+  func flush(talker: Talker?, format: Format?, includeIncomplete: Bool) throws(NMEAError)
+    -> [any Element]
+  {
+    // complete messages are flushed upon receipt of the last sentence
+    if !includeIncomplete { return [] }
+
+    let flushed = buffer.flush(talker: talker, format: format, includeIncomplete: includeIncomplete)
+    return flushed.map { recipient, element in
+      message(for: recipient, element: element)
+    }
+  }
+
+  private func message(for recipient: Recipient, element: BufferElement) -> any Element {
+    do {
+      let payload = try makePayload(recipient: recipient, element: element)
+      return Message(talker: recipient.talker, format: recipient.format, payload: payload)
+    } catch {
+      switch error {
+        case .badText(let index):
+          return MessageError(type: .badEncoding, fieldNumber: index)
+      }
+    }
+  }
+
+  private func makePayload(recipient: Recipient, element: BufferElement) throws(ALFErrors)
+    -> Message.Payload
+  {
     // the first sentence carries the alert title; an optional second sentence
     // carries the additional alert description (see comment 12)
     guard let rawTitle = element.texts[1] else { throw ALFErrors.badText(index: 12) }

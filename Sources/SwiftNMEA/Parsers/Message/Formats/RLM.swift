@@ -1,11 +1,11 @@
 import Foundation
 
 class RLMParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .returnLink
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     // Beacon ID: fixed-length 15 hexadecimal character field, not null. Kept as
     // a string to preserve leading zeros and the exact 15-digit representation.
     let beaconID = try sentence.fields.string(at: 0)!

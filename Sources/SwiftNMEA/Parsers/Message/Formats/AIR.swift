@@ -1,11 +1,11 @@
 import Foundation
 
 class AIRParser: MessageFormat {
-  func canParse(sentence: ParametricSentence) throws -> Bool {
+  func canParse(sentence: ParametricSentence) throws(NMEAError) -> Bool {
     sentence.delimiter == .parametric && sentence.format == .AISInterrogationRequest
   }
 
-  func parse(sentence: ParametricSentence) throws -> Message.Payload? {
+  func parse(sentence: ParametricSentence) throws(NMEAError) -> Message.Payload? {
     let MMSI1 = try sentence.fields.int(at: 0)!
     let messageNumber1_1 = try sentence.fields.int(at: 1)!
     let subsection1_1 = try sentence.fields.int(at: 2, optional: true)

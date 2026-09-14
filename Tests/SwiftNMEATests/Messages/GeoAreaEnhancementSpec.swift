@@ -4,34 +4,13 @@ import Testing
 
 @Suite
 struct `GeoAreaEnhancement tests` {
-  // lat 12.34, lon 56.78, Δlat 13.24, Δlon 57.68, speed 22.4 kt, course 180.1°
-  private let bothPresent = "123456781324576802241801"
-  // speed sub-field (chars 17–20) replaced by the "no data" sentinel
-  private let noSpeed = "1234567813245768----1801"
-  // course sub-field (chars 21–24) replaced by the "no data" sentinel
-  private let noCourse = "12345678132457680224----"
-
   // MARK: - decoding
 
-  @Test
-  func `reads speed and course when present`() {
-    let enhancement = GeoAreaEnhancement(rawValue: bothPresent)
-    #expect(enhancement?.speed == .init(value: 22.4, unit: .knots))
-    #expect(enhancement?.course == .init(value: 180.1, unit: .degrees))
-  }
-
-  @Test
-  func `reads a missing speed estimate as nil`() {
-    let enhancement = GeoAreaEnhancement(rawValue: noSpeed)
-    #expect(enhancement?.speed == nil)
-    #expect(enhancement?.course == .init(value: 180.1, unit: .degrees))
-  }
-
-  @Test
-  func `reads a missing course estimate as nil`() {
-    let enhancement = GeoAreaEnhancement(rawValue: noCourse)
-    #expect(enhancement?.speed == .init(value: 22.4, unit: .knots))
-    #expect(enhancement?.course == nil)
+  @Test(arguments: EnhancementCase.all)
+  func `reads the speed and course estimates`(_ testCase: EnhancementCase) {
+    let enhancement = GeoAreaEnhancement(rawValue: testCase.rawValue)
+    #expect(enhancement?.speed == testCase.speed)
+    #expect(enhancement?.course == testCase.course)
   }
 
   @Test
@@ -41,21 +20,43 @@ struct `GeoAreaEnhancement tests` {
 
   // MARK: - round trip
 
-  @Test
-  func `preserves speed and course when present`() {
-    let enhancement = GeoAreaEnhancement(rawValue: bothPresent)
-    #expect(enhancement?.rawValue == bothPresent)
+  @Test(arguments: EnhancementCase.all)
+  func `preserves the field through a round trip`(_ testCase: EnhancementCase) {
+    let enhancement = GeoAreaEnhancement(rawValue: testCase.rawValue)
+    #expect(enhancement?.rawValue == testCase.rawValue)
   }
 
-  @Test
-  func `preserves a missing speed estimate`() {
-    let enhancement = GeoAreaEnhancement(rawValue: noSpeed)
-    #expect(enhancement?.rawValue == noSpeed)
-  }
+  /// A 24-character geographic-area enhancement field and the estimates it carries.
+  ///
+  /// Every case encodes lat 12.34, lon 56.78, Δlat 13.24, Δlon 57.68; they differ
+  /// only in whether the speed and course sub-fields hold the "no data" sentinel.
+  struct EnhancementCase: Sendable, CustomTestStringConvertible {
+    static let all: [Self] = [
+      .init(
+        name: "speed and course present",
+        rawValue: "123456781324576802241801",
+        speed: .init(value: 22.4, unit: .knots),
+        course: .init(value: 180.1, unit: .degrees)
+      ),
+      .init(
+        name: "no speed estimate",
+        rawValue: "1234567813245768----1801",
+        speed: nil,
+        course: .init(value: 180.1, unit: .degrees)
+      ),
+      .init(
+        name: "no course estimate",
+        rawValue: "12345678132457680224----",
+        speed: .init(value: 22.4, unit: .knots),
+        course: nil
+      )
+    ]
 
-  @Test
-  func `preserves a missing course estimate`() {
-    let enhancement = GeoAreaEnhancement(rawValue: noCourse)
-    #expect(enhancement?.rawValue == noCourse)
+    let name: String
+    let rawValue: String
+    let speed: Measurement<UnitSpeed>?
+    let course: Measurement<UnitAngle>?
+
+    var testDescription: String { name }
   }
 }

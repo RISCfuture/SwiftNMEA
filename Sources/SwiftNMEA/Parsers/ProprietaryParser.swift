@@ -1,12 +1,12 @@
 import RegexBuilder
 
-actor ProprietaryParser {
-  private let rx: Regex<(Substring, Substring, Substring, UInt8)> = {
-    let manufacturerRef = Reference<Substring>()
-    let dataRef = Reference<Substring>()
-    let checksumRef = Reference<UInt8>()
+enum ProprietaryParser {
+  private static let manufacturerRef = Reference<Substring>()
+  private static let dataRef = Reference<Substring>()
+  private static let checksumRef = Reference<UInt8>()
 
-    return Regex {
+  private static let rx = LockedRegex(
+    Regex {
       Anchor.startOfSubject
       "$P"
       Capture(as: manufacturerRef) {
@@ -23,15 +23,15 @@ actor ProprietaryParser {
       }
       Anchor.endOfSubject
     }
-  }()
+  )
 
-  func parse(sentence: String) throws -> ProprietaryResult? {
+  static func parse(sentence: String) throws -> ProprietaryResult? {
     guard let match = try rx.wholeMatch(in: sentence) else { return nil }
 
     return .init(
-      manufacturer: String(match.output.1),
-      data: String(match.output.2),
-      checksum: match.output.3
+      manufacturer: String(match[manufacturerRef]),
+      data: String(match[dataRef]),
+      checksum: match[checksumRef]
     )
   }
 

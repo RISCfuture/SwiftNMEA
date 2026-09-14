@@ -6,8 +6,6 @@ import NMEACommon
 /// Reply or command messages consisting of multiple data fields. ``Message``s are
 /// built from one or more parametric or encapsulated sentences.
 public struct ParametricSentence: Sentence, Element, Sendable, Codable, Equatable {
-  private static let parser = ParametricParser()
-
   public let delimiter: Delimiter
   public let fields: Fields
   public let checksum: UInt8
@@ -18,8 +16,8 @@ public struct ParametricSentence: Sentence, Element, Sendable, Codable, Equatabl
   /// The message format.
   public var format: Format { .init(rawValue: fields.address.sslice(from: 2, to: 4))! }
 
-  public init?(sentence: String, ignoreChecksum: Bool = false) async throws {
-    guard let result = try await Self.parser.parse(sentence: sentence) else { return nil }
+  public init?(sentence: String, ignoreChecksum: Bool = false) throws {
+    guard let result = try ParametricParser.parse(sentence: sentence) else { return nil }
     delimiter = result.delimiter
     fields = .init(data: result.fields)
     checksum = result.checksum

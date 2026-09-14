@@ -40,7 +40,7 @@ struct `8.3.107 TTD` {
   // MARK: - .parse
 
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -58,7 +58,7 @@ struct `8.3.107 TTD` {
       hex: true
     )
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -85,7 +85,7 @@ struct `8.3.107 TTD` {
   }
 
   @Test
-  func `parses a single-sentence message with a null sequential identifier`() async throws {
+  func `parses a single-sentence message with a null sequential identifier`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -103,7 +103,7 @@ struct `8.3.107 TTD` {
       fields: ["01", "01", nil, chunks[0], fillBits]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -117,7 +117,7 @@ struct `8.3.107 TTD` {
   }
 
   @Test
-  func `throws an error for an incorrect sentence number`() async throws {
+  func `throws an error for an incorrect sentence number`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -144,7 +144,7 @@ struct `8.3.107 TTD` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     let error = try #require(messages[2] as? MessageError)
@@ -153,7 +153,7 @@ struct `8.3.107 TTD` {
   }
 
   @Test
-  func `throws an error for an out-of-range fill-bits field`() async throws {
+  func `throws an error for an out-of-range fill-bits field`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -169,7 +169,7 @@ struct `8.3.107 TTD` {
       fields: ["01", "01", nil, chunks[0], 99]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let error = try #require(messages[1] as? MessageError)
@@ -178,9 +178,7 @@ struct `8.3.107 TTD` {
   }
 
   @Test
-  func `parses a protocol-one CPA/TCPA structure`()
-    async throws
-  {
+  func `parses a protocol-one CPA/TCPA structure`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -196,7 +194,7 @@ struct `8.3.107 TTD` {
       fields: ["01", "01", nil, chunks[0], fillBits]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -216,7 +214,7 @@ struct `8.3.107 TTD` {
   }
 
   @Test
-  func `parses a protocol-one structure with N/A sentinels as nil`() async throws {
+  func `parses a protocol-one structure with N/A sentinels as nil`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -232,7 +230,7 @@ struct `8.3.107 TTD` {
       fields: ["01", "01", nil, chunks[0], fillBits]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let payload = (messages[1] as? Message)?.payload,
       case .trackedTargets(let targets) = payload
@@ -246,7 +244,7 @@ struct `8.3.107 TTD` {
   }
 
   @Test
-  func `parses a sentence mixing protocol-zero and protocol-one structures`() async throws {
+  func `parses a sentence mixing protocol-zero and protocol-one structures`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -264,7 +262,7 @@ struct `8.3.107 TTD` {
       fields: ["01", "01", nil, chunks[0], fillBits]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let payload = (messages[1] as? Message)?.payload,
       case .trackedTargets(let targets) = payload
@@ -281,9 +279,7 @@ struct `8.3.107 TTD` {
   }
 
   @Test
-  func `throws for an unknown protocol version`()
-    async throws
-  {
+  func `throws for an unknown protocol version`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -299,7 +295,7 @@ struct `8.3.107 TTD` {
       fields: ["01", "01", nil, chunks[0], fillBits]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let error = try #require(messages[1] as? MessageError)
@@ -310,7 +306,7 @@ struct `8.3.107 TTD` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete sentences`() async throws {
+  func `flushes incomplete sentences`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -331,10 +327,10 @@ struct `8.3.107 TTD` {
     )
     let data = sentences[0...1].joined().data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 2)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
     #expect(messages.count == 1)
 
     let message = try #require(messages[0] as? Message)

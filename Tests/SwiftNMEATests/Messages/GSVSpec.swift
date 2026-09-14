@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.48 GSV` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
 
     // MARK: Setup
 
@@ -53,7 +53,7 @@ struct `8.3.48 GSV` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 5)
     let payload1 = try #require((messages[2] as? Message)?.payload)
@@ -95,7 +95,7 @@ struct `8.3.48 GSV` {
   }
 
   @Test
-  func `derives the constellation from the talker and parses a hex signal ID`() async throws {
+  func `derives the constellation from the talker and parses a hex signal ID`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -108,7 +108,7 @@ struct `8.3.48 GSV` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     guard let payload = (messages[1] as? Message)?.payload,
@@ -123,7 +123,7 @@ struct `8.3.48 GSV` {
   }
 
   @Test
-  func `throws an error for an out-of-range signal ID`() async throws {
+  func `throws an error for an out-of-range signal ID`() throws {
     let parser = SwiftNMEA()
     // GPS signal IDs only range 0–8; hex "F" (15) is out of range.
     let sentence = createSentence(
@@ -137,7 +137,7 @@ struct `8.3.48 GSV` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

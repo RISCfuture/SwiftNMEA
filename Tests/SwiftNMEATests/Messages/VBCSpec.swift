@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.112 VBC` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -18,7 +18,7 @@ struct `8.3.112 VBC` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -43,7 +43,7 @@ struct `8.3.112 VBC` {
   }
 
   @Test
-  func `throws an error when the water-speed status is a null field`() async throws {
+  func `throws an error when the water-speed status is a null field`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -55,7 +55,7 @@ struct `8.3.112 VBC` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
@@ -65,9 +65,7 @@ struct `8.3.112 VBC` {
   }
 
   @Test
-  func `throws an error for a non-numeric speed`()
-    async throws
-  {
+  func `throws an error for a non-numeric speed`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -79,7 +77,7 @@ struct `8.3.112 VBC` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

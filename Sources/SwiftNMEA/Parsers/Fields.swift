@@ -10,10 +10,6 @@ import NMEACommon
 /// The first field (#0) is only accessible through ``address``; calling any of the
 /// subscript operators uses a subset of the fields _not_ including the address.
 public struct Fields: Sendable, Codable, Equatable {
-  private static var latitudeParser: LatitudeParser { .init() }
-  private static var longitudeParser: LongitudeParser { .init() }
-  private static var timeParser: TimeParser { .init() }
-
   private var fields: [String?]
 
   /// The value of the 0th field, typically the address. This field is not
@@ -322,12 +318,12 @@ public struct Fields: Sendable, Codable, Equatable {
       if optional { return nil }
       throw fieldError(type: .missingRequiredValue, index: longitudeIndex.0)
     }
-    guard let latitude = try Self.latitudeParser.parse(latitudeStr, hemisphere: latitudeHemisphere)
+    guard let latitude = try LatitudeParser.parse(latitudeStr, hemisphere: latitudeHemisphere)
     else {
       throw fieldError(type: .badLatLon, index: latitudeIndex.0)
     }
     guard
-      let longitude = try Self.longitudeParser.parse(longitudeStr, hemisphere: longitudeHemisphere)
+      let longitude = try LongitudeParser.parse(longitudeStr, hemisphere: longitudeHemisphere)
     else {
       throw fieldError(type: .badLatLon, index: longitudeIndex.0)
     }
@@ -366,7 +362,7 @@ public struct Fields: Sendable, Codable, Equatable {
       throw fieldError(type: .badDate, index: index)
     }
     guard
-      let date = Self.timeParser.calendar.date(
+      let date = TimeParser.calendar.date(
         from: .init(timeZone: timeZone, year: year, month: month, day: day)
       )
     else {
@@ -387,7 +383,7 @@ public struct Fields: Sendable, Codable, Equatable {
     }
     if valueStr.contains(".") {
       guard
-        let time = try Self.timeParser.parseHmsDecimal(
+        let time = try TimeParser.parseHmsDecimal(
           valueStr,
           searchDirection: searchDirection,
           timeZone: timeZone
@@ -398,7 +394,7 @@ public struct Fields: Sendable, Codable, Equatable {
       return time
     }
     guard
-      let time = try Self.timeParser.parseHms(
+      let time = try TimeParser.parseHms(
         valueStr,
         searchDirection: searchDirection,
         timeZone: timeZone
@@ -414,7 +410,7 @@ public struct Fields: Sendable, Codable, Equatable {
       if optional { return nil }
       throw fieldError(type: .missingRequiredValue, index: index)
     }
-    guard let time = try Self.timeParser.parseHmsDecimalDuration(valueStr) else {
+    guard let time = try TimeParser.parseHmsDecimalDuration(valueStr) else {
       throw fieldError(type: .badTime, index: index)
     }
     return time
@@ -443,14 +439,14 @@ public struct Fields: Sendable, Codable, Equatable {
       throw fieldError(type: .missingRequiredValue, index: hmsDecimalIndex)
     }
     guard
-      let dayPortion = Self.timeParser.calendar.date(
+      let dayPortion = TimeParser.calendar.date(
         from: .init(timeZone: timeZone, year: year, month: month, day: day)
       )
     else {
       throw lineError(type: .badDate)
     }
     guard
-      let date = try Self.timeParser.parseHmsDecimal(
+      let date = try TimeParser.parseHmsDecimal(
         timeStr,
         searchDirection: .forward,
         referenceDate: dayPortion,
@@ -485,14 +481,14 @@ public struct Fields: Sendable, Codable, Equatable {
       throw fieldError(type: .missingRequiredValue, index: hmsIndex)
     }
     guard
-      let dayPortion = Self.timeParser.calendar.date(
+      let dayPortion = TimeParser.calendar.date(
         from: .init(timeZone: timeZone, year: year, month: month, day: day)
       )
     else {
       throw lineError(type: .badDate)
     }
     guard
-      let date = try Self.timeParser.parseHms(
+      let date = try TimeParser.parseHms(
         timeStr,
         searchDirection: .forward,
         referenceDate: dayPortion,
@@ -519,7 +515,7 @@ public struct Fields: Sendable, Codable, Equatable {
       throw fieldError(type: .missingRequiredValue, index: hmsDecimalIndex)
     }
     guard
-      let date = try Self.timeParser.parseHmsDecimal(
+      let date = try TimeParser.parseHmsDecimal(
         timeStr,
         searchDirection: .forward,
         referenceDate: dayPortion,

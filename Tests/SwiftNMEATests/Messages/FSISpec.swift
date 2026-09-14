@@ -6,11 +6,11 @@ import Testing
 @Suite
 struct `8.3.37 FSI` {
   @Test
-  func `parses example (a) from the spec`() async throws {
+  func `parses example (a) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,020230,026140,m,0,C")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -30,11 +30,11 @@ struct `8.3.37 FSI` {
   }
 
   @Test
-  func `parses example (b) from the spec`() async throws {
+  func `parses example (b) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,020230,026140,m,5,R")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -54,11 +54,11 @@ struct `8.3.37 FSI` {
   }
 
   @Test
-  func `parses example (c) from the spec`() async throws {
+  func `parses example (c) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,,021820,o,,C")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -78,11 +78,11 @@ struct `8.3.37 FSI` {
   }
 
   @Test
-  func `parses the example (d) from the spec`() async throws {
+  func `parses the example (d) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CDFSI,900016,,d,9,R")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -102,11 +102,11 @@ struct `8.3.37 FSI` {
   }
 
   @Test
-  func `parses example (e) from the spec`() async throws {
+  func `parses example (e) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,300821,,m,9,C")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -126,11 +126,11 @@ struct `8.3.37 FSI` {
   }
 
   @Test
-  func `parses example (f) from the spec`() async throws {
+  func `parses example (f) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,404001,,w,5,R")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -150,11 +150,11 @@ struct `8.3.37 FSI` {
   }
 
   @Test
-  func `parses example (g) from the spec`() async throws {
+  func `parses example (g) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,416193,,s,0,C")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -174,11 +174,11 @@ struct `8.3.37 FSI` {
   }
 
   @Test
-  func `parses example (h) from the spec`() async throws {
+  func `parses example (h) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CTFSI,041620,043020,|,9,R")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -198,11 +198,11 @@ struct `8.3.37 FSI` {
   }
 
   @Test
-  func `parses example (i) from the spec`() async throws {
+  func `parses example (i) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$CXFSI,,021875,t,,C")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)

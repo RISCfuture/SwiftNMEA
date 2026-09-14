@@ -6,7 +6,7 @@ import Testing
 
 @Suite
 struct `8.3.127 XDR` {
-  private func measurements(from fields: [Any?]) async throws -> [Transducer.Value] {
+  private func measurements(from fields: [Any?]) throws -> [Transducer.Value] {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.127 XDR` {
       fields: fields
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     guard let payload = (messages[1] as? Message)?.payload else {
@@ -29,7 +29,7 @@ struct `8.3.127 XDR` {
     return measurements
   }
 
-  private func error(from fields: [Any?]) async throws -> MessageError? {
+  private func error(from fields: [Any?]) throws -> MessageError? {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -38,13 +38,13 @@ struct `8.3.127 XDR` {
       fields: fields
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
     return messages.compactMap { $0 as? MessageError }.first
   }
 
   @Test
-  func `parses temperature in Celsius and Kelvin`() async throws {
-    let measurements = try await measurements(from: [
+  func `parses temperature in Celsius and Kelvin`() throws {
+    let measurements = try measurements(from: [
       "C", 92.1, "C", "EngineOil#0",
       "C", 353.4, "K", "TransOil#0"
     ])
@@ -54,21 +54,21 @@ struct `8.3.127 XDR` {
   }
 
   @Test
-  func `throws when a temperature uses Fahrenheit`() async throws {
-    let error = try await error(from: ["C", 92.1, "F", "EngineOil#0"])
+  func `throws when a temperature uses Fahrenheit`() throws {
+    let error = try error(from: ["C", 92.1, "F", "EngineOil#0"])
     #expect(error?.type == .badUnitValue)
   }
 
   @Test
-  func `parses a dew point`() async throws {
-    let measurements = try await measurements(from: ["W", 12.3, "C", "Air#0"])
+  func `parses a dew point`() throws {
+    let measurements = try measurements(from: ["W", 12.3, "C", "Air#0"])
     #expect(measurements.count == 1)
     #expect(measurements[0] == .dewPoint(.init(value: 12.3, unit: .celsius), id: "Air#0"))
   }
 
   @Test
-  func `parses flow rate in litres/s and litres/h`() async throws {
-    let measurements = try await measurements(from: [
+  func `parses flow rate in litres/s and litres/h`() throws {
+    let measurements = try measurements(from: [
       "R", 1.5, "L", "Fuel#0",
       "R", 90, "H", "Oil#0"
     ])
@@ -78,8 +78,8 @@ struct `8.3.127 XDR` {
   }
 
   @Test
-  func `parses fluid level as cubic metres and as a percentage`() async throws {
-    let measurements = try await measurements(from: [
+  func `parses fluid level as cubic metres and as a percentage`() throws {
+    let measurements = try measurements(from: [
       "E", 60, "P", "Fuel#1",
       "V", 12.5, "M", "BlackWater#0"
     ])
@@ -89,8 +89,8 @@ struct `8.3.127 XDR` {
   }
 
   @Test
-  func `parses a switch as binary and a valve as a percentage`() async throws {
-    let measurements = try await measurements(from: [
+  func `parses a switch as binary and a valve as a percentage`() throws {
+    let measurements = try measurements(from: [
       "S", 1, "B", "Switch#1#4",
       "S", 0, "B", "Switch#0#2",
       "S", 10, "P", "Valve#2#0",
@@ -104,20 +104,20 @@ struct `8.3.127 XDR` {
   }
 
   @Test
-  func `throws when a switch/valve uses an unrecognized unit`() async throws {
-    let error = try await error(from: ["S", 1, "Q", "Switch#0#0"])
+  func `throws when a switch/valve uses an unrecognized unit`() throws {
+    let error = try error(from: ["S", 1, "Q", "Switch#0#0"])
     #expect(error?.type == .badUnitValue)
   }
 
   @Test
-  func `throws when a volume uses an unrecognized unit`() async throws {
-    let error = try await error(from: ["V", 12.5, "l", "Fuel#0"])
+  func `throws when a volume uses an unrecognized unit`() throws {
+    let error = try error(from: ["V", 12.5, "l", "Fuel#0"])
     #expect(error?.type == .badUnitValue)
   }
 
   @Test
-  func `parses a generic transducer`() async throws {
-    let measurements = try await measurements(from: ["G", 23.4, nil, "SENSOR3"])
+  func `parses a generic transducer`() throws {
+    let measurements = try measurements(from: ["G", 23.4, nil, "SENSOR3"])
     #expect(measurements.count == 1)
     #expect(measurements[0] == .generic(23.4, id: "SENSOR3"))
   }

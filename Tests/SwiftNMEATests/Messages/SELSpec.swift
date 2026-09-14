@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.89 SEL` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.89 SEL` {
       fields: ["POS", "GP0001", "HEA", "HE0001"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -23,7 +23,7 @@ struct `8.3.89 SEL` {
   }
 
   @Test
-  func `parses a null source SFI`() async throws {
+  func `parses a null source SFI`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -32,7 +32,7 @@ struct `8.3.89 SEL` {
       fields: ["SOG", "", "TIM", "TI0001"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -40,9 +40,7 @@ struct `8.3.89 SEL` {
   }
 
   @Test
-  func `throws an error for an unknown data id`()
-    async throws
-  {
+  func `throws an error for an unknown data id`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -51,7 +49,7 @@ struct `8.3.89 SEL` {
       fields: ["XXX", "GP0001"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     guard let error = messages[1] as? MessageError else {
@@ -63,9 +61,7 @@ struct `8.3.89 SEL` {
   }
 
   @Test
-  func `throws an error for a duplicate data id`()
-    async throws
-  {
+  func `throws an error for a duplicate data id`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -74,7 +70,7 @@ struct `8.3.89 SEL` {
       fields: ["POS", "GP0001", "POS", "GP0002"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     guard let error = messages[1] as? MessageError else {

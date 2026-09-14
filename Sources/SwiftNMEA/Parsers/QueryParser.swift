@@ -1,11 +1,11 @@
 import RegexBuilder
 
-actor QueryParser {
-  private let rx: Regex<(Substring, Substring, UInt8)> = {
-    let fieldsRef = Reference<Substring>()
-    let checksumRef = Reference<UInt8>()
+enum QueryParser {
+  private static let fieldsRef = Reference<Substring>()
+  private static let checksumRef = Reference<UInt8>()
 
-    return Regex {
+  private static let rx = LockedRegex(
+    Regex {
       Anchor.startOfSubject
       "$"
       Capture(as: fieldsRef) {
@@ -23,12 +23,12 @@ actor QueryParser {
 
       Anchor.endOfSubject
     }
-  }()
+  )
 
-  func parse(sentence: String) throws -> QueryResult? {
+  static func parse(sentence: String) throws -> QueryResult? {
     guard let match = try rx.wholeMatch(in: sentence) else { return nil }
 
-    return .init(fields: match.output.1, checksum: match.output.2)
+    return .init(fields: match[fieldsRef], checksum: match[checksumRef])
   }
 
   struct QueryResult {

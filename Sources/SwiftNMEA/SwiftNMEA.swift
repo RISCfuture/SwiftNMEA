@@ -1,44 +1,38 @@
 public import Foundation
+import Synchronization
 
 /// A class that buffers streaming data and parses detected NMEA ``Sentence``s
 /// and ``Message``s.
-public class SwiftNMEA {
-  private static let lineSeparator: [UInt8] = [0x0D, 0x0A]  // CRLF
-
-  /// The maximum length of a sentence-like line, excluding the trailing
-  /// `<CR><LF>` (which is stripped before parsing).
-  ///
-  /// IEC 61162-1 / NMEA 0183 §7 limits a sentence to 82 characters,
-  /// consisting of a maximum of 79 characters between the starting delimiter
-  /// (`$` or `!`) and the terminating `<CR><LF>`. With the delimiter included
-  /// but the `<CR><LF>` removed, that leaves 80 characters.
-  private static let maxLineLength = 80
+///
+/// Instances are safe to share across concurrency domains: the buffer, the
+/// filters, and the message parser all live behind a single lock, so
+/// overlapping calls to ``parse(data:ignoreChecksums:)`` and
+/// ``flush(talker:format:includeIncomplete:)`` are serialized rather than
+/// interleaved.
+public final class SwiftNMEA: Sendable {
+  private let state: Mutex<State>
 
   /// The subtypes of ``Element`` that will not be ignored. If empty, no types
   /// are ignored.
-  public var typeFilter: [any Element.Type]
+  public var typeFilter: [any Element.Type] {
+    get { state.withLock { $0.typeFilter } }
+    set { state.withLock { $0.typeFilter = newValue } }
+  }
 
   /// The talkers that will not be ignored. If empty, no talkers are ignored.
   /// Because ``ProprietarySentence``s and ``MessageError``s do not have
   /// talkers, they will be filtered out if this filter is non-empty.
-  public var talkerFilter: Set<Talker>
+  public var talkerFilter: Set<Talker> {
+    get { state.withLock { $0.talkerFilter } }
+    set { state.withLock { $0.talkerFilter = newValue } }
+  }
 
   /// The formats that will not be ignored. If empty, no formats are ignored.
   /// Because ``ProprietarySentence``s and ``MessageError``s do not have
   /// formats, they will be filtered out if this filter is non-empty.
-  public var formatFilter: Set<Format>
-
-  private let messageParser = MessageParser()
-  private var buffer = Data()
-
-  private var shouldIncludeParametric: Bool {
-    typeFilter.isEmpty || typeFilter.contains { $0 == ParametricSentence.self }
-  }
-  private var shouldIncludeProprietary: Bool {
-    typeFilter.isEmpty || typeFilter.contains { $0 == ProprietarySentence.self }
-  }
-  private var shouldIncludeMessages: Bool {
-    typeFilter.isEmpty || typeFilter.contains { $0 == Message.self }
+  public var formatFilter: Set<Format> {
+    get { state.withLock { $0.formatFilter } }
+    set { state.withLock { $0.formatFilter = newValue } }
   }
 
   /**
@@ -53,9 +47,13 @@ public class SwiftNMEA {
     talkerFilter: [Talker] = [],
     formatFilter: [Format] = []
   ) {
-    self.typeFilter = typeFilter
-    self.talkerFilter = .init(talkerFilter)
-    self.formatFilter = .init(formatFilter)
+    state = .init(
+      .init(
+        typeFilter: typeFilter,
+        talkerFilter: .init(talkerFilter),
+        formatFilter: .init(formatFilter)
+      )
+    )
   }
 
   /**
@@ -89,13 +87,8 @@ public class SwiftNMEA {
    validation fails.
    - Returns: The parsed sentences and messages.
    */
-  public func parse(data: Data, ignoreChecksums: Bool = false) async throws -> [any Element] {
-    buffer.append(data)
-    var lines = [String]()
-    while let line = try extractFirstSentence() {
-      lines.append(line)
-    }
-    return try await parseSentences(from: lines, ignoreChecksums: ignoreChecksums)
+  public func parse(data: Data, ignoreChecksums: Bool = false) throws -> [any Element] {
+    try state.withLock { try $0.parse(data: data, ignoreChecksums: ignoreChecksums) }
   }
 
   /**
@@ -129,16 +122,59 @@ public class SwiftNMEA {
    - Returns: ``Message``s and ``MessageError``s flushed and removed from the buffer.
    */
   public func flush(talker: Talker? = nil, format: Format? = nil, includeIncomplete: Bool = false)
-    async throws -> [any Element]
+    throws -> [any Element]
   {
-    try await messageParser.flush(
-      talker: talker,
-      format: format,
-      includeIncomplete: includeIncomplete
-    )
+    try state.withLock {
+      try $0.messageParser.flush(
+        talker: talker,
+        format: format,
+        includeIncomplete: includeIncomplete
+      )
+    }
+  }
+}
+
+/// The lock-protected interior of ``SwiftNMEA``: the stream buffer, the active
+/// filters, and the message parser that accumulates multi-sentence messages.
+private struct State {
+  private static let lineSeparator: [UInt8] = [0x0D, 0x0A]  // CRLF
+
+  /// The maximum length of a sentence-like line, excluding the trailing
+  /// `<CR><LF>` (which is stripped before parsing).
+  ///
+  /// IEC 61162-1 / NMEA 0183 §7 limits a sentence to 82 characters,
+  /// consisting of a maximum of 79 characters between the starting delimiter
+  /// (`$` or `!`) and the terminating `<CR><LF>`. With the delimiter included
+  /// but the `<CR><LF>` removed, that leaves 80 characters.
+  private static let maxLineLength = 80
+
+  var typeFilter: [any Element.Type]
+  var talkerFilter: Set<Talker>
+  var formatFilter: Set<Format>
+
+  let messageParser = MessageParser()
+  private var buffer = Data()
+
+  private var shouldIncludeParametric: Bool {
+    typeFilter.isEmpty || typeFilter.contains { $0 == ParametricSentence.self }
+  }
+  private var shouldIncludeProprietary: Bool {
+    typeFilter.isEmpty || typeFilter.contains { $0 == ProprietarySentence.self }
+  }
+  private var shouldIncludeMessages: Bool {
+    typeFilter.isEmpty || typeFilter.contains { $0 == Message.self }
   }
 
-  private func extractFirstSentence() throws -> String? {
+  mutating func parse(data: Data, ignoreChecksums: Bool) throws -> [any Element] {
+    buffer.append(data)
+    var lines = [String]()
+    while let line = try extractFirstSentence() {
+      lines.append(line)
+    }
+    return try parseSentences(from: lines, ignoreChecksums: ignoreChecksums)
+  }
+
+  private mutating func extractFirstSentence() throws -> String? {
     guard let separatorRange = buffer.firstRange(of: Self.lineSeparator) else { return nil }
     let sentenceRange = buffer.startIndex..<separatorRange.lowerBound
     let sentenceAndSeparatorRange = buffer.startIndex..<separatorRange.upperBound
@@ -151,9 +187,7 @@ public class SwiftNMEA {
     throw NMEAError(type: .badEncoding)
   }
 
-  private func parseSentences(from lines: [String], ignoreChecksums: Bool = false) async throws
-    -> [any Element]
-  {
+  private func parseSentences(from lines: [String], ignoreChecksums: Bool) throws -> [any Element] {
     var messages: [any Element] = []
     for line in lines {
       let isSentenceLike = line.first == "$" || line.first == "!"
@@ -163,29 +197,29 @@ public class SwiftNMEA {
           throw NMEAError(type: .sentenceTooLong, line: line)
         }
 
-        if let query = try await Query(sentence: line, ignoreChecksum: ignoreChecksums) {
+        if let query = try Query(sentence: line, ignoreChecksum: ignoreChecksums) {
           // we have to parse queries unconditionally because otherwise they'll be caught by ParametricParser
           addIfFilterMatches(query, to: &messages)
         } else if shouldIncludeProprietary,
-          let proprietary = try await ProprietarySentence(
+          let proprietary = try ProprietarySentence(
             sentence: line,
             ignoreChecksum: ignoreChecksums
           )
         {
           addIfFilterMatches(proprietary, to: &messages)
         } else if shouldIncludeParametric || shouldIncludeMessages,
-          let sentence = try await ParametricSentence(
+          let sentence = try ParametricSentence(
             sentence: line,
             ignoreChecksum: ignoreChecksums
           )
         {
           addIfFilterMatches(sentence, to: &messages)
           if shouldIncludeMessages,
-            let message = try await messageParser.parse(sentence: sentence)
+            let message = try messageParser.parse(sentence: sentence)
           {
             addIfFilterMatches(message, to: &messages)
           }
-        } else if isSentenceLike, try await !lineIsRecognizable(line) {
+        } else if isSentenceLike, try !lineIsRecognizable(line) {
           // a sentence-like line that matches none of the parsers (and wasn't merely
           // excluded by a filter) is malformed
           throw NMEAError(type: .unknownSentenceType, line: line)
@@ -205,10 +239,10 @@ public class SwiftNMEA {
   /// matches a parser shape is "recognized" even if it was excluded by a
   /// filter or has a bad checksum. Used to distinguish a line that was merely
   /// filtered out from one that is genuinely unparseable.
-  private func lineIsRecognizable(_ line: String) async throws -> Bool {
-    if try await Query(sentence: line, ignoreChecksum: true) != nil { return true }
-    if try await ProprietarySentence(sentence: line, ignoreChecksum: true) != nil { return true }
-    if try await ParametricSentence(sentence: line, ignoreChecksum: true) != nil { return true }
+  private func lineIsRecognizable(_ line: String) throws -> Bool {
+    if try Query(sentence: line, ignoreChecksum: true) != nil { return true }
+    if try ProprietarySentence(sentence: line, ignoreChecksum: true) != nil { return true }
+    if try ParametricSentence(sentence: line, ignoreChecksum: true) != nil { return true }
     return false
   }
 

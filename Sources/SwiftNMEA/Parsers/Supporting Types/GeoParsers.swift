@@ -11,27 +11,32 @@ enum LongitudeHemisphere: String {
   case west = "W"
 }
 
-final class LatitudeParser {
-  private let degrees = Reference<Int>()
-  private let minutes = Reference<Double>()
-  private lazy var rx = Regex {
-    Anchor.startOfSubject
-    Capture(as: degrees) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      Int($0)!
-    }
-    Capture(as: minutes) {
-      Repeat(.digit, count: 2)
-      "."
-      OneOrMore(.digit)
-    } transform: {
-      Double($0)!
-    }
-    Anchor.endOfSubject
-  }
+enum LatitudeParser {
+  private static let degrees = Reference<Int>()
+  private static let minutes = Reference<Double>()
 
-  func parse(_ value: String, hemisphere: LatitudeHemisphere) throws -> Measurement<UnitAngle>? {
+  private static let rx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Capture(as: degrees) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        Int($0)!
+      }
+      Capture(as: minutes) {
+        Repeat(.digit, count: 2)
+        "."
+        OneOrMore(.digit)
+      } transform: {
+        Double($0)!
+      }
+      Anchor.endOfSubject
+    }
+  )
+
+  static func parse(_ value: String, hemisphere: LatitudeHemisphere) throws
+    -> Measurement<UnitAngle>?
+  {
     guard let match = try rx.firstMatch(in: value) else {
       return nil
     }
@@ -41,27 +46,32 @@ final class LatitudeParser {
   }
 }
 
-final class LongitudeParser {
-  private let degrees = Reference<Int>()
-  private let minutes = Reference<Double>()
-  private lazy var rx = Regex {
-    Anchor.startOfSubject
-    Capture(as: degrees) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      Int($0)!
-    }
-    Capture(as: minutes) {
-      Repeat(.digit, count: 2)
-      "."
-      OneOrMore(.digit)
-    } transform: {
-      Double($0)!
-    }
-    Anchor.endOfSubject
-  }
+enum LongitudeParser {
+  private static let degrees = Reference<Int>()
+  private static let minutes = Reference<Double>()
 
-  func parse(_ value: String, hemisphere: LongitudeHemisphere) throws -> Measurement<UnitAngle>? {
+  private static let rx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Capture(as: degrees) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        Int($0)!
+      }
+      Capture(as: minutes) {
+        Repeat(.digit, count: 2)
+        "."
+        OneOrMore(.digit)
+      } transform: {
+        Double($0)!
+      }
+      Anchor.endOfSubject
+    }
+  )
+
+  static func parse(_ value: String, hemisphere: LongitudeHemisphere) throws
+    -> Measurement<UnitAngle>?
+  {
     guard let match = try rx.firstMatch(in: value) else {
       return nil
     }

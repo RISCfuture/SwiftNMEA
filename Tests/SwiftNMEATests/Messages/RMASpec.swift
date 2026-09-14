@@ -7,11 +7,11 @@ import Testing
 @Suite
 struct `8.3.79 RMA` {
   @Test
-  func `parses example (a) from the spec`() async throws {
+  func `parses example (a) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,V,,,,,14162.8,,,,,,N*6F\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -42,11 +42,11 @@ struct `8.3.79 RMA` {
   }
 
   @Test
-  func `parses example (b) from the spec`() async throws {
+  func `parses example (b) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,V,,,,,14172.3,26026.7,,,,,N*4C\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -77,11 +77,11 @@ struct `8.3.79 RMA` {
   }
 
   @Test
-  func `parses example (c) from the spec`() async throws {
+  func `parses example (c) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,A,,,,,14182.3,26026.7,,,,,A*5B\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -112,11 +112,11 @@ struct `8.3.79 RMA` {
   }
 
   @Test
-  func `parses example (d) from the spec`() async throws {
+  func `parses example (d) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,A,4226.26,N,07125.89,W,14182.3,26026.7,8.5,275.,14.0,W,A*05\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -149,11 +149,11 @@ struct `8.3.79 RMA` {
   }
 
   @Test
-  func `parses example (e) from the spec`() async throws {
+  func `parses example (e) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,V,4226.26,N,07125.89,W,14182.3,26026.7,8.5,275.,14.0,W,N*1D\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -186,11 +186,11 @@ struct `8.3.79 RMA` {
   }
 
   @Test
-  func `parses example (f) from the spec`() async throws {
+  func `parses example (f) from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$LCRMA,A,4226.265,N,07125.890,W,14172.33,26026.71,8.53,275.,14.0,W,D*3B\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

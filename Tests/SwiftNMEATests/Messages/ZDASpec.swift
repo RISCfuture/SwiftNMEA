@@ -6,11 +6,11 @@ import Testing
 @Suite
 struct `8.3.130 ZDA` {
   @Test
-  func `parses the first example from the spec (corrected)`() async throws {
+  func `parses the first example from the spec (corrected)`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$GPZDA,234500.00,09,06,1995,-12,45")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -35,11 +35,11 @@ struct `8.3.130 ZDA` {
   }
 
   @Test
-  func `parses the second example from the spec (corrected)`() async throws {
+  func `parses the second example from the spec (corrected)`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$GPZDA,013000.00,11,06,1995,10,30")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

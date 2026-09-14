@@ -49,7 +49,7 @@ struct `8.3.114 VDM` {
   // MARK: - .parse
 
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -74,7 +74,7 @@ struct `8.3.114 VDM` {
       otherFields: ["B"]
     )
     let data = (sentences1 + sentences2).joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 5)
     let payload1 = try #require((messages[1] as? Message)?.payload)
@@ -84,7 +84,7 @@ struct `8.3.114 VDM` {
   }
 
   @Test
-  func `parses a 62-character (46-byte) sentence when some fields are nil`() async throws {
+  func `parses a 62-character (46-byte) sentence when some fields are nil`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -97,7 +97,7 @@ struct `8.3.114 VDM` {
       fields: [1, 1, nil, nil, chunks[0], fillBits]
     )
     let sentenceData = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
+    let messages = try parser.parse(data: sentenceData)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -110,7 +110,7 @@ struct `8.3.114 VDM` {
   }
 
   @Test
-  func `throws an error for an incorrect sentence number`() async throws {
+  func `throws an error for an incorrect sentence number`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -133,7 +133,7 @@ struct `8.3.114 VDM` {
       )
     ]
     let sentenceData = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
+    let messages = try parser.parse(data: sentenceData)
 
     #expect(messages.count == 3)
     guard let error = messages[2] as? MessageError else {
@@ -145,13 +145,11 @@ struct `8.3.114 VDM` {
   }
 
   @Test
-  func `parses the first example from the spec`()
-    async throws
-  {
+  func `parses the first example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "!AIVDM,1,1,,A,1P000Oh1IT1svTP2r:43grwb05q4,0")
     let sentenceData = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
+    let messages = try parser.parse(data: sentenceData)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -159,16 +157,14 @@ struct `8.3.114 VDM` {
   }
 
   @Test
-  func `parses the second example from the spec`()
-    async throws
-  {
+  func `parses the second example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "!AIVDM,2,1,7,A,1P000Oh1IT1svT,0"),
       applyChecksum(to: "!AIVDM,2,2,7,A,P2r:43grwb05q4,0")
     ]
     let sentenceData = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
+    let messages = try parser.parse(data: sentenceData)
 
     #expect(messages.count == 3)
     let payload = try #require((messages[2] as? Message)?.payload)
@@ -176,16 +172,14 @@ struct `8.3.114 VDM` {
   }
 
   @Test
-  func `parses the third example from the spec`()
-    async throws
-  {
+  func `parses the third example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "!AIVDM,2,1,9,A,1P000Oh1IT1svTP2r:43,0"),
       applyChecksum(to: "!AIVDM,2,2,9,A,grwb05q4,0")
     ]
     let sentenceData = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
+    let messages = try parser.parse(data: sentenceData)
 
     #expect(messages.count == 3)
     let payload = try #require((messages[2] as? Message)?.payload)
@@ -195,7 +189,7 @@ struct `8.3.114 VDM` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete sentences`() async throws {
+  func `flushes incomplete sentences`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -213,10 +207,10 @@ struct `8.3.114 VDM` {
     )
     let sentenceData = sentences[0].data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: sentenceData)
+    let parsed = try parser.parse(data: sentenceData)
     #expect(parsed.count == 1)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
     #expect(messages.count == 1)
 
     guard let message = messages[0] as? Message else {

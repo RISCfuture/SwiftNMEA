@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct `8.3.94 SM3` {
   @Test
-  func `parses a circular-area SafetyNET message`() async throws {
+  func `parses a circular-area SafetyNET message`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -19,7 +19,7 @@ struct `8.3.94 SM3` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -60,7 +60,7 @@ struct `8.3.94 SM3` {
   }
 
   @Test
-  func `parses null centre, radius, and LES fields when MSI is incomplete`() async throws {
+  func `parses null centre, radius, and LES fields when MSI is incomplete`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -71,7 +71,7 @@ struct `8.3.94 SM3` {
         nil, nil, nil, nil, nil
       ]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     let payload = try #require((messages[1] as? Message)?.payload)
     guard
@@ -101,7 +101,7 @@ struct `8.3.94 SM3` {
   }
 
   @Test
-  func `throws for a reserved ocean region code`() async throws {
+  func `throws for a reserved ocean region code`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -112,7 +112,7 @@ struct `8.3.94 SM3` {
         "5600.00", "N", "03400.00", "W", "035"
       ]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

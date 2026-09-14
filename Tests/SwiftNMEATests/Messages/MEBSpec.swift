@@ -8,7 +8,7 @@ struct `8.3.55 MEB` {
   // MARK: - .parse
 
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -36,7 +36,7 @@ struct `8.3.55 MEB` {
       otherFields: [1, 9_876_543_210, 14, 2, 1, nil, 0, "R"]
     )
     let data = (sentences1 + sentences2).joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 5)
     let payload1 = try #require((messages[1] as? Message)?.payload)
@@ -75,7 +75,7 @@ struct `8.3.55 MEB` {
   }
 
   @Test
-  func `parses a stored message with a null channel`() async throws {
+  func `parses a stored message with a null channel`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -91,7 +91,7 @@ struct `8.3.55 MEB` {
       otherFields: [nil, 1_234_567_890, 6, 3, 0, 9_876_543_210, 1, "C"]
     )
     let sentenceData = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
+    let messages = try parser.parse(data: sentenceData)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -106,9 +106,7 @@ struct `8.3.55 MEB` {
   }
 
   @Test
-  func `throws an error for a missing field`()
-    async throws
-  {
+  func `throws an error for a missing field`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -141,7 +139,7 @@ struct `8.3.55 MEB` {
       )
     ]
     let sentenceData = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
+    let messages = try parser.parse(data: sentenceData)
 
     #expect(messages.count == 4)
 
@@ -161,7 +159,7 @@ struct `8.3.55 MEB` {
   }
 
   @Test
-  func `throws an error for an incorrect sentence number`() async throws {
+  func `throws an error for an incorrect sentence number`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -194,7 +192,7 @@ struct `8.3.55 MEB` {
       )
     ]
     let sentenceData = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
+    let messages = try parser.parse(data: sentenceData)
 
     #expect(messages.count == 3)
     guard let error = messages[2] as? MessageError else {
@@ -208,7 +206,7 @@ struct `8.3.55 MEB` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete sentences`() async throws {
+  func `flushes incomplete sentences`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -226,10 +224,10 @@ struct `8.3.55 MEB` {
     )
     let sentenceData = sentences[0].data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: sentenceData)
+    let parsed = try parser.parse(data: sentenceData)
     #expect(parsed.count == 1)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
     #expect(messages.count == 1)
 
     guard let message = messages[0] as? Message else {
@@ -267,7 +265,7 @@ struct `8.3.55 MEB` {
   }
 
   @Test
-  func `throws an error for a missing field when flushing`() async throws {
+  func `throws an error for a missing field when flushing`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -287,11 +285,11 @@ struct `8.3.55 MEB` {
       ]
     )
     let sentenceData = sentence.data(using: .ascii)!
-    let parsed = try await parser.parse(data: sentenceData)
+    let parsed = try parser.parse(data: sentenceData)
 
     #expect(parsed.count == 1)
 
-    let flushed = try await parser.flush(includeIncomplete: true)
+    let flushed = try parser.flush(includeIncomplete: true)
     #expect(flushed.count == 1)
 
     guard let error = flushed[0] as? MessageError else {

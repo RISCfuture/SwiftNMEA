@@ -8,11 +8,11 @@ struct `8.3.109 TUT` {
   // MARK: - .parse
 
   @Test
-  func `parses the proprietary example from the spec`() async throws {
+  func `parses the proprietary example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$SDTUT,SD,01,01,1,PXYZ,02*6D\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -31,13 +31,11 @@ struct `8.3.109 TUT` {
   }
 
   @Test
-  func `parses the Unicode example from the spec`()
-    async throws
-  {
+  func `parses the Unicode example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$INTUT,SD,01,01,1,U,6D45702C5371967A*5D\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -53,13 +51,11 @@ struct `8.3.109 TUT` {
   }
 
   @Test
-  func `parses the ASCII example from the spec`()
-    async throws
-  {
+  func `parses the ASCII example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$INTUT,SD,01,01,1,A,5368616C6C6F7720576174657221*4B\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -75,7 +71,7 @@ struct `8.3.109 TUT` {
   }
 
   @Test
-  func `throws an error for invalid encoded data`() async throws {
+  func `throws an error for invalid encoded data`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -88,7 +84,7 @@ struct `8.3.109 TUT` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let error = try #require(messages[1] as? MessageError)
@@ -97,7 +93,7 @@ struct `8.3.109 TUT` {
   }
 
   @Test
-  func `throws an error for an incorrect sentence number`() async throws {
+  func `throws an error for an incorrect sentence number`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -114,7 +110,7 @@ struct `8.3.109 TUT` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     let error = try #require(messages[2] as? MessageError)
@@ -125,7 +121,7 @@ struct `8.3.109 TUT` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete messages`() async throws {
+  func `flushes incomplete messages`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -142,11 +138,11 @@ struct `8.3.109 TUT` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
 
     #expect(parsed.count == 2)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
     #expect(messages.count == 1)
 
     let message = try #require(messages[0] as? Message)
@@ -163,7 +159,7 @@ struct `8.3.109 TUT` {
   }
 
   @Test
-  func `throws an error for invalid encoded data when flushing`() async throws {
+  func `throws an error for invalid encoded data when flushing`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -180,9 +176,9 @@ struct `8.3.109 TUT` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    _ = try await parser.parse(data: data)
+    _ = try parser.parse(data: data)
 
-    let flushed = try await parser.flush(includeIncomplete: true)
+    let flushed = try parser.flush(includeIncomplete: true)
     #expect(flushed.count == 1)
 
     let error = try #require(flushed[0] as? MessageError)

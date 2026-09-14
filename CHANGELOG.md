@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Breaking:** `SwiftNMEA.parse(data:ignoreChecksums:)`, `SwiftNMEA.flush(talker:format:includeIncomplete:)`, and the failable `init?(sentence:ignoreChecksum:)` requirement of the `Sentence` protocol (and its implementations on `ParametricSentence`, `ProprietarySentence`, and `Query`) are no longer `async`. Drop the `await` at every call site. The actors that wrapped the sentence-parsing regexes only existed to keep a non-`Sendable` `Regex` safe; the regexes now live in `LockedRegex`, a lock-guarded, lazily-built holder (the same mechanism SwiftMETAR uses), so parsing is a plain synchronous call.
+- **Breaking:** `SwiftNMEA` is now a `final class` conforming to `Sendable`. Instances can be shared across concurrency domains; its buffer, filters, and message parser live behind a single lock, so overlapping calls are serialized. Subclassing `SwiftNMEA` is no longer possible.
+- The latitude, longitude, and time field parsers are now shared, so their regexes are compiled once per process rather than rebuilt on every field access.
+
 ## [2.3.0] - 2026-09-14
 
 ### Changed

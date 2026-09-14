@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.78 RLM` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -10)
     let sentence = createSentence(
@@ -21,7 +21,7 @@ struct `8.3.78 RLM` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -39,7 +39,7 @@ struct `8.3.78 RLM` {
   }
 
   @Test
-  func `parses a sentence with no time of reception`() async throws {
+  func `parses a sentence with no time of reception`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -53,7 +53,7 @@ struct `8.3.78 RLM` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     let payload = try #require((messages[1] as? Message)?.payload)
     guard
@@ -70,7 +70,7 @@ struct `8.3.78 RLM` {
   }
 
   @Test
-  func `throws an error for a beacon ID of the wrong length`() async throws {
+  func `throws an error for a beacon ID of the wrong length`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -83,7 +83,7 @@ struct `8.3.78 RLM` {
         "ABCD"
       ]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
       return

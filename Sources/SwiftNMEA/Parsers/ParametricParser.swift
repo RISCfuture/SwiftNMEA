@@ -1,12 +1,12 @@
 import RegexBuilder
 
-actor ParametricParser {
-  private let rx: Regex<(Substring, Delimiter, Substring, UInt8)> = {
-    let delimiterRef = Reference<Delimiter>()
-    let fieldsRef = Reference<Substring>()
-    let checksumRef = Reference<UInt8>()
+enum ParametricParser {
+  private static let delimiterRef = Reference<Delimiter>()
+  private static let fieldsRef = Reference<Substring>()
+  private static let checksumRef = Reference<UInt8>()
 
-    return Regex {
+  private static let rx = LockedRegex(
+    Regex {
       Anchor.startOfSubject
       Capture(as: delimiterRef) {
         ChoiceOf {
@@ -30,15 +30,15 @@ actor ParametricParser {
       }
       Anchor.endOfSubject
     }
-  }()
+  )
 
-  func parse(sentence: String) throws -> SentenceResult? {
+  static func parse(sentence: String) throws -> SentenceResult? {
     guard let match = try rx.wholeMatch(in: sentence) else { return nil }
 
     return .init(
-      delimiter: match.output.1,
-      fields: match.output.2,
-      checksum: match.output.3
+      delimiter: match[delimiterRef],
+      fields: match[fieldsRef],
+      checksum: match[checksumRef]
     )
   }
 

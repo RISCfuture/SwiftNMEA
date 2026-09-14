@@ -8,14 +8,14 @@ struct `8.3.96 SMB` {
   // MARK: - .parse
 
   @Test
-  func `parses a multi-sentence message and decodes code delimiters`() async throws {
+  func `parses a multi-sentence message and decodes code delimiters`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "$CSSMB,002,001,0,123456,FROM:MRCC^0D^0A"),
       applyChecksum(to: "$CSSMB,002,002,0,123456,TO:ALL SHIPS")
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     // two echoed sentences, then the assembled message on the last sentence
     #expect(messages.count == 3)
@@ -31,7 +31,7 @@ struct `8.3.96 SMB` {
   }
 
   @Test
-  func `parses a single sentence with null sentence number and identifier`() async throws {
+  func `parses a single sentence with null sentence number and identifier`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -40,7 +40,7 @@ struct `8.3.96 SMB` {
       fields: ["001", nil, nil, 654_321, "SINGLE LINE MESSAGE"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -55,14 +55,14 @@ struct `8.3.96 SMB` {
   }
 
   @Test
-  func `throws an error for an out-of-range sentence number`() async throws {
+  func `throws an error for an out-of-range sentence number`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "$CSSMB,002,001,0,123456,FIRST"),
       applyChecksum(to: "$CSSMB,002,003,0,123456,THIRD")
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     let error = try #require(messages[2] as? MessageError)
@@ -71,7 +71,7 @@ struct `8.3.96 SMB` {
   }
 
   @Test
-  func `throws an error for a null sentence number in a multi-sentence message`() async throws {
+  func `throws an error for a null sentence number in a multi-sentence message`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -80,7 +80,7 @@ struct `8.3.96 SMB` {
       fields: ["002", nil, 0, 123_456, "FIRST"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     let error = try #require(messages[1] as? MessageError)
     #expect(error.type == .missingRequiredValue)
@@ -90,7 +90,7 @@ struct `8.3.96 SMB` {
   // MARK: - .flush
 
   @Test
-  func `flushes an incomplete message`() async throws {
+  func `flushes an incomplete message`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -100,10 +100,10 @@ struct `8.3.96 SMB` {
     )
     let data = sentence.data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 1)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
     #expect(messages.count == 1)
 
     let message = try #require(messages[0] as? Message)

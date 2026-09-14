@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.12 ALA` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -2000)
     let sentence = createSentence(
@@ -19,7 +19,7 @@ struct `8.3.12 ALA` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -46,7 +46,7 @@ struct `8.3.12 ALA` {
   }
 
   @Test
-  func `parses a DC propulsion motor overspeed alarm (EP/PD code 3)`() async throws {
+  func `parses a DC propulsion motor overspeed alarm (EP/PD code 3)`() throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -120)
     let sentence = createSentence(
@@ -59,7 +59,7 @@ struct `8.3.12 ALA` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -71,7 +71,7 @@ struct `8.3.12 ALA` {
   }
 
   @Test
-  func `does not recognize the removed DC propulsion motor code 8`() async throws {
+  func `does not recognize the removed DC propulsion motor code 8`() throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -120)
     let sentence = createSentence(
@@ -84,7 +84,7 @@ struct `8.3.12 ALA` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

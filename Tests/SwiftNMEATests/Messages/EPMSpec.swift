@@ -8,7 +8,7 @@ struct `8.3.32 EPM` {
   // MARK: - .parse
 
   @Test
-  func `parses a multi-sentence command and concatenates the value`() async throws {
+  func `parses a multi-sentence command and concatenates the value`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -29,7 +29,7 @@ struct `8.3.32 EPM` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     let payload = try #require((messages[2] as? Message)?.payload)
@@ -50,7 +50,7 @@ struct `8.3.32 EPM` {
   }
 
   @Test
-  func `decodes escaped reserved characters in the value`() async throws {
+  func `decodes escaped reserved characters in the value`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -59,7 +59,7 @@ struct `8.3.32 EPM` {
       fields: [1, 1, 25, "R", "AI", "503123450", 101, "a^2Cb"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -73,7 +73,7 @@ struct `8.3.32 EPM` {
   }
 
   @Test
-  func `parses a null unique identifier`() async throws {
+  func `parses a null unique identifier`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -82,7 +82,7 @@ struct `8.3.32 EPM` {
       fields: [1, 1, 12, "C", "AI", nil, 7, "value"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -95,7 +95,7 @@ struct `8.3.32 EPM` {
   }
 
   @Test
-  func `throws an error for a negative property identifier`() async throws {
+  func `throws an error for a negative property identifier`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -104,7 +104,7 @@ struct `8.3.32 EPM` {
       fields: [1, 1, 12, "C", "AI", "503123450", -5, "value"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
@@ -115,7 +115,7 @@ struct `8.3.32 EPM` {
   }
 
   @Test
-  func `rejects an out-of-order sentence instead of concatenating it`() async throws {
+  func `rejects an out-of-order sentence instead of concatenating it`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -138,7 +138,7 @@ struct `8.3.32 EPM` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     // Sentence 3 appends after sentence 1; sentence 2 then arrives out of
     // order. It must be rejected rather than concatenated in the wrong
@@ -154,7 +154,7 @@ struct `8.3.32 EPM` {
   // MARK: - .flush
 
   @Test
-  func `flushes an incomplete message`() async throws {
+  func `flushes an incomplete message`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -164,10 +164,10 @@ struct `8.3.32 EPM` {
     )
     let data = sentence.data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 1)
 
-    let flushed = try await parser.flush(includeIncomplete: true)
+    let flushed = try parser.flush(includeIncomplete: true)
     #expect(flushed.count == 1)
 
     guard let message = flushed[0] as? Message else {

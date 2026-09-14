@@ -9,9 +9,7 @@ struct `8.3.97 SMV` {
   // MARK: - .parse
 
   @Test
-  func `parses a single-sentence distress relay`()
-    async throws
-  {
+  func `parses a single-sentence distress relay`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -24,7 +22,7 @@ struct `8.3.97 SMV` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -61,7 +59,7 @@ struct `8.3.97 SMV` {
   }
 
   @Test
-  func `parses a single-sentence cancellation with null optional fields`() async throws {
+  func `parses a single-sentence cancellation with null optional fields`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -74,7 +72,7 @@ struct `8.3.97 SMV` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -103,14 +101,14 @@ struct `8.3.97 SMV` {
   }
 
   @Test
-  func `assembles a message whose position and name are in separate sentences`() async throws {
+  func `assembles a message whose position and name are in separate sentences`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "$CSSMV,2,1,5,12,123456789,,1234.56,N,12345.67,W,2018,01,23,12,34,D"),
       applyChecksum(to: "$CSSMV,2,2,5,12,123456789,MAXIMUM LENGTH FOR VESSEL NAME,,,,,,,,,,D")
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     // two echoed sentences, then the assembled message on the last sentence
     #expect(messages.count == 3)
@@ -139,7 +137,7 @@ struct `8.3.97 SMV` {
   }
 
   @Test
-  func `throws an error for a null sentence number in a multi-sentence message`() async throws {
+  func `throws an error for a null sentence number in a multi-sentence message`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -152,7 +150,7 @@ struct `8.3.97 SMV` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     let error = try #require(messages[1] as? MessageError)
     #expect(error.type == .missingRequiredValue)
@@ -160,7 +158,7 @@ struct `8.3.97 SMV` {
   }
 
   @Test
-  func `throws an error for an unknown distress status value`() async throws {
+  func `throws an error for an unknown distress status value`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -173,7 +171,7 @@ struct `8.3.97 SMV` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     let error = try #require(messages[1] as? MessageError)
     #expect(error.type == .unknownValue)

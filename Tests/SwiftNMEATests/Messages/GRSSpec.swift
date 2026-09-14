@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.45 GRS` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -2)
     let sentence = createSentence(
@@ -20,7 +20,7 @@ struct `8.3.45 GRS` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -44,7 +44,7 @@ struct `8.3.45 GRS` {
   }
 
   @Test
-  func `returns an error for a too-short sentence instead of crashing`() async throws {
+  func `returns an error for a too-short sentence instead of crashing`() throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -2)
     // Only the time/mode header plus the trailing System ID / Signal ID:
@@ -56,7 +56,7 @@ struct `8.3.45 GRS` {
       fields: [hmsFractionFormatter.string(from: time), 0, 7]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

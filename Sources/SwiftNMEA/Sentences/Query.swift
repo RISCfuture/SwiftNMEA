@@ -6,8 +6,6 @@ import NMEACommon
 /// in a form of two-way communication. The use of query sentences implies that the
 /// listener shall have the capability of being a talker with its own bus.
 public struct Query: Sentence, Element, Sendable, Codable, Equatable {
-  private static let parser = QueryParser()
-
   public var delimiter: Delimiter { .parametric }
 
   public let checksum: UInt8
@@ -32,8 +30,8 @@ public struct Query: Sentence, Element, Sendable, Codable, Equatable {
     checksum = fields.checksum
   }
 
-  public init?(sentence: String, ignoreChecksum: Bool = false) async throws {
-    guard let result = try await Self.parser.parse(sentence: sentence) else { return nil }
+  public init?(sentence: String, ignoreChecksum: Bool = false) throws {
+    guard let result = try QueryParser.parse(sentence: sentence) else { return nil }
     fields = .init(data: result.fields)
     checksum = result.checksum
 

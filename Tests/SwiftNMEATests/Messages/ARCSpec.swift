@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.17 ARC` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -12)
     let sentence = createSentence(
@@ -19,7 +19,7 @@ struct `8.3.17 ARC` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -36,7 +36,7 @@ struct `8.3.17 ARC` {
   }
 
   @Test
-  func `parses a sentence with null optional fields`() async throws {
+  func `parses a sentence with null optional fields`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -47,7 +47,7 @@ struct `8.3.17 ARC` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -64,7 +64,7 @@ struct `8.3.17 ARC` {
   }
 
   @Test
-  func `throws an error for an invalid refused command`() async throws {
+  func `throws an error for an invalid refused command`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -74,7 +74,7 @@ struct `8.3.17 ARC` {
         nil, nil, 245, 1, "Z"
       ]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
     let error = try #require(messages.compactMap { $0 as? MessageError }.first)
     #expect(error.type == .unknownValue)
   }

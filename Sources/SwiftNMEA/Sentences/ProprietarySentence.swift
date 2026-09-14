@@ -16,8 +16,6 @@
 /// not be submitted for approval. However, it is required that such sentences be
 /// published in the manufacturer’s manuals for reference.
 public struct ProprietarySentence: Sentence, Element, Sendable, Codable, Equatable {
-  private static let parser = ProprietaryParser()
-
   public var delimiter: Delimiter { .parametric }
 
   /// It is recommended to use ``manufacturer`` and ``data`` instead of this
@@ -34,8 +32,8 @@ public struct ProprietarySentence: Sentence, Element, Sendable, Codable, Equatab
   /// Manufacturer's data
   public let data: String
 
-  public init?(sentence: String, ignoreChecksum: Bool = false) async throws {
-    guard let result = try await Self.parser.parse(sentence: sentence) else { return nil }
+  public init?(sentence: String, ignoreChecksum: Bool = false) throws {
+    guard let result = try ProprietaryParser.parse(sentence: sentence) else { return nil }
     manufacturer = result.manufacturer
     data = result.data
     checksum = result.checksum

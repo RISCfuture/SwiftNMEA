@@ -28,7 +28,7 @@ public protocol Sentence: Sendable, Codable, Equatable {
    - Parameter ignoreChecksum: If `true`, does not validate the checksum.
    - Throws: If the checksum was incorrect.
    */
-  init?(sentence: String, ignoreChecksum: Bool) async throws
+  init?(sentence: String, ignoreChecksum: Bool) throws
 }
 
 extension Sentence {

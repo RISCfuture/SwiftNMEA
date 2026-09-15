@@ -9,7 +9,7 @@ struct `8.3.40 GEN` {
     precondition(sentence.hasPrefix("$") && sentence.hasSuffix("*"))
     let body = sentence.dropFirst().dropLast()
     let checksum = body.utf8.reduce(UInt8(0)) { $0 ^ $1 }
-    return sentence + String(format: "%02X", checksum) + "\r\n"
+    return unsafe sentence + String(format: "%02X", checksum) + "\r\n"
   }
 
   @Test

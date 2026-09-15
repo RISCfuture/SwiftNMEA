@@ -19,7 +19,7 @@ public struct PositionSourceDatum: RawRepresentable, Sendable, Codable, Equatabl
   public let fixResolution: Double
 
   public var rawValue: String {
-    let resolutionStr = String(format: "%02.0f", fixResolution * 10)
+    let resolutionStr = unsafe String(format: "%02.0f", fixResolution * 10)
     // six digits: source (2) + fix resolution (2) + datum (2)
     return "\(source.rawValue)\(resolutionStr)\(datum.rawValue)"
   }

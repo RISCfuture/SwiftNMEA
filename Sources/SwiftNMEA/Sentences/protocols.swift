@@ -32,7 +32,7 @@ public protocol Sentence: Sendable, Codable, Equatable {
 }
 
 extension Sentence {
-  internal var checksumString: String { .init(format: "%02X", checksum) }
+  internal var checksumString: String { unsafe .init(format: "%02X", checksum) }
 
   /// The sentence, encoded for transmission, including newlines.
   public var rawValue: String { "\(delimiter.rawValue)\(fields.rawValue)*\(checksumString)\r\n" }

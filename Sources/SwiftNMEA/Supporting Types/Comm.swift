@@ -49,14 +49,14 @@ public struct Comm {
         case .MF_HF(let frequency):
           let kHz = frequency.converted(to: .kilohertz).value
           guard kHz < 30_000 else { fatalError("Cannot represent frequencies ≥ 30,000 kHz") }
-          return String(format: "%06d", (kHz * 10).rounded())
+          return unsafe String(format: "%06d", Int((kHz * 10).rounded()))
         case .MF_HF_telephone(let channel):
-          return String(format: "3%04d", channel)
+          return unsafe String(format: "3%04d", channel)
         case let .MF_HF_teletype(band, channel):
-          return String(format: "4%02d%03d", band, channel)
+          return unsafe String(format: "4%02d%03d", band, channel)
         case let .VHF(mode, channel):
           let simplexFlag = String(mode.rawValue)
-          return String(format: "90%@%03d", simplexFlag, channel)
+          return unsafe String(format: "90%@%03d", simplexFlag, channel)
       }
     }
 

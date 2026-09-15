@@ -11,7 +11,7 @@ extension Data {
   var hex: String {
     var string = ""
     for byte in self {
-      string += String(format: "%02X", byte)
+      string += unsafe String(format: "%02X", byte)
     }
     return string
   }

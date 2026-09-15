@@ -12,7 +12,7 @@ func applyChecksum(to sentence: String) -> String {
   let delimiter = sentence.first!
   let rest = sentence.slice(from: 1)
   let checksum = calculateChecksum(for: rest)
-  let checksumStr = String(format: "%02X", checksum)
+  let checksumStr = unsafe String(format: "%02X", checksum)
   return "\(delimiter)\(rest)*\(checksumStr)\r\n"
 }
 
@@ -42,10 +42,10 @@ func encapsulatedSentences(
   otherFields: [Any?],
   hex: Bool = false
 ) -> [String] {
-  let totalSentences = String(format: hex ? "%02X" : "%d", chunks.count)
+  let totalSentences = unsafe String(format: hex ? "%02X" : "%d", chunks.count)
 
   return chunks.enumerated().map { index, chunk in
-    let lastSentence = String(format: hex ? "%02X" : "%d", index + 1)
+    let lastSentence = unsafe String(format: hex ? "%02X" : "%d", index + 1)
     return if index == 0 {
       createSentence(
         delimiter: .encapsulated,

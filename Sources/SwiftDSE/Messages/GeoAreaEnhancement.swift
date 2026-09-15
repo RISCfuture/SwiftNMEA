@@ -39,15 +39,15 @@ public struct GeoAreaEnhancement: RawRepresentable, Sendable, Codable, Equatable
     let lonMin = longitudeRefinement.converted(to: .arcMinutes).value
     let deltaLatMin = deltaLatRefinement.converted(to: .arcMinutes).value
     let deltaLonMin = deltaLonRefinement.converted(to: .arcMinutes).value
-    let latStr = String(format: "%04.0f", latMin * 100)
-    let lonStr = String(format: "%04.0f", lonMin * 100)
-    let latDeltaStr = String(format: "%04.0f", deltaLatMin * 100)
-    let lonDeltaStr = String(format: "%04.0f", deltaLonMin * 100)
+    let latStr = unsafe String(format: "%04.0f", latMin * 100)
+    let lonStr = unsafe String(format: "%04.0f", lonMin * 100)
+    let latDeltaStr = unsafe String(format: "%04.0f", deltaLatMin * 100)
+    let lonDeltaStr = unsafe String(format: "%04.0f", deltaLonMin * 100)
     let speedStr =
-      speed.map { String(format: "%04.0f", $0.converted(to: .knots).value * 10) }
+      speed.map { unsafe String(format: "%04.0f", $0.converted(to: .knots).value * 10) }
       ?? Self.noDataSentinel
     let courseStr =
-      course.map { String(format: "%04.0f", $0.converted(to: .degrees).value * 10) }
+      course.map { unsafe String(format: "%04.0f", $0.converted(to: .degrees).value * 10) }
       ?? Self.noDataSentinel
 
     return "\(latStr)\(lonStr)\(latDeltaStr)\(lonDeltaStr)\(speedStr)\(courseStr)"

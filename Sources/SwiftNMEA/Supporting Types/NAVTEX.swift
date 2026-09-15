@@ -67,7 +67,7 @@ public struct NAVTEX {
 
     /// The mask, represented as a hexadecimal string.
     public var rawValue: String {
-      String(format: "%X", coverage.int32Value)
+      unsafe String(format: "%X", coverage.int32Value)
     }
 
     init() {

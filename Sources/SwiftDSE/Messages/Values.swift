@@ -12,7 +12,7 @@ protocol MeasurementValue: Sendable, Codable, Equatable, RawRepresentable where 
 // swiftlint:disable extension_access_modifier missing_docs
 extension MeasurementValue {
   public var rawValue: String {
-    String(format: "%04.0f", measurement.value * 10)
+    unsafe String(format: "%04.0f", measurement.value * 10)
   }
 
   public init?(rawValue: String) {
@@ -65,7 +65,7 @@ public struct Number: RawRepresentable, Sendable, Codable, Equatable {
   /// The number.
   public let value: Int
 
-  public var rawValue: String { String(format: "%04d", value) }
+  public var rawValue: String { unsafe String(format: "%04d", value) }
 
   public init?(rawValue: String) {
     guard let value = Int(rawValue) else { return nil }

@@ -18,8 +18,8 @@ public struct PositionEnhancement: RawRepresentable, Sendable, Codable, Equatabl
     let latMin = latitudeRefinement.converted(to: .arcMinutes).value
     let lonMin = longitudeRefinement.converted(to: .arcMinutes).value
     // both refinements are four digits expressing tenths…ten-thousandths of minutes
-    let latStr = String(format: "%04d", Int((latMin * 10000).rounded()))
-    let lonStr = String(format: "%04d", Int((lonMin * 10000).rounded()))
+    let latStr = unsafe String(format: "%04d", Int((latMin * 10000).rounded()))
+    let lonStr = unsafe String(format: "%04d", Int((lonMin * 10000).rounded()))
     return "\(latStr)\(lonStr)"
   }
 

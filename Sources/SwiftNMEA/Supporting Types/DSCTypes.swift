@@ -470,11 +470,11 @@ public struct DSC {
         case .frequency(let frequency):
           return Self.encodeFrequency(frequency)
         case .channelHF_MF(let channel):
-          return String(format: "3%05d", channel)
+          return unsafe String(format: "3%05d", channel)
         case .autoVHF(let channel):
-          return String(format: "8%05d", channel)
+          return unsafe String(format: "8%05d", channel)
         case .channelVHF(let channel):
-          return String(format: "90%04d", channel)
+          return unsafe String(format: "90%04d", channel)
       }
     }
 
@@ -513,14 +513,14 @@ public struct DSC {
     /// (multiples of 10 Hz, seven-digit-frequency) form.
     private static func encodeFrequency(_ frequency: Measurement<UnitFrequency>) -> String {
       let hz = frequency.converted(to: .hertz).value
-      guard hz.isFinite else { return String(format: "%06d", 0) }
+      guard hz.isFinite else { return unsafe String(format: "%06d", 0) }
       let tens = (hz / 10).rounded()
       let clampedTens = min(max(tens, 0), maxFrequency10Hz / 10)
       let tensInt = Int(clampedTens)
       if tensInt.isMultiple(of: 10), Double(tensInt) * 10 <= maxFrequency100Hz {
-        return String(format: "%06d", tensInt / 10)
+        return unsafe String(format: "%06d", tensInt / 10)
       }
-      return String(format: "4%07d", tensInt)
+      return unsafe String(format: "4%07d", tensInt)
     }
   }
 }

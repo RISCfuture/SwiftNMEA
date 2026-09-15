@@ -8,11 +8,11 @@ struct `8.3.110 TXT` {
   // MARK: - .parse, example from the spec
 
   @Test
-  func `parses the example`() async throws {
+  func `parses the example`() throws {
     let parser = SwiftNMEA()
     let sentence = "$GPTXT,01,01,25,DR MODE-ANTENNA FAULT^21*38\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -21,14 +21,14 @@ struct `8.3.110 TXT` {
   }
 
   @Test
-  func `throws an error for an incorrect sentence number`() async throws {
+  func `throws an error for an incorrect sentence number`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "$GPTXT,02,01,25,DR MODE-ANTENNA FAULT^21"),
       applyChecksum(to: "$GPTXT,02,03,25,DR MODE-ANTENNA FAULT^21")
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     let error = try #require(messages[2] as? MessageError)
@@ -39,11 +39,11 @@ struct `8.3.110 TXT` {
   // MARK: - .parse, STA8089FG
 
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = "$GPTXT,(C)2000-2018 ST Microelectronics*29\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -54,7 +54,7 @@ struct `8.3.110 TXT` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete messages`() async throws {
+  func `flushes incomplete messages`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -72,10 +72,10 @@ struct `8.3.110 TXT` {
     ]
     let data = sentences.joined().data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 2)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
     #expect(messages.count == 1)
 
     let message = try #require(messages[0] as? Message)

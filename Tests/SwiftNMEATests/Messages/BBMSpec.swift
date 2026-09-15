@@ -8,7 +8,7 @@ struct `8.3.18 BBM` {
   // MARK: - .parse
 
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -34,7 +34,7 @@ struct `8.3.18 BBM` {
       otherFields: [0, "02"]
     )
     let data = (sentences1 + sentences2).joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 5)
     let payload1 = try #require((messages[1] as? Message)?.payload)
@@ -60,7 +60,7 @@ struct `8.3.18 BBM` {
   }
 
   @Test
-  func `throws an error for missing fields`() async throws {
+  func `throws an error for missing fields`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -84,7 +84,7 @@ struct `8.3.18 BBM` {
       )
     ]
     let sentenceData = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
+    let messages = try parser.parse(data: sentenceData)
 
     #expect(messages.count == 4)
 
@@ -98,7 +98,7 @@ struct `8.3.18 BBM` {
   }
 
   @Test
-  func `throws an error for an incorrect sentence number`() async throws {
+  func `throws an error for an incorrect sentence number`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -122,7 +122,7 @@ struct `8.3.18 BBM` {
       )
     ]
     let sentenceData = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: sentenceData)
+    let messages = try parser.parse(data: sentenceData)
 
     #expect(messages.count == 3)
     let error = try #require(messages[2] as? MessageError)
@@ -133,7 +133,7 @@ struct `8.3.18 BBM` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete sentences`() async throws {
+  func `flushes incomplete sentences`() throws {
     let parser = SwiftNMEA()
     let sixBit = SixBitCoder()
 
@@ -151,10 +151,10 @@ struct `8.3.18 BBM` {
     )
     let sentenceData = sentences[0].data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: sentenceData)
+    let parsed = try parser.parse(data: sentenceData)
     #expect(parsed.count == 1)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
     #expect(messages.count == 1)
 
     let message = try #require(messages[0] as? Message)

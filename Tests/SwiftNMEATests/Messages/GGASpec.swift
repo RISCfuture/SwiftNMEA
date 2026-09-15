@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct `8.3.42 GGA` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -2)
     let sentence = createSentence(
@@ -24,7 +24,7 @@ struct `8.3.42 GGA` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -57,12 +57,12 @@ struct `8.3.42 GGA` {
   }
 
   @Test
-  func `parses a sentence from a STA8089FG`() async throws {
+  func `parses a sentence from a STA8089FG`() throws {
     let parser = SwiftNMEA()
     let sentence =
       "$GPGGA,235944.000,0000.00000,N,00000.00000,E,0,00,99.0,100.00,M,0.0,M,,*61\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.98 SPW` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.98 SPW` {
       fields: ["EPV", "211000001", 2, "SESAME"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -33,7 +33,7 @@ struct `8.3.98 SPW` {
   }
 
   @Test
-  func `throws an error for a reserved password level`() async throws {
+  func `throws an error for a reserved password level`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -42,7 +42,7 @@ struct `8.3.98 SPW` {
       fields: ["EPV", "211000001", 5, "SESAME"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     let error = try #require(messages[1] as? MessageError)
     #expect(error.type == .unknownValue)

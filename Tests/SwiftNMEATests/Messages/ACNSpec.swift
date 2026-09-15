@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.7 ACN` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -2000)
     let sentence = createSentence(
@@ -19,7 +19,7 @@ struct `8.3.7 ACN` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -33,7 +33,7 @@ struct `8.3.7 ACN` {
   }
 
   @Test
-  func `parses a sentence with null optional fields`() async throws {
+  func `parses a sentence with null optional fields`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -42,7 +42,7 @@ struct `8.3.7 ACN` {
       fields: [nil, nil, 1, nil, "C", "Q"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -56,7 +56,7 @@ struct `8.3.7 ACN` {
   }
 
   @Test
-  func `throws an error when the sentence status flag is not "C"`() async throws {
+  func `throws an error when the sentence status flag is not "C"`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -64,7 +64,7 @@ struct `8.3.7 ACN` {
       format: .alertCommand,
       fields: [nil, nil, 1, 2, "R", "A"]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
@@ -74,7 +74,7 @@ struct `8.3.7 ACN` {
   }
 
   @Test
-  func `throws an error for acknowledge of alert instance 0`() async throws {
+  func `throws an error for acknowledge of alert instance 0`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -82,7 +82,7 @@ struct `8.3.7 ACN` {
       format: .alertCommand,
       fields: [nil, nil, 1, 0, "C", "A"]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

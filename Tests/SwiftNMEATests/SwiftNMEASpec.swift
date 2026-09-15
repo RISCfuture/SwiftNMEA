@@ -21,7 +21,7 @@ struct `SwiftNMEA tests` {
   // MARK: - .parse
 
   @Test
-  func `handles chunked data`() async throws {
+  func `handles chunked data`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       "$GPAAM,A,V,0.5,N,KSFO*15\r\n",
@@ -33,7 +33,7 @@ struct `SwiftNMEA tests` {
 
     var messages = [any Element]()
     for chunk in chunks {
-      try await messages.append(contentsOf: parser.parse(data: chunk))
+      try messages.append(contentsOf: parser.parse(data: chunk))
     }
 
     #expect(messages.count == 6)
@@ -43,10 +43,10 @@ struct `SwiftNMEA tests` {
 
   @Test
   func `filters in all messages with empty filters`()
-    async throws
+    throws
   {
     let parser = SwiftNMEA()
-    let messages = try await parser.parse(data: Self.filterData)
+    let messages = try parser.parse(data: Self.filterData)
     #expect(messages.count == 8)
     #expect(messages.filter { $0 is ParametricSentence }.count == 2)
     #expect(messages.filter { $0 is Query }.count == 2)
@@ -56,43 +56,43 @@ struct `SwiftNMEA tests` {
   }
 
   @Test
-  func `filters parametric sentences`() async throws {
+  func `filters parametric sentences`() throws {
     let parser = SwiftNMEA(typeFilter: [ParametricSentence.self])
-    let messages = try await parser.parse(data: Self.filterData)
+    let messages = try parser.parse(data: Self.filterData)
     #expect(messages.count == 3)
     #expect(messages.filter { $0 is ParametricSentence }.count == 2)
     #expect(messages.filter { $0 is MessageError }.count == 1)
   }
 
   @Test
-  func `filters queries`() async throws {
+  func `filters queries`() throws {
     let parser = SwiftNMEA(typeFilter: [Query.self])
-    let messages = try await parser.parse(data: Self.filterData)
+    let messages = try parser.parse(data: Self.filterData)
     #expect(messages.count == 2)
     #expect(messages.allSatisfy { $0 is Query })
   }
 
   @Test
-  func `filters proprietary sentences`() async throws {
+  func `filters proprietary sentences`() throws {
     let parser = SwiftNMEA(typeFilter: [ProprietarySentence.self])
-    let messages = try await parser.parse(data: Self.filterData)
+    let messages = try parser.parse(data: Self.filterData)
     #expect(messages.count == 1)
     #expect(messages.allSatisfy { $0 is ProprietarySentence })
   }
 
   @Test
-  func `filters messages`() async throws {
+  func `filters messages`() throws {
     let parser = SwiftNMEA(typeFilter: [Message.self])
-    let messages = try await parser.parse(data: Self.filterData)
+    let messages = try parser.parse(data: Self.filterData)
     #expect(messages.count == 3)
     #expect(messages.filter { $0 is Message }.count == 2)
     #expect(messages.filter { $0 is MessageError }.count == 1)
   }
 
   @Test
-  func `filters by talker`() async throws {
+  func `filters by talker`() throws {
     let parser = SwiftNMEA(talkerFilter: [.GPS])
-    let messages = try await parser.parse(data: Self.filterData)
+    let messages = try parser.parse(data: Self.filterData)
 
     #expect(messages.count == 4)
     #expect(
@@ -113,9 +113,9 @@ struct `SwiftNMEA tests` {
   }
 
   @Test
-  func `filters by format`() async throws {
+  func `filters by format`() throws {
     let parser = SwiftNMEA(formatFilter: [.waypointArrivalAlarm])
-    let messages = try await parser.parse(data: Self.filterData)
+    let messages = try parser.parse(data: Self.filterData)
 
     #expect(messages.count == 4)
     #expect(
@@ -138,10 +138,10 @@ struct `SwiftNMEA tests` {
   // MARK: checksums
 
   @Test
-  func `rejects an invalid checksum`() async throws {
+  func `rejects an invalid checksum`() throws {
     let parser = SwiftNMEA()
     let data = "$GPAAM,A,V,0.5,N,KSFO*AA\r\n".data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 1)
     let error = try #require(messages[0] as? MessageError)
@@ -149,22 +149,22 @@ struct `SwiftNMEA tests` {
   }
 
   @Test
-  func `ignores an invalid checksum when ignoreChecksums is true`() async throws {
+  func `ignores an invalid checksum when ignoreChecksums is true`() throws {
     let parser = SwiftNMEA()
     let data = "$GPAAM,A,V,0.5,N,KSFO*AA\r\n".data(using: .ascii)!
 
-    await #expect(throws: Never.self) { try await parser.parse(data: data, ignoreChecksums: true) }
+    #expect(throws: Never.self) { try parser.parse(data: data, ignoreChecksums: true) }
   }
 
   // MARK: queries
 
   @Test
-  func `parses a query`() async throws {
+  func `parses a query`() throws {
     let parser = SwiftNMEA()
     let data = "$GPCRQ,MSK*2E\r\n".data(using: .ascii)!
 
     var messages = [any Element]()
-    try await messages.append(contentsOf: parser.parse(data: data))
+    try messages.append(contentsOf: parser.parse(data: data))
 
     #expect(messages.count == 1)
     let query = try #require(messages[0] as? Query)
@@ -176,12 +176,12 @@ struct `SwiftNMEA tests` {
   // MARK: proprietary messages
 
   @Test
-  func `parses a proprietary message`() async throws {
+  func `parses a proprietary message`() throws {
     let parser = SwiftNMEA()
     let data = "$PSRDA003[470738][1224523]???RST47, 3809, A004*47\r\n".data(using: .ascii)!
 
     var messages = [any Element]()
-    try await messages.append(contentsOf: parser.parse(data: data))
+    try messages.append(contentsOf: parser.parse(data: data))
 
     #expect(messages.count == 1)
     let query = try #require(messages[0] as? ProprietarySentence)
@@ -192,10 +192,10 @@ struct `SwiftNMEA tests` {
   // MARK: malformed sentences
 
   @Test
-  func `surfaces a sentence-like garbage line as an unknownSentenceType error`() async throws {
+  func `surfaces a sentence-like garbage line as an unknownSentenceType error`() throws {
     let parser = SwiftNMEA()
     let data = "$not a real sentence\r\n".data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 1)
     let error = try #require(messages[0] as? MessageError)
@@ -203,11 +203,11 @@ struct `SwiftNMEA tests` {
   }
 
   @Test
-  func `surfaces an over-long sentence-like line as a sentenceTooLong error`() async throws {
+  func `surfaces an over-long sentence-like line as a sentenceTooLong error`() throws {
     let parser = SwiftNMEA()
     let longField = String(repeating: "K", count: 90)
     let data = "$GPAAM,A,V,0.5,N,\(longField)*15\r\n".data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 1)
     let error = try #require(messages[0] as? MessageError)
@@ -216,20 +216,20 @@ struct `SwiftNMEA tests` {
 
   @Test
   func `silently drops a non-sentence-like noise line`()
-    async throws
+    throws
   {
     let parser = SwiftNMEA()
     let data = "\\s:foo,c:1234*hh\\\r\n".data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.isEmpty)
   }
 
   @Test
-  func `still parses a valid sentence`() async throws {
+  func `still parses a valid sentence`() throws {
     let parser = SwiftNMEA()
     let data = "$GPAAM,A,V,0.5,N,KSFO*15\r\n".data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.filter { $0 is ParametricSentence }.count == 1)
     #expect(!messages.contains { $0 is MessageError })

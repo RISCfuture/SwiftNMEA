@@ -1,7 +1,7 @@
 import RegexBuilder
 
-actor ProprietaryParser {
-  private let rx: Regex<(Substring, Substring, Substring, UInt8)> = {
+final class ProprietaryParser: Sendable {
+  private let rx = LockedRegex<(Substring, Substring, Substring, UInt8)> {
     let manufacturerRef = Reference<Substring>()
     let dataRef = Reference<Substring>()
     let checksumRef = Reference<UInt8>()
@@ -23,10 +23,10 @@ actor ProprietaryParser {
       }
       Anchor.endOfSubject
     }
-  }()
+  }
 
   func parse(sentence: String) -> ProprietaryResult? {
-    guard let match = sentence.wholeMatch(of: rx) else { return nil }
+    guard let match = rx.wholeMatch(in: sentence) else { return nil }
 
     return .init(
       manufacturer: String(match.output.1),

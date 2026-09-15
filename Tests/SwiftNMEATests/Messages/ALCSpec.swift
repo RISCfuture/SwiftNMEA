@@ -8,7 +8,7 @@ struct `8.3.13 ALC` {
   // MARK: - .parse
 
   @Test
-  func `parses a single-sentence cyclic alert list`() async throws {
+  func `parses a single-sentence cyclic alert list`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -21,7 +21,7 @@ struct `8.3.13 ALC` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -44,7 +44,7 @@ struct `8.3.13 ALC` {
   }
 
   @Test
-  func `parses an empty cyclic alert list`() async throws {
+  func `parses an empty cyclic alert list`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -53,7 +53,7 @@ struct `8.3.13 ALC` {
       fields: [1, 1, 0, 0]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -61,7 +61,7 @@ struct `8.3.13 ALC` {
   }
 
   @Test
-  func `concatenates entries across multiple sentences`() async throws {
+  func `concatenates entries across multiple sentences`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -84,7 +84,7 @@ struct `8.3.13 ALC` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     let payload = try #require((messages[2] as? Message)?.payload)
@@ -107,7 +107,7 @@ struct `8.3.13 ALC` {
   }
 
   @Test
-  func `throws an error for an out-of-range revision counter`() async throws {
+  func `throws an error for an out-of-range revision counter`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -119,7 +119,7 @@ struct `8.3.13 ALC` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

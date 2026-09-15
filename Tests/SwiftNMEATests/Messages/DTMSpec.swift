@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.31 DTM` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -21,7 +21,7 @@ struct `8.3.31 DTM` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -46,7 +46,7 @@ struct `8.3.31 DTM` {
   }
 
   @Test
-  func `parses a BDCS reference datum (C00)`() async throws {
+  func `parses a BDCS reference datum (C00)`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -61,7 +61,7 @@ struct `8.3.31 DTM` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -74,7 +74,7 @@ struct `8.3.31 DTM` {
   }
 
   @Test
-  func `parses a sentence with an unknown (null) local datum`() async throws {
+  func `parses a sentence with an unknown (null) local datum`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -89,7 +89,7 @@ struct `8.3.31 DTM` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -105,7 +105,7 @@ struct `8.3.31 DTM` {
   }
 
   @Test
-  func `throws when a user-defined datum omits an offset`() async throws {
+  func `throws when a user-defined datum omits an offset`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -120,7 +120,7 @@ struct `8.3.31 DTM` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let error = try #require(messages[1] as? MessageError)
@@ -129,7 +129,7 @@ struct `8.3.31 DTM` {
   }
 
   @Test
-  func `throws for an invalid latitude-offset hemisphere character`() async throws {
+  func `throws for an invalid latitude-offset hemisphere character`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -144,7 +144,7 @@ struct `8.3.31 DTM` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let error = try #require(messages[1] as? MessageError)

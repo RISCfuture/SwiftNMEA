@@ -1,7 +1,7 @@
 import RegexBuilder
 
-actor ParametricParser {
-  private let rx: Regex<(Substring, Delimiter, Substring, UInt8)> = {
+final class ParametricParser: Sendable {
+  private let rx = LockedRegex<(Substring, Delimiter, Substring, UInt8)> {
     let delimiterRef = Reference<Delimiter>()
     let fieldsRef = Reference<Substring>()
     let checksumRef = Reference<UInt8>()
@@ -30,10 +30,10 @@ actor ParametricParser {
       }
       Anchor.endOfSubject
     }
-  }()
+  }
 
   func parse(sentence: String) -> SentenceResult? {
-    guard let match = sentence.wholeMatch(of: rx) else { return nil }
+    guard let match = rx.wholeMatch(in: sentence) else { return nil }
 
     return .init(
       delimiter: match.output.1,

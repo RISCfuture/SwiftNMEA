@@ -11,7 +11,7 @@ struct `8.3.30 DSE` {
   // MARK: - .parse
 
   @Test
-  func `parses a query and a reply`() async throws {
+  func `parses a query and a reply`() throws {
     let parser = SwiftNMEA()
 
     // MARK: Setup
@@ -61,7 +61,7 @@ struct `8.3.30 DSE` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     // MARK: - Message 1
 
@@ -213,7 +213,7 @@ struct `8.3.30 DSE` {
   }
 
   @Test
-  func `throws an error for a missing field`() async throws {
+  func `throws an error for a missing field`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -239,7 +239,7 @@ struct `8.3.30 DSE` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
 
@@ -249,7 +249,7 @@ struct `8.3.30 DSE` {
   }
 
   @Test
-  func `throws an error for an incorrect sentence number`() async throws {
+  func `throws an error for an incorrect sentence number`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -275,7 +275,7 @@ struct `8.3.30 DSE` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     let error = try #require(messages[2] as? MessageError)
@@ -284,11 +284,11 @@ struct `8.3.30 DSE` {
   }
 
   @Test
-  func `parses the example from the spec`() async throws {
+  func `parses the example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$CVDSE,1,1,A,3601234560,00,12345678*0C\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? NMEAMessage)
@@ -316,7 +316,7 @@ struct `8.3.30 DSE` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete sentences`() async throws {
+  func `flushes incomplete sentences`() throws {
     let parser = SwiftNMEA()
 
     // MARK: Setup
@@ -346,9 +346,9 @@ struct `8.3.30 DSE` {
     ]
     let data = sentences.joined().data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 2)
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
 
     // MARK: - Message 1
 

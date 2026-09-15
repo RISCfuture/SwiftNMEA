@@ -7,11 +7,11 @@ import Testing
 @Suite
 struct `8.3.66 MSS` {
   @Test
-  func `parses the example from the spec`() async throws {
+  func `parses the example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$CRMSS,50,17,293.0,100,1*55\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

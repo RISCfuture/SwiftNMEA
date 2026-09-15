@@ -18,8 +18,8 @@ struct `ProprietarySentence tests` {
   // MARK: - parsing
 
   @Test
-  func `parses the sentence from the spec`() async throws {
-    let sentence = try await ProprietarySentence(
+  func `parses the sentence from the spec`() throws {
+    let sentence = try ProprietarySentence(
       sentence: "$PSRDA003[470738][1224523]???RST47, 3809, A004*47"
     )!
     #expect(sentence.manufacturer == "SRD")

@@ -10,7 +10,7 @@ struct `8.3.14 ALF` {
   // MARK: single-sentence message
 
   @Test
-  func `parses the spec example`() async throws {
+  func `parses the spec example`() throws {
     let parser = SwiftNMEA()
     // $IIALF,1,1,0,124304.50,A,W,A,,3052,1,1,0,LOST TARGET
     let sentence = createSentence(
@@ -20,7 +20,7 @@ struct `8.3.14 ALF` {
       fields: [1, 1, 0, "124304.50", "A", "W", "A", nil, 3052, 1, 1, 0, "LOST TARGET"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -58,7 +58,7 @@ struct `8.3.14 ALF` {
   }
 
   @Test
-  func `allows null category, priority, and state for a normal alert`() async throws {
+  func `allows null category, priority, and state for a normal alert`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -67,7 +67,7 @@ struct `8.3.14 ALF` {
       fields: [1, 1, nil, nil, nil, nil, "N", nil, 3052, nil, 1, 0, "NORMAL"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -103,7 +103,7 @@ struct `8.3.14 ALF` {
   // MARK: two-sentence message
 
   @Test
-  func `combines the title and description`() async throws {
+  func `combines the title and description`() throws {
     let parser = SwiftNMEA()
     // $IIALF,2,1,1,081950.10,B,A,S,XYZ,010512,1,2,0,HEADING LOST
     // $IIALF,2,2,1,,,,,XYZ,010512,1,2,0,NO SYSTEM HEADING AVAILABLE
@@ -125,7 +125,7 @@ struct `8.3.14 ALF` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     let payload = try #require((messages[2] as? Message)?.payload)
@@ -158,7 +158,7 @@ struct `8.3.14 ALF` {
   }
 
   @Test
-  func `throws for a negative alert identifier`() async throws {
+  func `throws for a negative alert identifier`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -167,7 +167,7 @@ struct `8.3.14 ALF` {
       fields: [1, 1, 0, "124304.50", "A", "W", "A", nil, -5, 1, 1, 0, "LOST TARGET"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
@@ -178,7 +178,7 @@ struct `8.3.14 ALF` {
   }
 
   @Test
-  func `throws for an unknown alert state`() async throws {
+  func `throws for an unknown alert state`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -187,7 +187,7 @@ struct `8.3.14 ALF` {
       fields: [1, 1, 0, "124304.50", "A", "W", "Z", nil, 3052, 1, 1, 0, "LOST TARGET"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
@@ -199,7 +199,7 @@ struct `8.3.14 ALF` {
   // MARK: - .flush
 
   @Test
-  func `flushes an incomplete multi-sentence message`() async throws {
+  func `flushes an incomplete multi-sentence message`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -209,10 +209,10 @@ struct `8.3.14 ALF` {
     )
     let data = sentence.data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 1)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
     #expect(messages.count == 1)
     let payload = try #require((messages[0] as? Message)?.payload)
 

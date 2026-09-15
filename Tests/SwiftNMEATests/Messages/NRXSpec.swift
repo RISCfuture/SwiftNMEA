@@ -8,7 +8,7 @@ struct `8.3.73 NRX` {
   // MARK: - .parse
 
   @Test
-  func `parses the example sentence group`() async throws {
+  func `parses the example sentence group`() throws {
     let parser = SwiftNMEA()
     let string = """
       $CRNRX,007,001,00,IE69,1,135600,27,06,2001,241,3,A,==========================*09\r
@@ -20,7 +20,7 @@ struct `8.3.73 NRX` {
       $CRNRX,007,007,00,,,,,,,,,, ^0D ^0A^0D ^0A*59\r\n
       """
     let data = string.data(using: .utf8)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 8)
     let payload = try #require((messages[7] as? Message)?.payload)
@@ -74,13 +74,13 @@ struct `8.3.73 NRX` {
   }
 
   @Test
-  func `parses a message with a null code when the source is not NAVTEX`() async throws {
+  func `parses a message with a null code when the source is not NAVTEX`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(
       to: "$CRNRX,001,001,00,,1,135600,27,06,2001,26,0,A,HF-MSI BODY"
     )
     let data = sentence.data(using: .utf8)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -95,7 +95,7 @@ struct `8.3.73 NRX` {
 
   @Test
   func `throws an error for a missing field`()
-    async throws
+    throws
   {
     let parser = SwiftNMEA()
     let sentences = [
@@ -120,7 +120,7 @@ struct `8.3.73 NRX` {
       applyChecksum(to: "$CRNRX,007,007,00,,,,,,,,,, ^0D ^0A^0D ^0A")
     ]
     let data = sentences.joined().data(using: .utf8)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
     #expect(messages.count == 8)
 
     guard let error = messages[7] as? MessageError else {
@@ -132,7 +132,7 @@ struct `8.3.73 NRX` {
   }
 
   @Test
-  func `throws an error for a wrong sentence number`() async throws {
+  func `throws an error for a wrong sentence number`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(
@@ -156,7 +156,7 @@ struct `8.3.73 NRX` {
       applyChecksum(to: "$CRNRX,007,007,00,,,,,,,,,, ^0D ^0A^0D ^0A")
     ]
     let data = sentences.joined().data(using: .utf8)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 8)
     guard let error = messages[2] as? MessageError else {
@@ -170,7 +170,7 @@ struct `8.3.73 NRX` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete sentences`() async throws {
+  func `flushes incomplete sentences`() throws {
     let parser = SwiftNMEA()
     let string = """
       $CRNRX,007,001,00,IE69,1,135600,27,06,2001,241,3,A,==========================*09\r
@@ -180,10 +180,10 @@ struct `8.3.73 NRX` {
       """
     let data = string.data(using: .utf8)!
 
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 4)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
 
     let message = try #require(messages[0] as? Message)
     guard
@@ -232,7 +232,7 @@ struct `8.3.73 NRX` {
 
   @Test
   func `throws an error for a missing field when flushing`()
-    async throws
+    throws
   {
     let parser = SwiftNMEA()
     let sentences = [
@@ -251,10 +251,10 @@ struct `8.3.73 NRX` {
     ]
     let data = sentences.joined().data(using: .utf8)!
 
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 4)
 
-    let flushed = try await parser.flush(includeIncomplete: true)
+    let flushed = try parser.flush(includeIncomplete: true)
     #expect(flushed.count == 1)
 
     guard let error = flushed[0] as? MessageError else {

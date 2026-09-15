@@ -1,7 +1,7 @@
 import RegexBuilder
 
-actor QueryParser {
-  private let rx: Regex<(Substring, Substring, UInt8)> = {
+final class QueryParser: Sendable {
+  private let rx = LockedRegex<(Substring, Substring, UInt8)> {
     let fieldsRef = Reference<Substring>()
     let checksumRef = Reference<UInt8>()
 
@@ -23,10 +23,10 @@ actor QueryParser {
 
       Anchor.endOfSubject
     }
-  }()
+  }
 
   func parse(sentence: String) -> QueryResult? {
-    guard let match = sentence.wholeMatch(of: rx) else { return nil }
+    guard let match = rx.wholeMatch(in: sentence) else { return nil }
 
     return .init(fields: match.output.1, checksum: match.output.2)
   }

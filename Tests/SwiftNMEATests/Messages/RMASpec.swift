@@ -7,10 +7,10 @@ import Testing
 @Suite
 struct `8.3.79 RMA` {
   @Test(arguments: SpecExample.all)
-  func `parses an example from the spec`(_ example: SpecExample) async throws {
+  func `parses an example from the spec`(_ example: SpecExample) throws {
     let parser = SwiftNMEA()
     let data = example.sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

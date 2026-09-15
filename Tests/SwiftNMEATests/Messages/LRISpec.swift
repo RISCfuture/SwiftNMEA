@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct `8.3.63 LRI and friends` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let LRI = createSentence(
       delimiter: .parametric,
@@ -29,7 +29,7 @@ struct `8.3.63 LRI and friends` {
       ]
     )
     let data = LRI.data(using: .ascii)! + LRF.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     let payload = try #require((messages[2] as? Message)?.payload)
@@ -76,7 +76,7 @@ struct `8.3.63 LRI and friends` {
   }
 
   @Test
-  func `throws an error if a duplicate sentence is received`() async throws {
+  func `throws an error if a duplicate sentence is received`() throws {
     let parser = SwiftNMEA()
     let LRI = createSentence(
       delimiter: .parametric,
@@ -99,7 +99,7 @@ struct `8.3.63 LRI and friends` {
       ]
     )
     let data = LRI.data(using: .ascii)! + LRI2.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     guard let error = messages[2] as? MessageError else {

@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.71 NLS` {
   @Test
-  func `parses a single-sentence message`() async throws {
+  func `parses a single-sentence message`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -18,7 +18,7 @@ struct `8.3.71 NLS` {
         3, 1, nil
       ]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -38,7 +38,7 @@ struct `8.3.71 NLS` {
   }
 
   @Test
-  func `parses a multi-sentence message`() async throws {
+  func `parses a multi-sentence message`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -65,7 +65,7 @@ struct `8.3.71 NLS` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     // two echoed sentences, one completed Message after the second
     #expect(messages.count == 3)
@@ -83,7 +83,7 @@ struct `8.3.71 NLS` {
   }
 
   @Test
-  func `parses unavailable status and remaining hours as nil`() async throws {
+  func `parses unavailable status and remaining hours as nil`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -94,7 +94,7 @@ struct `8.3.71 NLS` {
         5, nil, nil
       ]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     let payload = try #require((messages[1] as? Message)?.payload)
     guard case let .navigationLightStatus(_, lights) = payload else {
@@ -109,7 +109,7 @@ struct `8.3.71 NLS` {
   }
 
   @Test
-  func `represents more than 9 800 remaining hours`() async throws {
+  func `represents more than 9 800 remaining hours`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -120,7 +120,7 @@ struct `8.3.71 NLS` {
         7, 2, 99
       ]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     guard let payload = (messages[1] as? Message)?.payload,
       case let .navigationLightStatus(_, lights) = payload
@@ -132,7 +132,7 @@ struct `8.3.71 NLS` {
   }
 
   @Test
-  func `throws an error for an unknown light status`() async throws {
+  func `throws an error for an unknown light status`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -143,7 +143,7 @@ struct `8.3.71 NLS` {
         8, 7, nil
       ]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

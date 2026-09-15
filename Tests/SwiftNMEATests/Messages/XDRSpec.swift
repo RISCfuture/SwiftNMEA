@@ -6,7 +6,7 @@ import Testing
 
 @Suite
 struct `8.3.127 XDR` {
-  private func measurements(from fields: [String?]) async throws -> [Transducer.Value] {
+  private func measurements(from fields: [String?]) throws -> [Transducer.Value] {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.127 XDR` {
       fields: fields
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     guard let payload = (messages[1] as? Message)?.payload else {
@@ -29,7 +29,7 @@ struct `8.3.127 XDR` {
     return measurements
   }
 
-  private func error(from fields: [String?]) async throws -> MessageError? {
+  private func error(from fields: [String?]) throws -> MessageError? {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -38,13 +38,13 @@ struct `8.3.127 XDR` {
       fields: fields
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
     return messages.compactMap { $0 as? MessageError }.first
   }
 
   @Test(arguments: TransducerCase.all)
-  func `parses transducer measurements`(_ testCase: TransducerCase) async throws {
-    let measurements = try await measurements(from: testCase.fields)
+  func `parses transducer measurements`(_ testCase: TransducerCase) throws {
+    let measurements = try measurements(from: testCase.fields)
     #expect(measurements == testCase.expected)
   }
 
@@ -53,8 +53,8 @@ struct `8.3.127 XDR` {
     ("a switch with an unrecognized unit", ["S", "1", "Q", "Switch#0#0"]),
     ("a volume with an unrecognized unit", ["V", "12.5", "l", "Fuel#0"])
   ])
-  func `throws for an unrecognized unit`(_ name: String, _ fields: [String?]) async throws {
-    let error = try await error(from: fields)
+  func `throws for an unrecognized unit`(_ name: String, _ fields: [String?]) throws {
+    let error = try error(from: fields)
     #expect(error?.type == .badUnitValue, "\(name)")
   }
 

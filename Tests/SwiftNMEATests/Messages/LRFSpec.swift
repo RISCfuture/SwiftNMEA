@@ -9,7 +9,7 @@ struct `8.3.62 LRF and friends` {
   // MARK: - .parse
 
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let fixTime = Date(timeIntervalSinceNow: -5)
     let ETA = Date(timeIntervalSinceNow: 60000)
@@ -57,7 +57,7 @@ struct `8.3.62 LRF and friends` {
     let data =
       LRF.data(using: .ascii)! + LR1.data(using: .ascii)! + LR2.data(using: .ascii)!
       + LR3.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 5)
     let payload = try #require((messages[4] as? Message)?.payload)
@@ -125,7 +125,7 @@ struct `8.3.62 LRF and friends` {
   }
 
   @Test
-  func `throws an error if a duplicate sentence is received`() async throws {
+  func `throws an error if a duplicate sentence is received`() throws {
     let parser = SwiftNMEA()
     let fixTime = Date(timeIntervalSinceNow: -5)
     let LRF = createSentence(
@@ -174,7 +174,7 @@ struct `8.3.62 LRF and friends` {
     let data =
       LRF.data(using: .ascii)! + LR1.data(using: .ascii)! + LR2.data(using: .ascii)!
       + LR2_2.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 5)
     guard let error = messages[4] as? MessageError else {
@@ -185,7 +185,7 @@ struct `8.3.62 LRF and friends` {
   }
 
   @Test
-  func `throws an error if an unexpected sentence is received`() async throws {
+  func `throws an error if an unexpected sentence is received`() throws {
     let parser = SwiftNMEA()
     let ETA = Date(timeIntervalSinceNow: 60000)
     let LRF = createSentence(
@@ -219,7 +219,7 @@ struct `8.3.62 LRF and friends` {
       ]
     )
     let data = LRF.data(using: .ascii)! + LR1.data(using: .ascii)! + LR3.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 4)
     guard let error = messages[3] as? MessageError else {
@@ -232,7 +232,7 @@ struct `8.3.62 LRF and friends` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete sentences`() async throws {
+  func `flushes incomplete sentences`() throws {
     let parser = SwiftNMEA()
     let fixTime = Date(timeIntervalSinceNow: -5)
     let LRF = createSentence(
@@ -267,10 +267,10 @@ struct `8.3.62 LRF and friends` {
     )
     let data = LRF.data(using: .ascii)! + LR1.data(using: .ascii)! + LR2.data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 3)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
     #expect(messages.count == 1)
 
     guard let message = messages[0] as? Message else {

@@ -6,10 +6,10 @@ import Testing
 @Suite
 struct `8.3.72 NRM` {
   @Test
-  func `parses the first example sentence`() async throws {
+  func `parses the first example sentence`() throws {
     let parser = SwiftNMEA()
     let data = Data("$INNRM,2,1,00001E1F,00000023,R*29\r\n".utf8)
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -45,10 +45,10 @@ struct `8.3.72 NRM` {
   }
 
   @Test
-  func `parses the second example sentence`() async throws {
+  func `parses the second example sentence`() throws {
     let parser = SwiftNMEA()
     let data = Data("$INNRM,0,2,00001E1F,0FFFFFFF,R*5F\r\n".utf8)
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

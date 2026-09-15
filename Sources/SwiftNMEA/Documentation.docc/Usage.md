@@ -13,7 +13,7 @@ received on your bus:
 ```swift
 let parser = SwiftNMEA()
 while data = bus.receive() {
-  let elements = try await parser.parse(data: data)
+  let elements = try parser.parse(data: data)
   handleElements(elements)
 }
 ```

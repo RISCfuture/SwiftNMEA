@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.106 TRL` {
   @Test
-  func `parses a single log entry`() async throws {
+  func `parses a single log entry`() throws {
     let parser = SwiftNMEA()
     // total=1, entry=1, sequentialID=3, switch off 15 May 2025 08:15:00,
     // switch on 15 May 2025 09:30:00, reason = power off
@@ -17,7 +17,7 @@ struct `8.3.106 TRL` {
       fields: [1, 1, 3, "15052025", "081500.00", "15052025", "093000.00", 1]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -60,7 +60,7 @@ struct `8.3.106 TRL` {
   }
 
   @Test
-  func `assembles a multi-entry log`() async throws {
+  func `assembles a multi-entry log`() throws {
     let parser = SwiftNMEA()
     let first = createSentence(
       delimiter: .parametric,
@@ -75,7 +75,7 @@ struct `8.3.106 TRL` {
       fields: [2, 2, 4, "16052025", "100000.00", "16052025", "120000.00", 4]
     )
     let data = (first + second).data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     // the assembled log is emitted on receipt of the last entry
     let lastPayload = messages.compactMap { ($0 as? Message)?.payload }.last
@@ -95,7 +95,7 @@ struct `8.3.106 TRL` {
 
   @Test
   func `parses an empty log with null fields`()
-    async throws
+    throws
   {
     let parser = SwiftNMEA()
     // a query response when no log entries exist: total=0, all else null
@@ -107,7 +107,7 @@ struct `8.3.106 TRL` {
       fields: [0, nil, nil, nil, nil, nil, nil, nil]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -121,7 +121,7 @@ struct `8.3.106 TRL` {
   }
 
   @Test
-  func `throws an error for an invalid reason code`() async throws {
+  func `throws an error for an invalid reason code`() throws {
     let parser = SwiftNMEA()
     // reason code 0 is not a defined value
     let sentence = createSentence(
@@ -131,7 +131,7 @@ struct `8.3.106 TRL` {
       fields: [1, 1, 3, "15052025", "081500.00", "15052025", "093000.00", 0]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     let error = try #require(messages[1] as? MessageError)
     #expect(error.type == .unknownValue)

@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.92 SM1` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.92 SM1` {
       fields: ["A", 1234, "010345", "104", 1, 2, 31, "00", 2024, 6, 2, 13, 56, 5]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -56,7 +56,7 @@ struct `8.3.92 SM1` {
   }
 
   @Test
-  func `parses null sequence, LES ID, service, and address fields`() async throws {
+  func `parses null sequence, LES ID, service, and address fields`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -65,7 +65,7 @@ struct `8.3.92 SM1` {
       fields: ["V", 7, nil, nil, 9, 1, nil, "00", 2024, 12, 31, 0, 0, nil]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -95,7 +95,7 @@ struct `8.3.92 SM1` {
   }
 
   @Test
-  func `throws an error for a reserved ocean region code`() async throws {
+  func `throws an error for a reserved ocean region code`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -104,7 +104,7 @@ struct `8.3.92 SM1` {
       fields: ["A", 1234, "010345", "104", 4, 1, 31, "00", 2024, 6, 2, 13, 56, 5]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

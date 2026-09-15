@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-09-14
+
+### Changed
+
+- Lowered the minimum platform versions to macOS 13, iOS 16, tvOS 16, watchOS 9,
+  and visionOS 1 (from macOS 15, iOS 18, tvOS 18, watchOS 11, and visionOS 2).
+  Nothing in the package reaches above that band: `Duration` in NMEAUnits sets
+  the floor and `Regex` sits alongside it. No API changed, so existing code
+  compiles as-is.
+- Updated dependencies: swift-algorithms 1.2.1, swift-collections 1.6.0,
+  swift-syntax 603.0.2, and swift-docc-plugin 1.5.0.
+- Internal build-settings cleanup with no source-breaking effect: every target
+  now enables the `ImmutableWeakCaptures`, `MemberImportVisibility`,
+  `ExistentialAny`, and `InternalImportsByDefault` upcoming features alongside
+  the two adopted in 2.1.0. The Swift tools version stays at 6.3 and the package
+  still builds in language modes 5 and 6.
+
+### Fixed
+
+- Documentation: corrected broken DocC symbol links — the GGA deprecation note
+  now resolves to the full `GNSSFix` signature, the SafetyNET linkage note to
+  `SafetyNET/MessageIdentification/uniqueMessageNumber`, and the `SPW` reason
+  code to `NAKReason/accessDenied` (`NAKReason` has no `unauthorized` case).
+
 ## [2.2.0] - 2026-07-06
 
 ### Added

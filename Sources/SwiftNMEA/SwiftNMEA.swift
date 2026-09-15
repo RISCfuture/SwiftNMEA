@@ -89,7 +89,7 @@ public class SwiftNMEA {
    validation fails.
    - Returns: The parsed sentences and messages.
    */
-  public func parse(data: Data, ignoreChecksums: Bool = false) async throws(NMEAError)
+  public func parse(data: Data, ignoreChecksums: Bool = false) throws(NMEAError)
     -> [any Element]
   {
     buffer.append(data)
@@ -97,7 +97,7 @@ public class SwiftNMEA {
     while let line = try extractFirstSentence() {
       lines.append(line)
     }
-    return await parseSentences(from: lines, ignoreChecksums: ignoreChecksums)
+    return parseSentences(from: lines, ignoreChecksums: ignoreChecksums)
   }
 
   /**
@@ -131,9 +131,9 @@ public class SwiftNMEA {
    - Returns: ``Message``s and ``MessageError``s flushed and removed from the buffer.
    */
   public func flush(talker: Talker? = nil, format: Format? = nil, includeIncomplete: Bool = false)
-    async throws(NMEAError) -> [any Element]
+    throws(NMEAError) -> [any Element]
   {
-    try await messageParser.flush(
+    try messageParser.flush(
       talker: talker,
       format: format,
       includeIncomplete: includeIncomplete
@@ -153,13 +153,13 @@ public class SwiftNMEA {
     throw NMEAError(type: .badEncoding)
   }
 
-  private func parseSentences(from lines: [String], ignoreChecksums: Bool = false) async
+  private func parseSentences(from lines: [String], ignoreChecksums: Bool = false)
     -> [any Element]
   {
     var messages: [any Element] = []
     for line in lines {
       do {
-        try await appendElements(from: line, ignoreChecksums: ignoreChecksums, to: &messages)
+        try appendElements(from: line, ignoreChecksums: ignoreChecksums, to: &messages)
       } catch {
         // whatever the line yielded before the failure is kept, followed by the error
         messages.append(MessageError(from: error))
@@ -176,36 +176,36 @@ public class SwiftNMEA {
     from line: String,
     ignoreChecksums: Bool,
     to messages: inout [any Element]
-  ) async throws(NMEAError) {
+  ) throws(NMEAError) {
     let isSentenceLike = line.first == "$" || line.first == "!"
 
     if isSentenceLike, line.count > Self.maxLineLength {
       throw NMEAError(type: .sentenceTooLong, line: line)
     }
 
-    if let query = try await Query(sentence: line, ignoreChecksum: ignoreChecksums) {
+    if let query = try Query(sentence: line, ignoreChecksum: ignoreChecksums) {
       // we have to parse queries unconditionally because otherwise they'll be caught by ParametricParser
       addIfFilterMatches(query, to: &messages)
     } else if shouldIncludeProprietary,
-      let proprietary = try await ProprietarySentence(
+      let proprietary = try ProprietarySentence(
         sentence: line,
         ignoreChecksum: ignoreChecksums
       )
     {
       addIfFilterMatches(proprietary, to: &messages)
     } else if shouldIncludeParametric || shouldIncludeMessages,
-      let sentence = try await ParametricSentence(
+      let sentence = try ParametricSentence(
         sentence: line,
         ignoreChecksum: ignoreChecksums
       )
     {
       addIfFilterMatches(sentence, to: &messages)
       if shouldIncludeMessages,
-        let message = try await messageParser.parse(sentence: sentence)
+        let message = try messageParser.parse(sentence: sentence)
       {
         addIfFilterMatches(message, to: &messages)
       }
-    } else if isSentenceLike, try await !lineIsRecognizable(line) {
+    } else if isSentenceLike, try !lineIsRecognizable(line) {
       // a sentence-like line that matches none of the parsers (and wasn't merely
       // excluded by a filter) is malformed
       throw NMEAError(type: .unknownSentenceType, line: line)
@@ -218,10 +218,10 @@ public class SwiftNMEA {
   /// matches a parser shape is "recognized" even if it was excluded by a
   /// filter or has a bad checksum. Used to distinguish a line that was merely
   /// filtered out from one that is genuinely unparseable.
-  private func lineIsRecognizable(_ line: String) async throws(NMEAError) -> Bool {
-    if try await Query(sentence: line, ignoreChecksum: true) != nil { return true }
-    if try await ProprietarySentence(sentence: line, ignoreChecksum: true) != nil { return true }
-    if try await ParametricSentence(sentence: line, ignoreChecksum: true) != nil { return true }
+  private func lineIsRecognizable(_ line: String) throws(NMEAError) -> Bool {
+    if try Query(sentence: line, ignoreChecksum: true) != nil { return true }
+    if try ProprietarySentence(sentence: line, ignoreChecksum: true) != nil { return true }
+    if try ParametricSentence(sentence: line, ignoreChecksum: true) != nil { return true }
     return false
   }
 

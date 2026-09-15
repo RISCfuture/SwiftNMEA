@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.93 SM2` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -19,7 +19,7 @@ struct `8.3.93 SM2` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -65,7 +65,7 @@ struct `8.3.93 SM2` {
   }
 
   @Test
-  func `parses a sentence with unavailable values`() async throws {
+  func `parses a sentence with unavailable values`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -78,7 +78,7 @@ struct `8.3.93 SM2` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     let payload = try #require((messages[1] as? Message)?.payload)
     guard
@@ -109,7 +109,7 @@ struct `8.3.93 SM2` {
   }
 
   @Test
-  func `throws an error for an out-of-range NAVAREA number`() async throws {
+  func `throws an error for an out-of-range NAVAREA number`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -121,7 +121,7 @@ struct `8.3.93 SM2` {
         22, "C", "A"
       ]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
       return
@@ -130,7 +130,7 @@ struct `8.3.93 SM2` {
   }
 
   @Test
-  func `throws an error for an out-of-range reception date`() async throws {
+  func `throws an error for an out-of-range reception date`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -142,7 +142,7 @@ struct `8.3.93 SM2` {
         5, "C", "A"
       ]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
       return

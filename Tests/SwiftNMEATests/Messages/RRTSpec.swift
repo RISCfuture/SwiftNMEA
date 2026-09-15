@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.85 RRT` {
   @Test
-  func `parses a status report for a monitored route`() async throws {
+  func `parses a status report for a monitored route`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.85 RRT` {
       fields: ["M", "KSQLKDWA", "1.2", "OAK30", "A", "P"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -41,7 +41,7 @@ struct `8.3.85 RRT` {
   }
 
   @Test
-  func `parses an empty query response with null fields`() async throws {
+  func `parses an empty query response with null fields`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -50,7 +50,7 @@ struct `8.3.85 RRT` {
       fields: ["M", nil, nil, nil, nil, nil]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -76,7 +76,7 @@ struct `8.3.85 RRT` {
   }
 
   @Test
-  func `throws an error for an invalid transfer type`() async throws {
+  func `throws an error for an invalid transfer type`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -85,7 +85,7 @@ struct `8.3.85 RRT` {
       fields: ["X", "KSQLKDWA", "1.2", "OAK30", "A", "P"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.3 ABK` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.3 ABK` {
       fields: [123_456_789, "A", "6.1", 3, 1]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

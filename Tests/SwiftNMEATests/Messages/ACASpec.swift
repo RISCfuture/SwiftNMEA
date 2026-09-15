@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct `8.3.5 ACA` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     // the “in-use changed” time field is null to keep the sentence within
     // the 82-character limit
@@ -21,7 +21,7 @@ struct `8.3.5 ACA` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -62,7 +62,7 @@ struct `8.3.5 ACA` {
   }
 
   @Test
-  func `rejects an over-length sentence`() async throws {
+  func `rejects an over-length sentence`() throws {
     let parser = SwiftNMEA()
     let inUseChanged = Date(timeIntervalSinceNow: -1000)
     let sentence = createSentence(
@@ -75,7 +75,7 @@ struct `8.3.5 ACA` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 1)
     guard let error = messages[0] as? MessageError else {

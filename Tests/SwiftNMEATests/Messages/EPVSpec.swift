@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.33 EPV` {
   @Test
-  func `parses a command sentence`() async throws {
+  func `parses a command sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.33 EPV` {
       fields: ["C", "AI", "503123450", 101, "38400"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -31,7 +31,7 @@ struct `8.3.33 EPV` {
   }
 
   @Test
-  func `parses a report sentence`() async throws {
+  func `parses a report sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -40,7 +40,7 @@ struct `8.3.33 EPV` {
       fields: ["R", "AI", "503123450", 101, "38400"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -56,7 +56,7 @@ struct `8.3.33 EPV` {
   }
 
   @Test
-  func `decodes escaped reserved characters in the value`() async throws {
+  func `decodes escaped reserved characters in the value`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -65,7 +65,7 @@ struct `8.3.33 EPV` {
       fields: ["R", "AI", "503123450", 101, "a^2Cb"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -79,7 +79,7 @@ struct `8.3.33 EPV` {
   }
 
   @Test
-  func `throws when the property identifier is negative`() async throws {
+  func `throws when the property identifier is negative`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -88,7 +88,7 @@ struct `8.3.33 EPV` {
       fields: ["C", "AI", "503123450", -1, "38400"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     guard let error = messages[1] as? MessageError else {

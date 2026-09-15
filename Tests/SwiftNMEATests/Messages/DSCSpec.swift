@@ -11,11 +11,11 @@ struct `8.3.29 DSC` {
   }
 
   @Test
-  func `parses the distress example from the spec`() async throws {
+  func `parses the distress example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$CVDSC,12,3601234560,12,05,00,1474712519,0817,,,S,E,*51\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -63,11 +63,11 @@ struct `8.3.29 DSC` {
   }
 
   @Test
-  func `parses the relay example from the spec`() async throws {
+  func `parses the relay example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$CTDSC,16,0112345670,12,12,09,1474712219,1234,9991212120,00,S*19\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -106,11 +106,11 @@ struct `8.3.29 DSC` {
   }
 
   @Test
-  func `parses the safety call example from the spec`() async throws {
+  func `parses the safety call example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$CTDSC,16,0112345670,08,09,26,041250,,,,S*11\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -149,7 +149,7 @@ struct `8.3.29 DSC` {
   }
 
   @Test
-  func `parses a geographic sentence`() async throws {
+  func `parses a geographic sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -162,7 +162,7 @@ struct `8.3.29 DSC` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

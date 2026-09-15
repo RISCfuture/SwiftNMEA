@@ -8,7 +8,7 @@ struct `8.3.90 SFI` {
   // MARK: - .parse
 
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
 
     // MARK: Setup
 
@@ -53,7 +53,7 @@ struct `8.3.90 SFI` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 5)
 
@@ -99,7 +99,7 @@ struct `8.3.90 SFI` {
   }
 
   @Test
-  func `throws an error for an incorrect sentence number`() async throws {
+  func `throws an error for an incorrect sentence number`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       createSentence(
@@ -128,7 +128,7 @@ struct `8.3.90 SFI` {
       )
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 3)
     guard let error = messages[2] as? MessageError else {
@@ -142,7 +142,7 @@ struct `8.3.90 SFI` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete sentences`() async throws {
+  func `flushes incomplete sentences`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -160,10 +160,10 @@ struct `8.3.90 SFI` {
     )
     let data = sentence.data(using: .ascii)!
 
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 1)
 
-    let messages = try await parser.flush(includeIncomplete: true)
+    let messages = try parser.flush(includeIncomplete: true)
     #expect(messages.count == 1)
 
     guard let message = messages[0] as? Message else {

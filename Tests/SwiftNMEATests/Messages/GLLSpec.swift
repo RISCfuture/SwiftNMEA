@@ -7,11 +7,11 @@ import Testing
 @Suite
 struct `8.3.43 GLL` {
   @Test
-  func `parses the example from the spec`() async throws {
+  func `parses the example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentence = "$LCGLL,4728.31,N,12254.25,W,091342,A,A*4C\r\n"
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

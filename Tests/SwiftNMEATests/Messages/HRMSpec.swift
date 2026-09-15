@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.55 HRM` {
   @Test
-  func `parses a sentence with all values`() async throws {
+  func `parses a sentence with all values`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.55 HRM` {
       fields: [-2.5, 8.0, 5.0, 6.0, "A", 7.0, 9.0, "123456", 15, 6, 2024, 30.0, "R"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -62,7 +62,7 @@ struct `8.3.55 HRM` {
   }
 
   @Test
-  func `parses a sentence with unavailable peak hold values`() async throws {
+  func `parses a sentence with unavailable peak hold values`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -71,7 +71,7 @@ struct `8.3.55 HRM` {
       fields: [-2.5, 8.0, 5.0, 6.0, "A", nil, nil, nil, nil, nil, nil, nil, "R"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -100,7 +100,7 @@ struct `8.3.55 HRM` {
   }
 
   @Test
-  func `throws when the sentence status flag is missing`() async throws {
+  func `throws when the sentence status flag is missing`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -109,7 +109,7 @@ struct `8.3.55 HRM` {
       fields: [-2.5, 8.0, 5.0, 6.0, "A", nil, nil, nil, nil, nil, nil, nil, nil]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     guard let error = messages[1] as? MessageError else {

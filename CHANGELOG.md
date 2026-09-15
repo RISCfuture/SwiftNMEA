@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Breaking:** Parsing is now synchronous.
+  `SwiftNMEA.parse(data:ignoreChecksums:)` and
+  `SwiftNMEA.flush(talker:format:includeIncomplete:)`, along with the failable
+  initializers `ParametricSentence.init?(sentence:ignoreChecksum:)`,
+  `ProprietarySentence.init?(sentence:ignoreChecksum:)`, and
+  `Query.init?(sentence:ignoreChecksum:)`, are no longer `async`. Drop `await`
+  from your call sites: `try await parser.parse(data: data)` becomes
+  `try parser.parse(data: data)`. The `Sentence` protocol's initializer
+  requirement is no longer `async` either, so conforming types outside the
+  package must drop it as well.
+- **Breaking:** Raised the minimum platform versions to macOS 15, iOS 18,
+  tvOS 18, watchOS 11, and visionOS 2 (from the macOS 13, iOS 16, tvOS 16,
+  watchOS 9, and visionOS 1 that 2.3.0 set). `Synchronization.Mutex`, which the
+  now-synchronous parsers use to guard regex construction, requires macOS 15.
+- The four parser types that own a `Regex` are no longer actors. `Regex` is not
+  `Sendable`, and actor isolation was the only thing making the `static let`
+  parser singletons concurrency-safe — at the cost of an `async` hop on every
+  parse, for work that was never concurrent. A lock-based holder replaces them:
+  each regex is built once per process under a process-wide mutex, because
+  building a `Regex` from the RegexBuilder DSL touches non-thread-safe global
+  state, whereas matching an already-built regex is thread-safe and runs
+  lock-free. Matching is no longer serialized across threads the way the actors
+  serialized it.
+
 ## [2.3.0] - 2026-09-14
 
 ### Changed

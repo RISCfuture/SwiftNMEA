@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.91 SLM` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.91 SLM` {
       fields: [1, "O", "Bow thruster panel", "P", "DP Main"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -32,7 +32,7 @@ struct `8.3.91 SLM` {
   }
 
   @Test
-  func `parses a sentence with unavailable optional values`() async throws {
+  func `parses a sentence with unavailable optional values`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -41,7 +41,7 @@ struct `8.3.91 SLM` {
       fields: [0, "B", nil, "M", nil]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -58,7 +58,7 @@ struct `8.3.91 SLM` {
   }
 
   @Test
-  func `throws an error for an unknown system status`() async throws {
+  func `throws an error for an unknown system status`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -66,7 +66,7 @@ struct `8.3.91 SLM` {
       format: .steeringLocationMode,
       fields: [5, "B", nil, "M", nil]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
@@ -76,7 +76,7 @@ struct `8.3.91 SLM` {
   }
 
   @Test
-  func `throws an error when location is Others but description is missing`() async throws {
+  func `throws an error when location is Others but description is missing`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -84,7 +84,7 @@ struct `8.3.91 SLM` {
       format: .steeringLocationMode,
       fields: [1, "O", nil, "P", nil]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

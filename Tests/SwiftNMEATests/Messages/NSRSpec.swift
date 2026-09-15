@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.74 NSR` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -15,7 +15,7 @@ struct `8.3.74 NSR` {
       fields: ["P", "A", "F", "V", "D", "A", "N", "N", "P", "A", "W", "P", "A"]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -56,7 +56,7 @@ struct `8.3.74 NSR` {
   }
 
   @Test
-  func `throws an error for an invalid integrity value`() async throws {
+  func `throws an error for an invalid integrity value`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -64,7 +64,7 @@ struct `8.3.74 NSR` {
       format: .navigationStatusReport,
       fields: ["X", "A", "P", "A", "P", "A", "P", "A", "P", "A", "W", "P", "A"]
     )
-    let messages = try await parser.parse(data: sentence.data(using: .ascii)!)
+    let messages = try parser.parse(data: sentence.data(using: .ascii)!)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

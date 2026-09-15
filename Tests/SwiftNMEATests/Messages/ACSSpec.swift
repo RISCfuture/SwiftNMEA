@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.8 ACS` {
   @Test
-  func `parses a sentence`() async throws {
+  func `parses a sentence`() throws {
     let parser = SwiftNMEA()
     let time = Date(timeIntervalSinceNow: -120)
     let components = calendar.dateComponents([.year, .month, .day], from: time)
@@ -24,7 +24,7 @@ struct `8.3.8 ACS` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

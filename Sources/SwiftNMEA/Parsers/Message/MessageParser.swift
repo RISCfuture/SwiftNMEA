@@ -1,4 +1,4 @@
-actor MessageParser {
+final class MessageParser {
   private let formatParsers: [any MessageFormat] = [
     AAMParser(), ABKParser(), ABMParser(), ACAParser(), ACKParser(),
     ACNParser(), ACSParser(), AGLParser(), AIRParser(), AKDParser(),

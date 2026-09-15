@@ -6,11 +6,11 @@ import Testing
 @Suite
 struct `8.3.130 ZDA` {
   @Test(arguments: SpecExample.all)
-  func `parses an example from the spec (corrected)`(_ example: SpecExample) async throws {
+  func `parses an example from the spec (corrected)`(_ example: SpecExample) throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: example.sentence)
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)

@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.9 AGL` {
   @Test
-  func `parses a single-sentence alert group list`() async throws {
+  func `parses a single-sentence alert group list`() throws {
     let parser = SwiftNMEA()
     // total=1, sentence=1, messageID=0, then a header entry (instance 0)
     // and one member entry
@@ -17,7 +17,7 @@ struct `8.3.9 AGL` {
       fields: [1, 1, 0, "0001", nil, 3001, 0, "0002", "NER", 3002, 5]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -43,7 +43,7 @@ struct `8.3.9 AGL` {
   }
 
   @Test
-  func `parses null SFI and null instance fields`() async throws {
+  func `parses null SFI and null instance fields`() throws {
     let parser = SwiftNMEA()
     // SFI null (alert from AGL source) and instance null (single instance)
     let sentence = createSentence(
@@ -53,7 +53,7 @@ struct `8.3.9 AGL` {
       fields: [1, 1, 7, nil, nil, 3001, 0, nil, nil, 3002, nil]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -71,7 +71,7 @@ struct `8.3.9 AGL` {
   }
 
   @Test
-  func `assembles a multi-sentence message`() async throws {
+  func `assembles a multi-sentence message`() throws {
     let parser = SwiftNMEA()
     let first = createSentence(
       delimiter: .parametric,
@@ -86,7 +86,7 @@ struct `8.3.9 AGL` {
       fields: [2, 2, 3, "0003", nil, 3003, 2]
     )
     let data = (first + second).data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     // the assembled message is emitted on receipt of the last sentence
     guard let payload = messages.compactMap({ ($0 as? Message)?.payload }).last else {
@@ -106,7 +106,7 @@ struct `8.3.9 AGL` {
   }
 
   @Test
-  func `throws an error for a non-numeric alert identifier`() async throws {
+  func `throws an error for a non-numeric alert identifier`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -115,7 +115,7 @@ struct `8.3.9 AGL` {
       fields: [1, 1, 0, "0001", nil, "abc", 0]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")

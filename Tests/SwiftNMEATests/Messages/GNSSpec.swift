@@ -8,14 +8,14 @@ import Testing
 struct `8.3.44 GNS` {
   @Test
   func `parses the first example from the spec`()
-    async throws
+    throws
   {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(
       to: "$GNGNS,122310.2,3722.425671,N,12258.856215,W,DA,14,0.9,1005.543,6.5,5.2,23,S"
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -61,12 +61,12 @@ struct `8.3.44 GNS` {
 
   @Test
   func `parses the second example from the spec`()
-    async throws
+    throws
   {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(to: "$GPGNS,122310.2,,,,,,7,,,,5.2,23,S")
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let message = try #require(messages[1] as? Message)
@@ -104,7 +104,7 @@ struct `8.3.44 GNS` {
   }
 
   @Test
-  func `parses a six-system mode indicator (ed.6.0)`() async throws {
+  func `parses a six-system mode indicator (ed.6.0)`() throws {
     let parser = SwiftNMEA()
     // The six-system mode indicator field is short enough to keep the
     // sentence within the 82-character limit when other fields are trimmed.
@@ -112,7 +112,7 @@ struct `8.3.44 GNS` {
       to: "$GNGNS,122310.2,3722.425671,N,12258.856215,W,ADEPSR,14,0.9,1005.5,,,,S"
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     guard let message = messages[1] as? Message,
@@ -133,13 +133,13 @@ struct `8.3.44 GNS` {
   }
 
   @Test
-  func `rejects an over-length sentence (ed.6.0)`() async throws {
+  func `rejects an over-length sentence (ed.6.0)`() throws {
     let parser = SwiftNMEA()
     let sentence = applyChecksum(
       to: "$GNGNS,122310.2,3722.425671,N,12258.856215,W,ADEPSR,14,0.9,1005.543,6.5,5.2,23,S"
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 1)
     guard let error = messages[0] as? MessageError else {

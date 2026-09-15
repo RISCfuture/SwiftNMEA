@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct `8.3.27 DOR` {
   @Test
-  func `parses the example from the spec`() async throws {
+  func `parses the example from the spec`() throws {
     let parser = SwiftNMEA()
     let sentences = [
       applyChecksum(to: "$HDDOR,S,,FD,,,004,,,"),
@@ -16,7 +16,7 @@ struct `8.3.27 DOR` {
       applyChecksum(to: "$HDDOR,E,,FD,CC,003,005,X,,C03005 Cabin 45")
     ]
     let data = sentences.joined().data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 10)
 

@@ -8,7 +8,7 @@ struct `8.3.39 GDC` {
   // MARK: - .parse
 
   @Test
-  func `parses a single-sentence message`() async throws {
+  func `parses a single-sentence message`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -20,7 +20,7 @@ struct `8.3.39 GDC` {
       ]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     #expect(messages.count == 2)
     let payload = try #require((messages[1] as? Message)?.payload)
@@ -47,7 +47,7 @@ struct `8.3.39 GDC` {
   }
 
   @Test
-  func `accumulates corrections across multiple sentences`() async throws {
+  func `accumulates corrections across multiple sentences`() throws {
     let parser = SwiftNMEA()
     let first = createSentence(
       delimiter: .parametric,
@@ -62,7 +62,7 @@ struct `8.3.39 GDC` {
       fields: [2, 2, 2, 17, 2.5, 43, 432_006, 1240.0, 3.0, 1]
     )
     let data = (first + second).data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     // sentence echo + sentence echo + completed message
     #expect(messages.count == 3)
@@ -82,7 +82,7 @@ struct `8.3.39 GDC` {
   }
 
   @Test
-  func `throws an error for an invalid signal ID`() async throws {
+  func `throws an error for an invalid signal ID`() throws {
     let parser = SwiftNMEA()
     // GPS signal IDs only range 0–8; 9 is reserved/invalid.
     let sentence = createSentence(
@@ -92,7 +92,7 @@ struct `8.3.39 GDC` {
       fields: [1, 1, 1, 12, -1.5, 42, 432_000, 1234.5, 7.25, 9]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
@@ -103,7 +103,7 @@ struct `8.3.39 GDC` {
   }
 
   @Test
-  func `throws an error for the disallowed combined-GNSS talker`() async throws {
+  func `throws an error for the disallowed combined-GNSS talker`() throws {
     let parser = SwiftNMEA()
     let sentence = createSentence(
       delimiter: .parametric,
@@ -112,7 +112,7 @@ struct `8.3.39 GDC` {
       fields: [1, 1, 1, 12, -1.5, 42, 432_000, 1234.5, 7.25, 5]
     )
     let data = sentence.data(using: .ascii)!
-    let messages = try await parser.parse(data: data)
+    let messages = try parser.parse(data: data)
 
     guard let error = messages[1] as? MessageError else {
       Issue.record("expected MessageError, got \(messages[1])")
@@ -124,7 +124,7 @@ struct `8.3.39 GDC` {
   // MARK: - .flush
 
   @Test
-  func `flushes incomplete messages`() async throws {
+  func `flushes incomplete messages`() throws {
     let parser = SwiftNMEA()
     let first = createSentence(
       delimiter: .parametric,
@@ -133,10 +133,10 @@ struct `8.3.39 GDC` {
       fields: [2, 1, 2, 12, -1.5, 42, 432_000, 1234.5, 7.25, 5]
     )
     let data = first.data(using: .ascii)!
-    let parsed = try await parser.parse(data: data)
+    let parsed = try parser.parse(data: data)
     #expect(parsed.count == 1)
 
-    let flushed = try await parser.flush(includeIncomplete: true)
+    let flushed = try parser.flush(includeIncomplete: true)
     #expect(flushed.count == 1)
 
     let payload = try #require((flushed[0] as? Message)?.payload)

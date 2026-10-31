@@ -17,7 +17,7 @@ concurrency:
 jobs:
   build:
     name: Generate Documentation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: SwiftyLab/setup-swift@latest
@@ -30,7 +30,7 @@ jobs:
             .build
             ~/.cache/org.swift.swiftpm
             ~/Library/Caches/org.swift.swiftpm
-          key: swiftpm-docs-ubuntu-latest-swift6.3-${{ hashFiles('Package.resolved') }}
+          key: swiftpm-docs-ubuntu-24.04-swift6.3-${{ hashFiles('Package.resolved') }}
       - name: Build
         run: |
           swift package \

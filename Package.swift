@@ -33,9 +33,8 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-algorithms.git", from: "1.2.1"),
-    .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "603.0.2"),
-    .package(url: "https://github.com/apple/swift-collections.git", from: "1.6.0"),
-    .package(url: "https://github.com/stackotter/swift-macro-toolkit.git", from: "0.9.0"),
+    .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "604.0.0"),
+    .package(url: "https://github.com/apple/swift-collections.git", from: "1.7.5"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.5.0")
   ],
   targets: [
@@ -44,8 +43,7 @@ let package = Package(
       dependencies: [
         .product(name: "SwiftParser", package: "swift-syntax"),
         .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-        .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
-        .product(name: "MacroToolkit", package: "swift-macro-toolkit")
+        .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
       ],
       swiftSettings: upcomingFeatures
     ),

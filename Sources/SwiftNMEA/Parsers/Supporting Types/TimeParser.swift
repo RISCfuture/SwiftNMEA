@@ -3,64 +3,63 @@ import NMEAUnits
 import RegexBuilder
 
 final class TimeParser {
+
+  private static let decimalRx = LockedRegex<(Substring, Int, Int, Double)> {
+    Regex {
+      Anchor.startOfSubject
+      Capture {
+        Repeat(.digit, count: 2)
+      } transform: {
+        Int($0)!
+      }
+      Capture {
+        Repeat(.digit, count: 2)
+      } transform: {
+        Int($0)!
+      }
+      Capture {
+        Repeat(.digit, count: 2)
+        "."
+        OneOrMore(.digit)
+      } transform: {
+        Double($0)!
+      }
+      Anchor.endOfSubject
+    }
+  }
+
+  private static let wholeRx = LockedRegex<(Substring, Int, Int, Double)> {
+    Regex {
+      Anchor.startOfSubject
+      Capture {
+        Repeat(.digit, count: 2)
+      } transform: {
+        Int($0)!
+      }
+      Capture {
+        Repeat(.digit, count: 2)
+      } transform: {
+        Int($0)!
+      }
+      Capture {
+        Repeat(.digit, count: 2)
+      } transform: {
+        Double($0)!
+      }
+      Anchor.endOfSubject
+    }
+  }
+
   var calendar: Calendar {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = .gmt
     return calendar
   }
 
-  private let hours = Reference<Int>()
-  private let minutes = Reference<Int>()
-  private let seconds = Reference<Double>()
-
-  private lazy var decimalRx = Regex {
-    Anchor.startOfSubject
-    Capture(as: hours) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      Int($0)!
-    }
-    Capture(as: minutes) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      Int($0)!
-    }
-    Capture(as: seconds) {
-      Repeat(.digit, count: 2)
-      "."
-      OneOrMore(.digit)
-    } transform: {
-      Double($0)!
-    }
-    Anchor.endOfSubject
-  }
-
-  private lazy var wholeRx = Regex {
-    Anchor.startOfSubject
-    Capture(as: hours) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      Int($0)!
-    }
-    Capture(as: minutes) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      Int($0)!
-    }
-    Capture(as: seconds) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      Double($0)!
-    }
-    Anchor.endOfSubject
-  }
-
   func hmsDecimalComponents(_ value: String, timeZone: TimeZone = .gmt) -> DateComponents? {
-    guard let match = value.firstMatch(of: decimalRx) else { return nil }
+    guard let match = Self.decimalRx.wholeMatch(in: value) else { return nil }
 
-    let hour = match[hours]
-    let minute = match[minutes]
-    let second = match[seconds]
+    let (_, hour, minute, second) = match.output
     let (intSecond, fracSecond) = modf(second)
     let nanosecond = Int(fracSecond * 1_000_000_000)
 
@@ -75,11 +74,9 @@ final class TimeParser {
   }
 
   func hmsComponents(_ value: String, timeZone: TimeZone = .gmt) -> DateComponents? {
-    guard let match = value.firstMatch(of: wholeRx) else { return nil }
+    guard let match = Self.wholeRx.wholeMatch(in: value) else { return nil }
 
-    let hour = match[hours]
-    let minute = match[minutes]
-    let second = match[seconds]
+    let (_, hour, minute, second) = match.output
 
     return .init(
       calendar: calendar,
@@ -109,11 +106,9 @@ final class TimeParser {
   }
 
   func parseHmsDecimalDuration(_ value: String) -> Duration? {
-    guard let match = value.firstMatch(of: decimalRx) else { return nil }
+    guard let match = Self.decimalRx.wholeMatch(in: value) else { return nil }
 
-    let hour = match[hours]
-    let minute = match[minutes]
-    let second = match[seconds]
+    let (_, hour, minute, second) = match.output
     let (intSecond, fracSecond) = modf(second)
     let nanosecond = Int(fracSecond * 1_000_000_000)
 

@@ -1,5 +1,4 @@
 import Foundation
-import MacroToolkit
 import SwiftParser
 package import SwiftSyntax
 import SwiftSyntaxBuilder
@@ -10,7 +9,8 @@ package struct DefineAlarmsMacro: DeclarationMacro {
     of node: some FreestandingMacroExpansionSyntax,
     in _: some MacroExpansionContext
   ) throws -> [DeclSyntax] {
-    guard let (argument) = destructureSingle(node.arguments),
+    guard node.arguments.count == 1,
+      let argument = node.arguments.first,
       let systemsExpr = argument.expression.as(ArrayExprSyntax.self)
     else {
       throw MacroError("@DefineAlarms takes a single argument of type [System]")
@@ -452,5 +452,13 @@ struct System: Identifiable, Equatable, Hashable {
       }
       return try .init(expr: tupleExpr)
     }
+  }
+}
+
+private struct MacroError: Error, CustomStringConvertible {
+  let description: String
+
+  init(_ description: String) {
+    self.description = description
   }
 }

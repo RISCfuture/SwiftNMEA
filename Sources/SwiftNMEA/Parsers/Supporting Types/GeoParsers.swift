@@ -12,60 +12,62 @@ enum LongitudeHemisphere: String {
 }
 
 final class LatitudeParser {
-  private let degrees = Reference<Int>()
-  private let minutes = Reference<Double>()
-  private lazy var rx = Regex {
-    Anchor.startOfSubject
-    Capture(as: degrees) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      Int($0)!
+  private static let rx = LockedRegex<(Substring, Int, Double)> {
+    Regex {
+      Anchor.startOfSubject
+      Capture {
+        Repeat(.digit, count: 2)
+      } transform: {
+        Int($0)!
+      }
+      Capture {
+        Repeat(.digit, count: 2)
+        "."
+        OneOrMore(.digit)
+      } transform: {
+        Double($0)!
+      }
+      Anchor.endOfSubject
     }
-    Capture(as: minutes) {
-      Repeat(.digit, count: 2)
-      "."
-      OneOrMore(.digit)
-    } transform: {
-      Double($0)!
-    }
-    Anchor.endOfSubject
   }
 
   func parse(_ value: String, hemisphere: LatitudeHemisphere) -> Measurement<UnitAngle>? {
-    guard let match = value.firstMatch(of: rx) else {
+    guard let match = Self.rx.wholeMatch(in: value) else {
       return nil
     }
-    var magnitude = Double(match[degrees]) + match[minutes] / 60.0
+    let (_, degrees, minutes) = match.output
+    var magnitude = Double(degrees) + minutes / 60.0
     if hemisphere == .south { magnitude *= -1 }
     return .init(value: magnitude, unit: .degrees)
   }
 }
 
 final class LongitudeParser {
-  private let degrees = Reference<Int>()
-  private let minutes = Reference<Double>()
-  private lazy var rx = Regex {
-    Anchor.startOfSubject
-    Capture(as: degrees) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      Int($0)!
+  private static let rx = LockedRegex<(Substring, Int, Double)> {
+    Regex {
+      Anchor.startOfSubject
+      Capture {
+        Repeat(.digit, count: 3)
+      } transform: {
+        Int($0)!
+      }
+      Capture {
+        Repeat(.digit, count: 2)
+        "."
+        OneOrMore(.digit)
+      } transform: {
+        Double($0)!
+      }
+      Anchor.endOfSubject
     }
-    Capture(as: minutes) {
-      Repeat(.digit, count: 2)
-      "."
-      OneOrMore(.digit)
-    } transform: {
-      Double($0)!
-    }
-    Anchor.endOfSubject
   }
 
   func parse(_ value: String, hemisphere: LongitudeHemisphere) -> Measurement<UnitAngle>? {
-    guard let match = value.firstMatch(of: rx) else {
+    guard let match = Self.rx.wholeMatch(in: value) else {
       return nil
     }
-    var magnitude = Double(match[degrees]) + match[minutes] / 60.0
+    let (_, degrees, minutes) = match.output
+    var magnitude = Double(degrees) + minutes / 60.0
     if hemisphere == .west { magnitude *= -1 }
     return .init(value: magnitude, unit: .degrees)
   }
